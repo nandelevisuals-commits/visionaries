@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VISIONAIRE Studio — Campaign Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,300;1,400&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #0a0805;
+  --parchment: #f5ede0;
+  --gold: #c9933a;
+  --gold2: #e8b96a;
+  --muted: #7a6e62;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(201,147,58,0.22);
+  --border2: rgba(201,147,58,0.1);
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: var(--parchment);
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+}
+.grain {
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  background-size: 200px 200px; pointer-events: none; z-index: 100; opacity: 0.6;
+}
+
+/* NAV */
+nav {
+display: flex; align-items: center; justify-content: space-between;
+padding: 1.4rem 2.5rem;
+border-bottom: 1px solid var(–border2);
+position: sticky; top: 0; z-index: 50;
+background: rgba(10,8,5,0.92); backdrop-filter: blur(16px);
+}
+.logo {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 1.3rem; font-weight: 700;
+letter-spacing: 0.12em; text-transform: uppercase; color: var(–gold);
+}
+.logo em { color: var(–parchment); font-style: italic; font-weight: 300; }
+.nav-tag {
+font-size: 0.62rem; letter-spacing: 0.3em;
+text-transform: uppercase; color: var(–muted);
+}
+.back-link {
+font-size: 0.65rem; letter-spacing: 0.2em;
+text-transform: uppercase; color: var(–muted);
+text-decoration: none; transition: color 0.2s;
+}
+.back-link:hover { color: var(–gold); }
+
+/* LAYOUT */
+.container {
+max-width: 860px; margin: 0 auto;
+padding: 4rem 2rem 6rem;
+}
+
+/* HERO */
+.page-eyebrow {
+font-size: 0.6rem; letter-spacing: 0.4em;
+text-transform: uppercase; color: var(–gold);
+display: flex; align-items: center; gap: 1rem;
+margin-bottom: 1.2rem;
+}
+.page-eyebrow::after { content: ‘’; flex: 1; max-width: 50px; height: 1px; background: var(–gold); opacity: 0.4; }
+.page-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: clamp(2.2rem, 5vw, 3.8rem);
+font-weight: 700; line-height: 1.05; margin-bottom: 0.8rem;
+}
+.page-title em { font-style: italic; color: var(–gold); font-weight: 300; }
+.page-sub { font-size: 0.95rem; color: var(–muted); line-height: 1.75; max-width: 520px; margin-bottom: 3rem; }
+
+/* FORM */
+.form-card {
+background: var(–card);
+border: 1px solid var(–border);
+padding: 2.5rem;
+position: relative;
+margin-bottom: 2rem;
+}
+.form-card::before {
+content: ‘’; position: absolute;
+top: -1px; left: 40px; right: 40px; height: 2px;
+background: linear-gradient(90deg, transparent, var(–gold), transparent);
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.45rem; }
+.form-group.full { grid-column: 1 / -1; }
+label {
+font-size: 0.6rem; letter-spacing: 0.28em;
+text-transform: uppercase; color: var(–gold); font-weight: 500;
+}
+input, select, textarea {
+background: rgba(255,255,255,0.04);
+border: 1px solid rgba(201,147,58,0.18);
+padding: 0.8rem 1rem;
+color: var(–parchment);
+font-family: ‘Instrument Sans’, sans-serif;
+font-size: 0.88rem; font-weight: 300;
+transition: border-color 0.2s, background 0.2s;
+outline: none; width: 100%;
+}
+input::placeholder, textarea::placeholder { color: rgba(122,110,98,0.55); }
+input:focus, select:focus, textarea:focus {
+border-color: var(–gold); background: rgba(201,147,58,0.05);
+}
+select option { background: #1a1510; color: var(–parchment); }
+textarea { resize: vertical; min-height: 80px; }
+
+.generate-btn {
+width: 100%; padding: 1.05rem 2rem;
+background: var(–gold); color: var(–ink);
+border: none; font-family: ‘Instrument Sans’, sans-serif;
+font-size: 0.7rem; font-weight: 500;
+letter-spacing: 0.3em; text-transform: uppercase;
+cursor: pointer; transition: background 0.2s;
+position: relative; overflow: hidden; margin-top: 0.5rem;
+}
+.generate-btn:hover { background: var(–gold2); }
+.generate-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.generate-btn .shimmer {
+position: absolute; inset: 0;
+background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+transform: translateX(-100%); animation: shimmer 1.8s infinite;
+}
+@keyframes shimmer { to { transform: translateX(100%); } }
+
+.error-box {
+background: rgba(139,58,30,0.12);
+border: 1px solid rgba(139,58,30,0.35);
+padding: 0.9rem 1.2rem; color: #e07050;
+font-size: 0.85rem; margin-top: 1rem; text-align: center;
+}
+
+/* RESULTS */
+.results { animation: fadeUp 0.55s ease forwards; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+.results-header {
+display: flex; align-items: flex-start;
+justify-content: space-between; gap: 1rem;
+padding-bottom: 1.5rem;
+border-bottom: 1px solid var(–border2);
+margin-bottom: 2rem; flex-wrap: wrap;
+}
+.campaign-name {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 2rem; font-weight: 700;
+color: var(–gold); font-style: italic;
+}
+.campaign-hook {
+font-size: 0.92rem; color: var(–muted);
+font-style: italic; line-height: 1.6; margin-top: 0.4rem;
+max-width: 580px;
+}
+.new-btn {
+padding: 0.65rem 1.4rem;
+background: transparent; border: 1px solid var(–border);
+color: var(–muted); font-family: ‘Instrument Sans’, sans-serif;
+font-size: 0.62rem; letter-spacing: 0.22em;
+text-transform: uppercase; cursor: pointer;
+transition: all 0.2s; white-space: nowrap;
+flex-shrink: 0;
+}
+.new-btn:hover { border-color: var(–gold); color: var(–gold); }
+
+.sections { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.section-block {
+border: 1px solid var(–border2);
+background: var(–card);
+position: relative; overflow: hidden;
+}
+.section-block::after {
+content: ‘’; position: absolute;
+left: 0; top: 0; bottom: 0; width: 2.5px;
+background: var(–gold); opacity: 0.55;
+}
+.section-head {
+padding: 1rem 1.5rem;
+border-bottom: 1px solid var(–border2);
+display: flex; align-items: center; gap: 0.75rem;
+}
+.section-label {
+font-size: 0.58rem; letter-spacing: 0.35em;
+text-transform: uppercase; color: var(–gold); font-weight: 500;
+}
+.section-body { padding: 1.5rem; }
+
+/* Moodboard */
+.mood-aesthetic {
+font-size: 0.9rem; color: var(–parchment); line-height: 1.75;
+margin-bottom: 1.2rem;
+}
+.palette-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.palette-chip {
+display: flex; align-items: center; gap: 0.4rem;
+padding: 0.3rem 0.6rem;
+border: 1px solid var(–border2); font-size: 0.72rem; color: var(–muted);
+}
+.color-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); flex-shrink: 0; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tag {
+padding: 0.28rem 0.7rem;
+border: 1px solid var(–border2); border-radius: 100px;
+font-size: 0.72rem; color: var(–muted);
+}
+.tag.gold { border-color: rgba(201,147,58,0.3); color: var(–gold); }
+.refs-label {
+font-size: 0.58rem; letter-spacing: 0.25em;
+text-transform: uppercase; color: var(–muted);
+margin: 0.8rem 0 0.4rem;
+}
+
+/* Prompts */
+.prompt-list { display: flex; flex-direction: column; gap: 1rem; }
+.prompt-item {
+background: rgba(201,147,58,0.04);
+border: 1px solid var(–border2);
+padding: 1.2rem 1.4rem;
+position: relative;
+}
+.prompt-meta {
+display: flex; align-items: center;
+justify-content: space-between; gap: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.prompt-num {
+font-size: 0.58rem; letter-spacing: 0.28em;
+text-transform: uppercase; color: var(–gold);
+}
+.prompt-ttl {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 1rem; font-weight: 600; color: var(–parchment);
+margin-bottom: 0.4rem;
+}
+.prompt-text { font-size: 0.85rem; color: var(–parchment); line-height: 1.72; }
+.copy-btn {
+padding: 0.25rem 0.55rem;
+background: transparent; border: 1px solid var(–border2);
+color: var(–muted); font-family: ‘Instrument Sans’, sans-serif;
+font-size: 0.58rem; letter-spacing: 0.15em;
+text-transform: uppercase; cursor: pointer;
+transition: all 0.18s; flex-shrink: 0;
+}
+.copy-btn:hover { border-color: var(–gold); color: var(–gold); }
+.copy-btn.copied { border-color: #4caf82; color: #4caf82; }
+
+/* Angles */
+.angle-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+.angle-list li {
+padding: 0.75rem 1.1rem;
+background: rgba(255,255,255,0.02);
+border-left: 2px solid var(–gold);
+font-size: 0.87rem; color: var(–parchment); line-height: 1.6;
+}
+
+/* Deliverables */
+.deliverables-text { font-size: 0.88rem; color: var(–parchment); line-height: 1.8; }
+
+/* Responsive */
+@media (max-width: 600px) {
+nav { padding: 1.1rem 1.2rem; }
+.nav-tag { display: none; }
+.container { padding: 2.5rem 1.2rem 5rem; }
+.form-grid { grid-template-columns: 1fr; }
+.form-card { padding: 1.5rem; }
+}
+</style>
+
+</head>
+<body>
+<div class="grain"></div>
+
+<nav>
+  <div class="logo">Vision<em>aire</em></div>
+  <div class="nav-tag">Campaign Studio</div>
+  <a href="index.html" class="back-link">← Back to Site</a>
+</nav>
+
+<div class="container">
+  <div class="page-eyebrow">AI Campaign Generator</div>
+  <h1 class="page-title">Build a <em>Full Campaign</em><br/>in Under a Minute.</h1>
+  <p class="page-sub">Enter your brief below. VISIONAIRE generates a complete campaign concept — image prompts, reel scripts, moodboard, and content angles — ready to use immediately.</p>
+
+  <!-- FORM -->
+
+  <div class="form-card" id="formCard">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Brand / Creator Name</label>
+        <input type="text" id="brand" placeholder="e.g. LUMÉ Skin, Zara Mitchell" />
+      </div>
+      <div class="form-group">
+        <label>Product or Service</label>
+        <input type="text" id="product" placeholder="e.g. Glow serum, vintage denim" />
+      </div>
+      <div class="form-group">
+        <label>Target Audience</label>
+        <input type="text" id="audience" placeholder="e.g. Black women 25–40, beauty lovers" />
+      </div>
+      <div class="form-group">
+        <label>Primary Platform</label>
+        <select id="platform">
+          <option value="Instagram">Instagram</option>
+          <option value="TikTok">TikTok</option>
+          <option value="Pinterest">Pinterest</option>
+          <option value="Multi-Platform">Multi-Platform</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Campaign Vibe / Aesthetic Direction</label>
+        <input type="text" id="vibe" placeholder="e.g. Afro-futurist luxury, raw editorial, cinematic summer heat" />
+      </div>
+      <div class="form-group full">
+        <label>Additional Notes (optional)</label>
+        <textarea id="notes" placeholder="Specific cultural references, color direction, campaign goals, hero product details..."></textarea>
+      </div>
+    </div>
+    <div id="errorBox" class="error-box" style="display:none;"></div>
+    <button class="generate-btn" id="genBtn" onclick="generate()">
+      Generate Campaign Concept →
+    </button>
+  </div>
+
+  <!-- RESULTS -->
+
+  <div id="results" style="display:none;"></div>
+</div>
+
+<script>
+const SYSTEM = `You are VISIONAIRE, an elite AI campaign strategist. Generate a campaign concept as valid JSON only — no markdown, no backticks, no extra text.
+
+Schema:
+{
+  "campaignName": "cinematic campaign title",
+  "hook": "one powerful sentence capturing the campaign soul",
+  "moodboard": {
+    "aesthetic": "2-3 sentence visual direction",
+    "palette": ["color1","color2","color3","color4"],
+    "references": ["ref1","ref2","ref3"],
+    "mood": ["word1","word2","word3","word4","word5"]
+  },
+  "imagePrompts": [
+    {"title":"scene title","prompt":"full cinematic prompt 60-100 words with camera angles, lighting, subject, mood"},
+    {"title":"...","prompt":"..."},
+    {"title":"...","prompt":"..."},
+    {"title":"...","prompt":"..."},
+    {"title":"...","prompt":"..."}
+  ],
+  "reelPrompts": [
+    {"title":"reel title","prompt":"full video prompt with camera movement, pacing, atmosphere for Sora/Runway"},
+    {"title":"...","prompt":"..."},
+    {"title":"...","prompt":"..."}
+  ],
+  "contentAngles": ["angle1","angle2","angle3","angle4","angle5"],
+  "deliverables": "summary of campaign and how to use it"
+}
+
+Rules: Be cinematic, culturally specific, bold. No generic choices. Return ONLY valid JSON.`;
+
+async function generate() {
+  const brand    = document.getElementById('brand').value.trim();
+  const product  = document.getElementById('product').value.trim();
+  const audience = document.getElementById('audience').value.trim();
+  const platform = document.getElementById('platform').value;
+  const vibe     = document.getElementById('vibe').value.trim();
+  const notes    = document.getElementById('notes').value.trim();
+  const errBox   = document.getElementById('errorBox');
+  const btn      = document.getElementById('genBtn');
+
+  errBox.style.display = 'none';
+
+  if (!brand || !product || !audience) {
+    errBox.textContent = 'Please fill in Brand, Product, and Target Audience to continue.';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = 'Generating Your Campaign… <div class="shimmer"></div>';
+  document.getElementById('results').style.display = 'none';
+
+  const prompt = `Brand/Creator: ${brand}
+Product: ${product}
+Audience: ${audience}
+Platform: ${platform}
+Vibe: ${vibe || 'not specified'}
+Notes: ${notes || 'none'}
+
+Generate a cinematic, culturally resonant campaign. Avoid generic AI aesthetics.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': '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', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = (data.content || []).map(b => b.text || '').join('');
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const d = JSON.parse(clean);
+    renderResults(d);
+  } catch(e) {
+    errBox.textContent = 'Something went wrong. Please try again in a moment.';
+    errBox.style.display = 'block';
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Generate Campaign Concept →';
+  }
+}
+
+function copy(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function renderResults(d) {
+  const el = document.getElementById('results');
+
+  const imgPrompts = (d.imagePrompts || []).map((p, i) => `
+    <div class="prompt-item">
+      <div class="prompt-meta">
+        <span class="prompt-num">Image ${i+1}</span>
+        <button class="copy-btn" onclick="copy(${JSON.stringify(p.prompt)}, this)">Copy</button>
+      </div>
+      <div class="prompt-ttl">${esc(p.title)}</div>
+      <div class="prompt-text">${esc(p.prompt)}</div>
+    </div>`).join('');
+
+  const reelPrompts = (d.reelPrompts || []).map((p, i) => `
+    <div class="prompt-item">
+      <div class="prompt-meta">
+        <span class="prompt-num">Reel ${i+1}</span>
+        <button class="copy-btn" onclick="copy(${JSON.stringify(p.prompt)}, this)">Copy</button>
+      </div>
+      <div class="prompt-ttl">${esc(p.title)}</div>
+      <div class="prompt-text">${esc(p.prompt)}</div>
+    </div>`).join('');
+
+  const palette = (d.moodboard?.palette || []).map(c => `
+    <div class="palette-chip">
+      <div class="color-dot" style="background:${c}"></div>
+      <span>${esc(c)}</span>
+    </div>`).join('');
+
+  const refs = (d.moodboard?.references || []).map(r => `<span class="tag">${esc(r)}</span>`).join('');
+  const mood = (d.moodboard?.mood || []).map(m => `<span class="tag gold">${esc(m)}</span>`).join('');
+  const angles = (d.contentAngles || []).map(a => `<li>${esc(a)}</li>`).join('');
+
+  el.innerHTML = `
+    <div class="results">
+      <div class="results-header">
+        <div>
+          <div class="campaign-name">"${esc(d.campaignName)}"</div>
+          <div class="campaign-hook">${esc(d.hook)}</div>
+        </div>
+        <button class="new-btn" onclick="resetForm()">← New Campaign</button>
+      </div>
+      <div class="sections">
+
+        <div class="section-block">
+          <div class="section-head"><span class="section-label">Moodboard Brief</span></div>
+          <div class="section-body">
+            <div class="mood-aesthetic">${esc(d.moodboard?.aesthetic || '')}</div>
+            <div class="palette-row">${palette}</div>
+            <div class="refs-label">Visual References</div>
+            <div class="tag-row" style="margin-bottom:0.8rem">${refs}</div>
+            <div class="tag-row">${mood}</div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-head"><span class="section-label">Image Prompts (5)</span></div>
+          <div class="section-body">
+            <div class="prompt-list">${imgPrompts}</div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-head"><span class="section-label">Reel & Video Prompts (3)</span></div>
+          <div class="section-body">
+            <div class="prompt-list">${reelPrompts}</div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-head"><span class="section-label">Content Angles & Caption Hooks (5)</span></div>
+          <div class="section-body">
+            <ul class="angle-list">${angles}</ul>
+          </div>
+        </div>
+
+        ${d.deliverables ? `
+        <div class="section-block">
+          <div class="section-head"><span class="section-label">How to Use This Campaign</span></div>
+          <div class="section-body">
+            <div class="deliverables-text">${esc(d.deliverables)}</div>
+          </div>
+        </div>` : ''}
+
+      </div>
+    </div>`;
+
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetForm() {
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('brand').value = '';
+  document.getElementById('product').value = '';
+  document.getElementById('audience').value = '';
+  document.getElementById('vibe').value = '';
+  document.getElementById('notes').value = '';
+  document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
+}
+
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+
+</body>
+</html>
