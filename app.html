@@ -399,7 +399,7 @@ Generate a cinematic, culturally resonant campaign. Avoid generic AI aesthetics.
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': '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', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      headers: { 'Content-Type': 'application/json', 'x-api-key': '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', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true', 'x-api-key': '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', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
