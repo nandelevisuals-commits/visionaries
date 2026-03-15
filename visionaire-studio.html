@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VISIONAIRE Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,300;1,400&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #0a0805;
+  --parchment: #f5ede0;
+  --gold: #c9933a;
+  --gold2: #e8b96a;
+  --muted: #7a6e62;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(201,147,58,0.22);
+  --border2: rgba(201,147,58,0.1);
+  --pink: #ff2d7a;
+  --teal: #00d4c8;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: var(--parchment);
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+}
+.grain {
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  background-size: 200px 200px; pointer-events: none; z-index: 100; opacity: 0.6;
+}
+
+/* NAV */
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.4rem 2.5rem;
+  border-bottom: 1px solid var(--border2);
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(10,8,5,0.92); backdrop-filter: blur(16px);
+}
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
+}
+.logo em { color: var(--parchment); font-style: italic; font-weight: 300; }
+.nav-tag { font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); }
+.back-link {
+  font-size: 0.65rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted);
+  text-decoration: none; transition: color 0.2s;
+}
+.back-link:hover { color: var(--gold); }
+
+/* STUDIO TABS */
+.studio-tabs {
+  display: flex; border-bottom: 1px solid var(--border2);
+  background: rgba(10,8,5,0.6);
+  padding: 0 2.5rem;
+  position: sticky; top: 64px; z-index: 40;
+  backdrop-filter: blur(16px);
+}
+.studio-tab {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.62rem; letter-spacing: 0.28em; text-transform: uppercase;
+  padding: 1rem 1.6rem; background: none; border: none;
+  color: var(--muted); cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: all 0.2s;
+}
+.studio-tab:hover { color: var(--parchment); }
+.studio-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* LAYOUT */
+.container { max-width: 860px; margin: 0 auto; padding: 4rem 2rem 6rem; }
+.tab-view { display: none; }
+.tab-view.active { display: block; }
+
+/* HERO */
+.page-eyebrow {
+  font-size: 0.6rem; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--gold);
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem;
+}
+.page-eyebrow::after { content: ''; flex: 1; max-width: 50px; height: 1px; background: var(--gold); opacity: 0.4; }
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 700; line-height: 1.05; margin-bottom: 0.8rem;
+}
+.page-title em { font-style: italic; color: var(--gold); font-weight: 300; }
+.page-sub { font-size: 0.95rem; color: var(--muted); line-height: 1.75; max-width: 520px; margin-bottom: 3rem; }
+
+/* FORM */
+.form-card {
+  background: var(--card); border: 1px solid var(--border);
+  padding: 2.5rem; position: relative; margin-bottom: 2rem;
+}
+.form-card::before {
+  content: ''; position: absolute;
+  top: -1px; left: 40px; right: 40px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.45rem; }
+.form-group.full { grid-column: 1 / -1; }
+label {
+  font-size: 0.6rem; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--gold); font-weight: 500;
+}
+input, select, textarea {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,147,58,0.18);
+  padding: 0.8rem 1rem;
+  color: var(--parchment);
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 300;
+  transition: border-color 0.2s, background 0.2s;
+  outline: none; width: 100%;
+}
+input::placeholder, textarea::placeholder { color: rgba(122,110,98,0.55); }
+input:focus, select:focus, textarea:focus { border-color: var(--gold); background: rgba(201,147,58,0.05); }
+select option { background: #1a1510; color: var(--parchment); }
+textarea { resize: vertical; min-height: 80px; }
+
+.generate-btn {
+  width: 100%; padding: 1.05rem 2rem;
+  background: var(--gold); color: var(--ink);
+  border: none; font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.7rem; font-weight: 500;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.2s;
+  position: relative; overflow: hidden; margin-top: 0.5rem;
+}
+.generate-btn:hover { background: var(--gold2); }
+.generate-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.generate-btn.teal-btn { background: var(--teal); color: var(--ink); }
+.generate-btn.teal-btn:hover { background: #00e8da; }
+.generate-btn .shimmer {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  transform: translateX(-100%); animation: shimmer 1.8s infinite;
+}
+@keyframes shimmer { to { transform: translateX(100%); } }
+
+.error-box {
+  background: rgba(139,58,30,0.12); border: 1px solid rgba(139,58,30,0.35);
+  padding: 0.9rem 1.2rem; color: #e07050;
+  font-size: 0.85rem; margin-top: 1rem; text-align: center;
+}
+
+/* RESULTS */
+.results { animation: fadeUp 0.55s ease forwards; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.results-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border2); margin-bottom: 2rem; flex-wrap: wrap;
+}
+.campaign-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 700; color: var(--gold); font-style: italic;
+}
+.campaign-hook { font-size: 0.92rem; color: var(--muted); font-style: italic; line-height: 1.6; margin-top: 0.4rem; max-width: 580px; }
+.new-btn {
+  padding: 0.65rem 1.4rem; background: transparent; border: 1px solid var(--border);
+  color: var(--muted); font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+}
+.new-btn:hover { border-color: var(--gold); color: var(--gold); }
+.sections { display: flex; flex-direction: column; gap: 1.5rem; }
+.section-block {
+  border: 1px solid var(--border2); background: var(--card);
+  position: relative; overflow: hidden;
+}
+.section-block::after {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2.5px;
+  background: var(--gold); opacity: 0.55;
+}
+.section-head {
+  padding: 1rem 1.5rem; border-bottom: 1px solid var(--border2);
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.section-label { font-size: 0.58rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); font-weight: 500; }
+.section-body { padding: 1.5rem; }
+.mood-aesthetic { font-size: 0.9rem; color: var(--parchment); line-height: 1.75; margin-bottom: 1.2rem; }
+.palette-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.palette-chip { display: flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.6rem; border: 1px solid var(--border2); font-size: 0.72rem; color: var(--muted); }
+.color-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); flex-shrink: 0; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tag { padding: 0.28rem 0.7rem; border: 1px solid var(--border2); border-radius: 100px; font-size: 0.72rem; color: var(--muted); }
+.tag.gold { border-color: rgba(201,147,58,0.3); color: var(--gold); }
+.refs-label { font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin: 0.8rem 0 0.4rem; }
+.prompt-list { display: flex; flex-direction: column; gap: 1rem; }
+.prompt-item { background: rgba(201,147,58,0.04); border: 1px solid var(--border2); padding: 1.2rem 1.4rem; position: relative; }
+.prompt-meta { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem; }
+.prompt-num { font-size: 0.58rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); }
+.prompt-ttl { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; color: var(--parchment); margin-bottom: 0.4rem; }
+.prompt-text { font-size: 0.85rem; color: var(--parchment); line-height: 1.72; }
+.copy-btn {
+  padding: 0.25rem 0.55rem; background: transparent; border: 1px solid var(--border2);
+  color: var(--muted); font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.18s; flex-shrink: 0;
+}
+.copy-btn:hover { border-color: var(--gold); color: var(--gold); }
+.copy-btn.copied { border-color: #4caf82; color: #4caf82; }
+.angle-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+.angle-list li { padding: 0.75rem 1.1rem; background: rgba(255,255,255,0.02); border-left: 2px solid var(--gold); font-size: 0.87rem; color: var(--parchment); line-height: 1.6; }
+.deliverables-text { font-size: 0.88rem; color: var(--parchment); line-height: 1.8; }
+
+/* ═══════════════════════════════════════
+   ENGINE TAB STYLES
+═══════════════════════════════════════ */
+.eng-section-block {
+  border: 1px solid var(--border2); background: var(--card);
+  position: relative; overflow: hidden; margin-bottom: 1rem;
+}
+.eng-section-block.teal-accent::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2.5px; background: var(--teal); opacity: 0.7; }
+.eng-section-block.pink-accent::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2.5px; background: var(--pink); opacity: 0.7; }
+.eng-section-block.gold-accent::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2.5px; background: var(--gold); opacity: 0.7; }
+
+.eng-modes { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.eng-mode-btn {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase;
+  padding: 0.45rem 1rem; background: none;
+  border: 1px solid var(--border2); color: var(--muted);
+  cursor: pointer; transition: all 0.2s;
+}
+.eng-mode-btn:hover { border-color: var(--border); color: var(--parchment); }
+.eng-mode-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,147,58,0.07); }
+
+.eng-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.eng-chip {
+  font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.3rem 0.75rem; border: 1px solid var(--border2);
+  border-radius: 100px; cursor: pointer; color: var(--muted);
+  transition: all 0.18s; user-select: none;
+}
+.eng-chip:hover { border-color: var(--border); color: var(--parchment); }
+.eng-chip.sel-gold { border-color: var(--gold); color: var(--gold); background: rgba(201,147,58,0.09); }
+.eng-chip.sel-pink { border-color: var(--pink); color: var(--pink); background: rgba(255,45,122,0.09); }
+.eng-chip.sel-teal { border-color: var(--teal); color: var(--teal); background: rgba(0,212,200,0.09); }
+
+.upload-zone {
+  border: 1px dashed rgba(201,147,58,0.25); padding: 1.8rem 1rem;
+  text-align: center; cursor: pointer; transition: all 0.2s;
+  margin-bottom: 1rem;
+}
+.upload-zone:hover { border-color: var(--gold); background: rgba(201,147,58,0.03); }
+.upload-zone p { font-size: 0.72rem; color: var(--muted); line-height: 1.9; letter-spacing: 0.05em; }
+.upload-zone p strong { color: var(--gold); }
+.img-preview-wrap {
+  border: 1px solid var(--teal); padding: 0.75rem; text-align: center;
+  background: rgba(0,212,200,0.03); position: relative; margin-bottom: 1rem;
+}
+.img-preview-wrap img { max-height: 130px; max-width: 100%; object-fit: cover; }
+.img-preview-note { font-size: 0.62rem; color: rgba(0,212,200,0.65); letter-spacing: 0.1em; margin-top: 0.5rem; }
+.img-remove-btn {
+  position: absolute; top: -8px; right: -8px;
+  width: 22px; height: 22px; background: var(--pink);
+  border: none; border-radius: 50%; color: white;
+  font-size: 0.65rem; cursor: pointer; font-weight: 700; line-height: 22px;
+}
+.or-divider { display: flex; align-items: center; gap: 0.8rem; margin: 0.9rem 0 1.1rem; }
+.or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--border2); }
+.or-divider span { font-size: 0.55rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(122,110,98,0.4); }
+
+.eng-badge {
+  font-size: 0.55rem; letter-spacing: 0.22em; text-transform: uppercase;
+  padding: 0.2rem 0.7rem; border-radius: 100px; font-weight: 500;
+}
+.eng-badge.kling { background: rgba(0,212,200,0.12); color: var(--teal); border: 1px solid rgba(0,212,200,0.28); }
+.eng-badge.sora  { background: rgba(255,45,122,0.12); color: var(--pink);  border: 1px solid rgba(255,45,122,0.28); }
+.eng-badge.both  { background: rgba(201,147,58,0.12); color: var(--gold);  border: 1px solid var(--border); }
+
+.hook-bar { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem; }
+.hook-bar-lbl { font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.hook-bar-track { flex: 1; height: 3px; background: rgba(255,255,255,0.06); overflow: hidden; }
+.hook-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--pink)); }
+.hook-bar-num { font-size: 0.6rem; color: var(--gold); min-width: 24px; text-align: right; }
+
+.eng-hook-item { background: rgba(255,45,122,0.04); border: 1px solid rgba(255,45,122,0.12); padding: 0.85rem 1rem; margin-bottom: 0.5rem; }
+.eng-hook-num { font-size: 0.52rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--pink); margin-bottom: 0.3rem; }
+.eng-hook-txt { font-size: 0.85rem; color: var(--parchment); line-height: 1.65; }
+.eng-hook-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+
+.eng-caption-box { background: rgba(201,147,58,0.04); border: 1px solid var(--border2); padding: 1rem 1.1rem; font-size: 0.85rem; color: var(--parchment); line-height: 1.8; font-style: italic; margin-bottom: 0.6rem; }
+.eng-hashtags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.8rem; }
+.eng-htag {
+  font-size: 0.72rem; letter-spacing: 0.06em; padding: 0.28rem 0.75rem;
+  border: 1px solid var(--border2); color: var(--gold); cursor: pointer; transition: all 0.18s;
+}
+.eng-htag:hover, .eng-htag.copied { border-color: var(--teal); color: var(--teal); background: rgba(0,212,200,0.07); }
+.eng-seo { font-size: 0.78rem; color: var(--muted); line-height: 1.8; }
+
+.eng-audio-tip { background: rgba(0,212,200,0.04); border: 1px solid rgba(0,212,200,0.12); padding: 0.6rem 1rem; font-size: 0.78rem; color: var(--parchment); line-height: 1.6; margin-bottom: 0.5rem; }
+.eng-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.9rem; }
+.eng-stat { background: rgba(201,147,58,0.04); border: 1px solid var(--border2); padding: 0.85rem 1rem; }
+.eng-stat-lbl { font-size: 0.52rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.3rem; }
+.eng-stat-val { font-size: 0.85rem; color: var(--parchment); }
+
+.eng-cta-item { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; background: rgba(255,45,122,0.03); border: 1px solid rgba(255,45,122,0.1); padding: 0.7rem 1rem; margin-bottom: 0.5rem; }
+.eng-cta-txt { font-size: 0.85rem; color: var(--parchment); }
+.eng-cb { font-size: 0.85rem; color: var(--muted); line-height: 1.6; padding: 0.55rem 0; border-bottom: 1px solid var(--border2); }
+
+.eng-algo-item { display: flex; gap: 0.75rem; align-items: flex-start; background: rgba(0,212,200,0.03); border: 1px solid rgba(0,212,200,0.1); padding: 0.75rem 1rem; margin-bottom: 0.5rem; }
+.eng-algo-check { color: var(--teal); font-size: 0.9rem; flex-shrink: 0; margin-top: 1px; }
+.eng-algo-action { font-size: 0.82rem; color: var(--parchment); margin-bottom: 0.2rem; }
+.eng-algo-why { font-size: 0.7rem; color: var(--muted); line-height: 1.55; }
+
+.eng-ep-item { display: flex; gap: 0.75rem; align-items: flex-start; background: rgba(201,147,58,0.03); border: 1px solid var(--border2); padding: 0.7rem 1rem; margin-bottom: 0.5rem; }
+.eng-ep-num { font-size: 0.6rem; letter-spacing: 0.18em; color: var(--muted); min-width: 36px; flex-shrink: 0; margin-top: 2px; }
+.eng-ep-txt { font-size: 0.82rem; color: var(--parchment); line-height: 1.65; }
+
+.eng-shop-tip { background: rgba(255,45,122,0.04); border: 1px solid rgba(255,45,122,0.12); padding: 0.6rem 1rem; font-size: 0.78rem; color: var(--parchment); line-height: 1.6; margin-bottom: 0.5rem; }
+
+.eng-overview-stats { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.2rem; }
+.eng-ostat {
+  display: inline-flex; flex-direction: column; align-items: center;
+  padding: 0.75rem 1.2rem; border-radius: 2px; min-width: 80px;
+}
+.eng-ostat.g { background: rgba(201,147,58,0.1); border: 1px solid rgba(201,147,58,0.3); }
+.eng-ostat.p { background: rgba(255,45,122,0.1); border: 1px solid rgba(255,45,122,0.28); }
+.eng-ostat.t { background: rgba(0,212,200,0.09); border: 1px solid rgba(0,212,200,0.26); }
+.eng-ostat-val { font-size: 1rem; font-weight: 500; }
+.eng-ostat.g .eng-ostat-val { color: var(--gold); }
+.eng-ostat.p .eng-ostat-val { color: var(--pink); }
+.eng-ostat.t .eng-ostat-val { color: var(--teal); }
+.eng-ostat-lbl { font-size: 0.48rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+
+.eng-info-box {
+  background: rgba(0,212,200,0.04); border: 1px solid rgba(0,212,200,0.14);
+  padding: 1rem 1.2rem; margin-bottom: 1.5rem;
+}
+.eng-info-ttl { font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.4rem; }
+.eng-info-body { font-size: 0.78rem; color: var(--muted); line-height: 1.8; }
+
+.raw-fallback { background: rgba(139,58,30,0.08); border: 1px solid rgba(139,58,30,0.25); padding: 1rem 1.2rem; margin-top: 1rem; }
+.raw-fallback pre { font-size: 0.75rem; color: var(--parchment); line-height: 1.7; white-space: pre-wrap; overflow-x: auto; }
+
+@media (max-width: 600px) {
+  nav { padding: 1.1rem 1.2rem; }
+  .nav-tag { display: none; }
+  .studio-tabs { padding: 0 1.2rem; }
+  .studio-tab { padding: 0.9rem 1rem; font-size: 0.58rem; }
+  .container { padding: 2.5rem 1.2rem 5rem; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-card { padding: 1.5rem; }
+  .eng-grid2 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<nav>
+  <div class="logo">Vision<em>aire</em></div>
+  <div class="nav-tag">Studio</div>
+  <a href="index.html" class="back-link">← Back to Site</a>
+</nav>
+
+<!-- STUDIO TABS -->
+<div class="studio-tabs">
+  <button class="studio-tab active" onclick="switchStudioTab('campaign')">Campaign Studio</button>
+  <button class="studio-tab" onclick="switchStudioTab('engine')">TikTok Engine</button>
+</div>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════
+       TAB 1 — CAMPAIGN STUDIO (original)
+  ══════════════════════════════════ -->
+  <div class="tab-view active" id="tab-campaign">
+    <div class="page-eyebrow">AI Campaign Generator</div>
+    <h1 class="page-title">Build a <em>Full Campaign</em><br/>in Under a Minute.</h1>
+    <p class="page-sub">Enter your brief below. VISIONAIRE generates a complete campaign concept — image prompts, reel scripts, moodboard, and content angles — ready to use immediately.</p>
+
+    <div class="form-card" id="formCard">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Brand / Creator Name</label>
+          <input type="text" id="brand" placeholder="e.g. LUMÉ Skin, Zara Mitchell" />
+        </div>
+        <div class="form-group">
+          <label>Product or Service</label>
+          <input type="text" id="product" placeholder="e.g. Glow serum, vintage denim" />
+        </div>
+        <div class="form-group">
+          <label>Target Audience</label>
+          <input type="text" id="audience" placeholder="e.g. Black women 25–40, beauty lovers" />
+        </div>
+        <div class="form-group">
+          <label>Primary Platform</label>
+          <select id="platform">
+            <option value="Instagram">Instagram</option>
+            <option value="TikTok">TikTok</option>
+            <option value="Pinterest">Pinterest</option>
+            <option value="Multi-Platform">Multi-Platform</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Campaign Vibe / Aesthetic Direction</label>
+          <input type="text" id="vibe" placeholder="e.g. Afro-futurist luxury, raw editorial, cinematic summer heat" />
+        </div>
+        <div class="form-group full">
+          <label>Additional Notes (optional)</label>
+          <textarea id="notes" placeholder="Specific cultural references, color direction, campaign goals, hero product details..."></textarea>
+        </div>
+      </div>
+      <div id="errorBox" class="error-box" style="display:none;"></div>
+      <button class="generate-btn" id="genBtn" onclick="generateCampaign()">
+        Generate Campaign Concept →
+      </button>
+    </div>
+
+    <div id="results" style="display:none;"></div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       TAB 2 — TIKTOK ENGINE
+  ══════════════════════════════════ -->
+  <div class="tab-view" id="tab-engine">
+    <div class="page-eyebrow">TikTok Cinematic Engine</div>
+    <h1 class="page-title">Your <em>Cinematic</em> Vision,<br/>Engineered for the Algorithm.</h1>
+    <p class="page-sub">Generate video prompts for Kling 3.0 Pro and Sora 2, plus a complete TikTok promotional strategy — built on 2026 algorithm signals and your NandyVisuals brand.</p>
+
+    <!-- Engine Mode Tabs -->
+    <div style="display:flex;gap:0.5rem;margin-bottom:2rem;border-bottom:1px solid var(--border2);padding-bottom:0;">
+      <button class="studio-tab active" id="eng-tab-prompts" onclick="switchEngTab('prompts')" style="font-size:0.6rem">🎬 Prompt Generator</button>
+      <button class="studio-tab" id="eng-tab-strategy" onclick="switchEngTab('strategy')" style="font-size:0.6rem">📊 Strategy Hub</button>
+    </div>
+
+    <!-- Shared Input Panel -->
+    <div class="form-card" id="engInputCard">
+      <div class="form-grid">
+        <!-- Content Mode -->
+        <div class="form-group full">
+          <label>Content Mode</label>
+          <div class="eng-modes" id="engModes">
+            <button class="eng-mode-btn active" data-mode="brand">Brand / UGC</button>
+            <button class="eng-mode-btn" data-mode="lifestyle">Cinematic Lifestyle</button>
+            <button class="eng-mode-btn" data-mode="product">Product Showcase</button>
+            <button class="eng-mode-btn" data-mode="viral">Viral Concept</button>
+          </div>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="form-group full">
+          <label>Image Reference <span style="color:var(--muted);font-size:0.52rem;letter-spacing:0.1em;text-transform:none;font-weight:300"> — mood board, product photo, or visual inspo</span></label>
+          <div class="upload-zone" id="engUploadZone" onclick="document.getElementById('engFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--gold)'" ondragleave="this.style.borderColor=''" ondrop="engHandleDrop(event)">
+            <p>🖼 <strong>Tap to upload</strong> or drag & drop<br/>JPG · PNG · WEBP · Max 10MB</p>
+          </div>
+          <div class="img-preview-wrap" id="engImgPreview" style="display:none">
+            <button class="img-remove-btn" onclick="engRemoveImg()">✕</button>
+            <img id="engPrevImg" src="" alt="Reference" />
+            <div class="img-preview-note">✓ Image loaded — used for both prompts and strategy</div>
+          </div>
+          <input type="file" id="engFileInput" accept="image/*" style="display:none" onchange="engHandleFile(this.files[0])" />
+        </div>
+
+        <div class="form-group full">
+          <div class="or-divider"><span>or describe your concept</span></div>
+        </div>
+
+        <!-- Concept + Brand -->
+        <div class="form-group full">
+          <label>Raw Concept / Prompt <span style="color:var(--muted);font-size:0.52rem;letter-spacing:0.1em;text-transform:none;font-weight:300">(optional if image provided)</span></label>
+          <textarea id="engConcept" placeholder="e.g. Black woman with teal hair levitating above a rooftop at golden hour, surrounded by floating petals — showcasing a glow serum..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Brand / Product</label>
+          <input type="text" id="engBrand" placeholder="e.g. GLO Kingdom Hoodie, LUMÉ..." />
+        </div>
+        <div class="form-group">
+          <label>Target Vibe</label>
+          <select id="engVibe">
+            <option>Surrealist Luxury</option>
+            <option>UGC Authentic</option>
+            <option>Editorial Cinematic</option>
+            <option>Afrofuturist</option>
+            <option>Dark Fashion Editorial</option>
+            <option>Soft Lifestyle / Dreamcore</option>
+            <option>High Energy Viral</option>
+            <option>Elements / Transformation</option>
+          </select>
+        </div>
+
+        <!-- Style Chips -->
+        <div class="form-group full">
+          <label>Style Modifiers</label>
+          <div class="eng-chips" id="engChips">
+            <span class="eng-chip" data-val="dramatic camera movement">Dramatic Camera</span>
+            <span class="eng-chip" data-val="UGC hook first 3 seconds" data-c="pink">UGC Hook (3s)</span>
+            <span class="eng-chip" data-val="physics-defying levitation" data-c="teal">Levitation</span>
+            <span class="eng-chip" data-val="liquid gold pour" data-c="teal">Liquid Gold</span>
+            <span class="eng-chip" data-val="constellation particle effects" data-c="teal">Constellation FX</span>
+            <span class="eng-chip" data-val="slow motion hero shot">Slo-Mo Hero</span>
+            <span class="eng-chip" data-val="impossible dolly zoom">Dolly Zoom</span>
+            <span class="eng-chip" data-val="teal hair Black woman protagonist">Teal Hair Protagonist</span>
+            <span class="eng-chip" data-val="fashion editorial movement">Fashion Movement</span>
+            <span class="eng-chip" data-val="ASMR close-up product texture" data-c="pink">ASMR Texture</span>
+            <span class="eng-chip" data-val="Yoruba Afro-Caribbean mythology" data-c="teal">Afro-Caribbean Mythic</span>
+            <span class="eng-chip" data-val="viral outfit check transition" data-c="pink">Outfit Check</span>
+            <span class="eng-chip" data-val="before and after reveal" data-c="pink">Before / After</span>
+            <span class="eng-chip" data-val="trending audio reactive motion" data-c="pink">Audio Reactive</span>
+          </div>
+        </div>
+
+        <!-- Platform + Count (prompts only) -->
+        <div id="engPromptExtras" style="display:contents">
+          <div class="form-group">
+            <label>Platform</label>
+            <select id="engPlatform">
+              <option value="tiktok-fyp">TikTok FYP</option>
+              <option value="tiktok-shop">TikTok Shop</option>
+              <option value="reels">Instagram Reels</option>
+              <option value="all">All Platforms</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Output Count</label>
+            <select id="engCount">
+              <option value="3">3 Variations</option>
+              <option value="5">5 Variations</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROMPT GENERATOR view -->
+    <div id="eng-view-prompts">
+      <div id="engErrPrompts" class="error-box" style="display:none"></div>
+      <button class="generate-btn" id="engBtnPrompts" onclick="engGenPrompts()">
+        ✦ Generate Cinematic Prompts ✦ <div class="shimmer"></div>
+      </button>
+      <div id="engRawPrompts"></div>
+      <div id="engOutPrompts"></div>
+    </div>
+
+    <!-- STRATEGY HUB view -->
+    <div id="eng-view-strategy" style="display:none">
+      <div class="eng-info-box">
+        <div class="eng-info-ttl">What Strategy Hub generates for you</div>
+        <div class="eng-info-body">Hook scripts · Caption formula + SEO keywords · Hashtag stack · Audio strategy · Best posting times · In-video CTAs · Comment bait questions · Algorithm signal checklist · Content series arc · TikTok Shop integration — all built on 2026 TikTok algorithm signals and your NandyVisuals brand.</div>
+      </div>
+      <div id="engErrStrategy" class="error-box" style="display:none"></div>
+      <button class="generate-btn teal-btn" id="engBtnStrategy" onclick="engGenStrategy()">
+        ✦ Generate TikTok Strategy ✦ <div class="shimmer"></div>
+      </button>
+      <div id="engOutStrategy"></div>
+    </div>
+
+  </div><!-- /tab-engine -->
+</div><!-- /container -->
+
+<script>
+// ═══════════════════════════════════════════════
+// SHARED
+// ═══════════════════════════════════════════════
+const API_KEY = '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';
+
+const NANDY = `You know Nandy (NANDYBLOSSOM / @theeaivisualz):
+- Cinematic AI visual creator, Black woman, surrealist luxury aesthetic
+- Signature: Black woman protagonist with teal hair, Kling 3.0 Pro + Sora 2
+- Style DNA: levitation, liquid gold, constellation FX, Afro-Caribbean/Yoruba mythology, impossible camera moves, no static imagery
+- Brands: VELOUR, MAISON, LUMÉ (portfolio) + UGC brand collabs
+- Goals: FYP domination, brand inbound collabs, TikTok Shop conversions`;
+
+const ENG_MODE_CTX = {
+  brand: "Brand UGC hybrid. Hook in first 2s like a real creator, not an ad.",
+  lifestyle: "Cinematic lifestyle — editorial but relatable. Content people save AND share.",
+  product: "Product as the hero — art film, not commercial. Show transformation and desire.",
+  viral: "Pure viral potential. Pattern-interrupt. Stop scroll in frame 1."
+};
+
+function switchStudioTab(t) {
+  document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.studio-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + t).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function callAPI(system, userMsg, imgB64, imgMime) {
+  const content = imgB64
+    ? [{ type:'image', source:{ type:'base64', media_type: imgMime||'image/jpeg', data: imgB64 }}, { type:'text', text: userMsg }]
+    : userMsg;
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 4000,
+      system,
+      messages: [{ role:'user', content }]
+    })
+  });
+  if (!res.ok) {
+    const e = await res.json().catch(()=>({}));
+    throw new Error(e?.error?.message || 'API error ' + res.status);
+  }
+  const data = await res.json();
+  return (data.content||[]).map(b=>b.text||'').join('').trim();
+}
+
+function extractJSON(raw, open) {
+  const close = open === '[' ? ']' : '}';
+  let s = raw.replace(/```json/gi,'').replace(/```/g,'').trim();
+  let depth=0, start=-1, end=-1, inStr=false, esc2=false;
+  for (let i=0; i<s.length; i++) {
+    const c = s[i];
+    if (esc2) { esc2=false; continue; }
+    if (c==='\\' && inStr) { esc2=true; continue; }
+    if (c==='"') { inStr=!inStr; continue; }
+    if (inStr) continue;
+    if (c===open)  { if(start===-1) start=i; depth++; }
+    if (c===close) { depth--; if(depth===0&&start!==-1){ end=i; break; } }
+  }
+  if (start!==-1&&end!==-1) s=s.slice(start,end+1);
+  s = s.replace(/,(\s*[}\]])/g,'$1');
+  return JSON.parse(s);
+}
+
+function makeCopyBtn(text, label) {
+  const b = document.createElement('button');
+  b.className = 'copy-btn'; b.textContent = label||'Copy';
+  b.onclick = () => navigator.clipboard.writeText(text).then(()=>{
+    b.textContent='Copied'; b.classList.add('copied');
+    setTimeout(()=>{ b.textContent=label||'Copy'; b.classList.remove('copied'); },2000);
+  });
+  return b;
+}
+
+// ═══════════════════════════════════════════════
+// TAB 1 — CAMPAIGN STUDIO
+// ═══════════════════════════════════════════════
+const CAMPAIGN_SYSTEM = `You are VISIONAIRE, an elite AI campaign strategist. Generate a campaign concept as valid JSON only — no markdown, no backticks, no extra text.
+Schema:
+{
+  "campaignName": "cinematic campaign title",
+  "hook": "one powerful sentence capturing the campaign soul",
+  "moodboard": {
+    "aesthetic": "2-3 sentence visual direction",
+    "palette": ["color1","color2","color3","color4"],
+    "references": ["ref1","ref2","ref3"],
+    "mood": ["word1","word2","word3","word4","word5"]
+  },
+  "imagePrompts": [
+    {"title":"scene title","prompt":"full cinematic prompt 60-100 words with camera angles, lighting, subject, mood"},
+    {"title":"...","prompt":"..."},{"title":"...","prompt":"..."},{"title":"...","prompt":"..."},{"title":"...","prompt":"..."}
+  ],
+  "reelPrompts": [
+    {"title":"reel title","prompt":"full video prompt with camera movement, pacing, atmosphere for Sora/Runway"},
+    {"title":"...","prompt":"..."},{"title":"...","prompt":"..."}
+  ],
+  "contentAngles": ["angle1","angle2","angle3","angle4","angle5"],
+  "deliverables": "summary of campaign and how to use it"
+}
+Rules: Be cinematic, culturally specific, bold. No generic choices. Return ONLY valid JSON.`;
+
+async function generateCampaign() {
+  const brand    = document.getElementById('brand').value.trim();
+  const product  = document.getElementById('product').value.trim();
+  const audience = document.getElementById('audience').value.trim();
+  const platform = document.getElementById('platform').value;
+  const vibe     = document.getElementById('vibe').value.trim();
+  const notes    = document.getElementById('notes').value.trim();
+  const errBox   = document.getElementById('errorBox');
+  const btn      = document.getElementById('genBtn');
+  errBox.style.display = 'none';
+  if (!brand||!product||!audience) {
+    errBox.textContent = 'Please fill in Brand, Product, and Target Audience to continue.';
+    errBox.style.display = 'block'; return;
+  }
+  btn.disabled=true; btn.innerHTML='Generating Your Campaign… <div class="shimmer"></div>';
+  document.getElementById('results').style.display='none';
+  const prompt = `Brand/Creator: ${brand}\nProduct: ${product}\nAudience: ${audience}\nPlatform: ${platform}\nVibe: ${vibe||'not specified'}\nNotes: ${notes||'none'}\nGenerate a cinematic, culturally resonant campaign. Avoid generic AI aesthetics.`;
+  try {
+    const raw = await callAPI(CAMPAIGN_SYSTEM, prompt, null, null);
+    const d = extractJSON(raw, '{');
+    renderCampaign(d);
+  } catch(e) {
+    errBox.textContent = 'Something went wrong: ' + e.message + '. Please try again.';
+    errBox.style.display = 'block'; console.error(e);
+  } finally {
+    btn.disabled=false; btn.innerHTML='Generate Campaign Concept →';
+  }
+}
+
+function copy(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent='Copied'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); },2000);
+  });
+}
+
+function renderCampaign(d) {
+  const el = document.getElementById('results');
+  const imgPrompts = (d.imagePrompts||[]).map((p,i)=>`
+    <div class="prompt-item">
+      <div class="prompt-meta"><span class="prompt-num">Image ${i+1}</span><button class="copy-btn" onclick="copy(${JSON.stringify(p.prompt)},this)">Copy</button></div>
+      <div class="prompt-ttl">${esc(p.title)}</div>
+      <div class="prompt-text">${esc(p.prompt)}</div>
+    </div>`).join('');
+  const reelPrompts = (d.reelPrompts||[]).map((p,i)=>`
+    <div class="prompt-item">
+      <div class="prompt-meta"><span class="prompt-num">Reel ${i+1}</span><button class="copy-btn" onclick="copy(${JSON.stringify(p.prompt)},this)">Copy</button></div>
+      <div class="prompt-ttl">${esc(p.title)}</div>
+      <div class="prompt-text">${esc(p.prompt)}</div>
+    </div>`).join('');
+  const palette = (d.moodboard?.palette||[]).map(c=>`<div class="palette-chip"><div class="color-dot" style="background:${c}"></div><span>${esc(c)}</span></div>`).join('');
+  const refs = (d.moodboard?.references||[]).map(r=>`<span class="tag">${esc(r)}</span>`).join('');
+  const mood = (d.moodboard?.mood||[]).map(m=>`<span class="tag gold">${esc(m)}</span>`).join('');
+  const angles = (d.contentAngles||[]).map(a=>`<li>${esc(a)}</li>`).join('');
+  el.innerHTML = `
+    <div class="results">
+      <div class="results-header">
+        <div><div class="campaign-name">"${esc(d.campaignName)}"</div><div class="campaign-hook">${esc(d.hook)}</div></div>
+        <button class="new-btn" onclick="resetCampaign()">← New Campaign</button>
+      </div>
+      <div class="sections">
+        <div class="section-block">
+          <div class="section-head"><span class="section-label">Moodboard Brief</span></div>
+          <div class="section-body">
+            <div class="mood-aesthetic">${esc(d.moodboard?.aesthetic||'')}</div>
+            <div class="palette-row">${palette}</div>
+            <div class="refs-label">Visual References</div>
+            <div class="tag-row" style="margin-bottom:0.8rem">${refs}</div>
+            <div class="tag-row">${mood}</div>
+          </div>
+        </div>
+        <div class="section-block">
+          <div class="section-head"><span class="section-label">Image Prompts (5)</span></div>
+          <div class="section-body"><div class="prompt-list">${imgPrompts}</div></div>
+        </div>
+        <div class="section-block">
+          <div class="section-head"><span class="section-label">Reel & Video Prompts (3)</span></div>
+          <div class="section-body"><div class="prompt-list">${reelPrompts}</div></div>
+        </div>
+        <div class="section-block">
+          <div class="section-head"><span class="section-label">Content Angles & Caption Hooks (5)</span></div>
+          <div class="section-body"><ul class="angle-list">${angles}</ul></div>
+        </div>
+        ${d.deliverables?`<div class="section-block"><div class="section-head"><span class="section-label">How to Use This Campaign</span></div><div class="section-body"><div class="deliverables-text">${esc(d.deliverables)}</div></div></div>`:''}
+      </div>
+    </div>`;
+  el.style.display='block';
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function resetCampaign() {
+  document.getElementById('results').style.display='none';
+  ['brand','product','audience','vibe','notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('formCard').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════
+// TAB 2 — TIKTOK ENGINE
+// ═══════════════════════════════════════════════
+let engMode = 'brand';
+let engImgB64 = null;
+let engImgMime = 'image/jpeg';
+let engSelectedChips = new Set();
+let engCurrentTab = 'prompts';
+
+document.getElementById('engModes').addEventListener('click', e => {
+  const b = e.target.closest('.eng-mode-btn'); if(!b) return;
+  document.querySelectorAll('.eng-mode-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); engMode = b.dataset.mode;
+});
+
+document.getElementById('engChips').addEventListener('click', e => {
+  const ch = e.target.closest('.eng-chip'); if(!ch) return;
+  const v = ch.dataset.val, c = ch.dataset.c || 'gold';
+  if (engSelectedChips.has(v)) {
+    engSelectedChips.delete(v); ch.className='eng-chip';
+  } else {
+    engSelectedChips.add(v); ch.className='eng-chip sel-'+c;
+  }
+});
+
+function switchEngTab(t) {
+  engCurrentTab = t;
+  document.getElementById('eng-view-prompts').style.display = t==='prompts' ? '' : 'none';
+  document.getElementById('eng-view-strategy').style.display = t==='strategy' ? '' : 'none';
+  document.getElementById('engPromptExtras').style.display = t==='prompts' ? 'contents' : 'none';
+  document.getElementById('eng-tab-prompts').classList.toggle('active', t==='prompts');
+  document.getElementById('eng-tab-strategy').classList.toggle('active', t==='strategy');
+}
+
+function engHandleFile(file) {
+  if (!file||!file.type.startsWith('image/')) return;
+  if (file.size>10485760) { alert('Max 10MB'); return; }
+  engImgMime = file.type;
+  const r = new FileReader();
+  r.onload = e => {
+    engImgB64 = e.target.result.split(',')[1];
+    document.getElementById('engPrevImg').src = e.target.result;
+    document.getElementById('engUploadZone').style.display='none';
+    document.getElementById('engImgPreview').style.display='block';
+  };
+  r.readAsDataURL(file);
+}
+function engHandleDrop(e) { e.preventDefault(); engHandleFile(e.dataTransfer.files[0]); }
+function engRemoveImg() {
+  engImgB64=null;
+  document.getElementById('engFileInput').value='';
+  document.getElementById('engUploadZone').style.display='';
+  document.getElementById('engImgPreview').style.display='none';
+}
+
+function engGetCtx() {
+  return {
+    concept: document.getElementById('engConcept').value.trim()||'(derive from uploaded image)',
+    brand: document.getElementById('engBrand').value.trim(),
+    vibe: document.getElementById('engVibe').value,
+    platform: document.getElementById('engPlatform').value,
+    count: document.getElementById('engCount').value,
+    chips: [...engSelectedChips].join(', ')||"Nandy's full aesthetic DNA — levitation, liquid gold, teal hair, constellation FX",
+    modeCtx: ENG_MODE_CTX[engMode]
+  };
+}
+
+// ── PROMPTS ──────────────────────────────────────
+async function engGenPrompts() {
+  if (!document.getElementById('engConcept').value.trim()&&!engImgB64) {
+    showEngErr('engErrPrompts','Add an image or enter a concept first.'); return;
+  }
+  const x = engGetCtx();
+  const btn = document.getElementById('engBtnPrompts');
+  btn.disabled=true; btn.innerHTML='Generating… <div class="shimmer"></div>';
+  showEngErr('engErrPrompts','');
+  document.getElementById('engRawPrompts').innerHTML='';
+  document.getElementById('engOutPrompts').innerHTML='';
+
+  const system = `You are VISIONAIRE ENGINE — elite cinematic AI video prompt architect for TikTok.
+${NANDY}
+Mode: ${x.modeCtx}
+RULES: All prompts must have DRAMATIC MOVEMENT. No static imagery. Each prompt must be a different angle.
+Return ONLY a raw JSON array. No markdown. No backticks. Start with [ end with ].
+Each item: {"tier":"The Hook","platform":"kling","prompt":"...","tags":["..."],"hookScore":85,"duration":"8-10s","tiktokNote":"..."}
+platform = exactly "kling" or "sora" or "both"
+Tiers: The Hook, The World, The Icon, The Obsession, The Drop, The Fantasy, The Reveal`;
+
+  const userMsg = `Create ${x.count} TikTok video prompts for Kling 3.0 Pro and/or Sora 2.
+${engImgB64?'Image reference uploaded — analyze mood, palette, subject, aesthetic, lighting. Use as foundation.':''}
+CONCEPT: ${x.concept}
+${x.brand?'BRAND: '+x.brand:''}
+VIBE: ${x.vibe} | PLATFORM: ${x.platform} | STYLE: ${x.chips}
+Make every prompt EXTREME and cinematic.`;
+
+  try {
+    const raw = await callAPI(system, userMsg, engImgB64, engImgMime);
+    let parsed;
+    try { parsed = extractJSON(raw,'['); if(!Array.isArray(parsed)) throw 0; }
+    catch {
+      document.getElementById('engRawPrompts').innerHTML=`<div class="raw-fallback"><div style="font-size:0.62rem;color:var(--gold);margin-bottom:0.5rem">⚠️ Auto-parse failed — raw output below (copy manually)</div><pre>${esc(raw)}</pre></div>`;
+      return;
+    }
+    renderEngPrompts(parsed);
+  } catch(e) { showEngErr('engErrPrompts', e.message); }
+  finally { btn.disabled=false; btn.innerHTML='✦ Generate Cinematic Prompts ✦ <div class="shimmer"></div>'; }
+}
+
+function renderEngPrompts(arr) {
+  const wrap = document.getElementById('engOutPrompts');
+  wrap.innerHTML = '';
+  const hdr = document.createElement('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin:1.5rem 0 1rem';
+  hdr.innerHTML=`<span style="font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold)">Generated Prompts</span>`;
+  const ca = document.createElement('button'); ca.className='copy-btn'; ca.textContent='Copy All';
+  ca.onclick=()=>navigator.clipboard.writeText(arr.map(p=>`--- ${(p.tier||'').toUpperCase()} (${(p.platform||'').toUpperCase()}) ---\n${p.prompt}`).join('\n\n'));
+  hdr.appendChild(ca); wrap.appendChild(hdr);
+
+  arr.forEach(p => {
+    const bdgCls = p.platform==='kling'?'kling':p.platform==='sora'?'sora':'both';
+    const bdgLbl = p.platform==='kling'?'Kling 3.0 Pro':p.platform==='sora'?'Sora 2':'Kling + Sora';
+    const block = document.createElement('div');
+    block.className = 'section-block'; block.style.marginBottom='1rem';
+    block.innerHTML=`
+      <div class="section-head" style="justify-content:space-between">
+        <span class="eng-badge ${bdgCls}">${bdgLbl}</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--muted);font-size:0.95rem">${esc(p.tier)}</span>
+      </div>
+      <div class="section-body">
+        <div class="prompt-text" style="margin-bottom:0.9rem">${esc(p.prompt)}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-bottom:0.7rem">
+          ${(p.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}
+          ${p.duration?`<span class="tag gold">⏱ ${esc(p.duration)}</span>`:''}
+        </div>
+        ${p.tiktokNote?`<div style="font-size:0.75rem;color:var(--muted);font-style:italic;margin-bottom:0.8rem">★ ${esc(p.tiktokNote)}</div>`:''}
+        <div class="hook-bar">
+          <span class="hook-bar-lbl">Hook Score</span>
+          <div class="hook-bar-track"><div class="hook-bar-fill" style="width:${p.hookScore||75}%"></div></div>
+          <span class="hook-bar-num">${p.hookScore||75}</span>
+        </div>
+      </div>`;
+    const cb = makeCopyBtn(p.prompt);
+    cb.style.cssText='margin:0 1.5rem 1.2rem';
+    block.appendChild(cb);
+    wrap.appendChild(block);
+  });
+}
+
+// ── STRATEGY ─────────────────────────────────────
+async function engGenStrategy() {
+  if (!document.getElementById('engConcept').value.trim()&&!engImgB64) {
+    showEngErr('engErrStrategy','Add an image or enter a concept first.'); return;
+  }
+  const x = engGetCtx();
+  const btn = document.getElementById('engBtnStrategy');
+  btn.disabled=true; btn.innerHTML='Building Your Strategy… <div class="shimmer"></div>';
+  showEngErr('engErrStrategy','');
+  document.getElementById('engOutStrategy').innerHTML='';
+
+  const schemaDesc = 'overview, fypScore(number 0-100), viralPotential(string), bestLength(string), postWindow(string), hooks(array of 3 strings), captionTemplate(string), hashtags(array of 5 strings starting with #), seoKeywords(array of 5 strings), audioStrategy(string), audioTips(array of 3 strings), bestDays(string), bestTimes(string), postFrequency(string), contentCadence(string), timingNote(string), ctas(array of 3 strings), commentBait(array of 3 strings), algorithmChecklist(array of 6 objects each having action string and why string), seriesIdea(string), seriesEpisodes(array of 5 strings), shopStrategy(string), shopTips(array of 3 strings)';
+
+  const system = `You are VISIONAIRE STRATEGY ENGINE — elite TikTok growth strategist for AI visual creators.
+${NANDY}
+2026 TikTok Algorithm facts:
+- Video completion rate is #1 ranking factor — target 70%+
+- Saves and Shares outweigh Likes in ranking
+- New videos tested with followers first, then non-followers
+- Caption keywords matter MORE than hashtags for TikTok SEO
+- Use 3-5 targeted hashtags only
+- Trending audio gives initial distribution boost
+- First 3 seconds critical for FYP placement
+- Qualified View = watched past 5 seconds
+- Comment depth > comment count
+- Post 3-5x per week consistently
+Return ONLY a raw JSON object. No markdown. No backticks. No extra text. Start with { end with }.
+Required fields: ${schemaDesc}`;
+
+  const userMsg = `Build a complete TikTok promotional strategy:
+${engImgB64?'Image reference uploaded — analyze aesthetic, mood, visual story. Build strategy around it.':''}
+CONCEPT: ${x.concept}
+${x.brand?'BRAND/PRODUCT: '+x.brand:''}
+MODE: ${engMode} | VIBE: ${x.vibe} | PLATFORM: ${x.platform} | STYLE: ${x.chips}
+Every recommendation must be specific to Nandy's cinematic AI creator brand. Focus on FYP domination, brand inbound, TikTok Shop conversions.`;
+
+  try {
+    const raw = await callAPI(system, userMsg, engImgB64, engImgMime);
+    if (!raw) throw new Error('Empty response — try again.');
+    const parsed = extractJSON(raw, '{');
+    if (typeof parsed!=='object'||Array.isArray(parsed)) throw new Error('Unexpected format — try again.');
+    renderEngStrategy(parsed);
+  } catch(e) { showEngErr('engErrStrategy', e.message); }
+  finally { btn.disabled=false; btn.innerHTML='✦ Generate TikTok Strategy ✦ <div class="shimmer"></div>'; }
+}
+
+function renderEngStrategy(st) {
+  const wrap = document.getElementById('engOutStrategy');
+  wrap.innerHTML='';
+
+  // Overview
+  const ov = document.createElement('div');
+  ov.className='eng-section-block gold-accent'; ov.style.marginTop='1.5rem';
+  ov.innerHTML=`
+    <div class="section-head"><span class="section-label">Strategy Overview</span></div>
+    <div class="section-body">
+      <div style="font-size:0.9rem;line-height:1.8;color:var(--parchment);margin-bottom:1.2rem">${esc(st.overview||'')}</div>
+      <div class="eng-overview-stats">
+        <div class="eng-ostat g"><span class="eng-ostat-val">${esc(String(st.fypScore||'—'))}/100</span><span class="eng-ostat-lbl">FYP Score</span></div>
+        <div class="eng-ostat p"><span class="eng-ostat-val">${esc(st.viralPotential||'—')}</span><span class="eng-ostat-lbl">Viral Potential</span></div>
+        <div class="eng-ostat t"><span class="eng-ostat-val">${esc(st.bestLength||'—')}</span><span class="eng-ostat-lbl">Best Length</span></div>
+        <div class="eng-ostat g"><span class="eng-ostat-val">${esc(st.postWindow||'—')}</span><span class="eng-ostat-lbl">Post Window</span></div>
+      </div>
+    </div>`;
+  wrap.appendChild(ov);
+
+  function makeBlock(accent, icon, title, buildFn) {
+    const b = document.createElement('div');
+    b.className=`eng-section-block ${accent}-accent`;
+    b.innerHTML=`<div class="section-head"><span class="section-label">${icon} ${title}</span></div>`;
+    const body = document.createElement('div'); body.className='section-body';
+    buildFn(body); b.appendChild(body); wrap.appendChild(b);
+  }
+
+  // Hooks
+  makeBlock('pink','🎬','Opening Hook Scripts — First 3 Seconds', body => {
+    (st.hooks||[]).forEach((h,i)=>{
+      const row=document.createElement('div'); row.className='eng-hook-item';
+      const inner=document.createElement('div'); inner.className='eng-hook-row';
+      const txt=document.createElement('div');
+      txt.innerHTML=`<div class="eng-hook-num">Hook ${i+1}</div><div class="eng-hook-txt">${esc(h)}</div>`;
+      inner.appendChild(txt); inner.appendChild(makeCopyBtn(h)); row.appendChild(inner); body.appendChild(row);
+    });
+  });
+
+  // Caption + Hashtags
+  makeBlock('gold','✍️','Caption Formula + Hashtag Stack', body => {
+    body.innerHTML+=`<div style="font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem">Caption Template</div>`;
+    body.innerHTML+=`<div class="eng-caption-box">${esc(st.captionTemplate||'')}</div>`;
+    const cb=makeCopyBtn(st.captionTemplate||'','Copy Caption'); cb.style.marginBottom='1rem'; body.appendChild(cb);
+    body.innerHTML+=`<div style="font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem">Hashtag Stack</div>`;
+    const ht=document.createElement('div'); ht.className='eng-hashtags';
+    (st.hashtags||[]).forEach(h=>{
+      const s=document.createElement('span'); s.className='eng-htag'; s.textContent=h;
+      s.onclick=()=>navigator.clipboard.writeText(h).then(()=>{ s.classList.add('copied'); setTimeout(()=>s.classList.remove('copied'),2000); });
+      ht.appendChild(s);
+    }); body.appendChild(ht);
+    body.innerHTML+=`<div style="font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin:0.8rem 0 0.4rem">SEO Keywords</div><div class="eng-seo">${esc((st.seoKeywords||[]).join(' · '))}</div>`;
+  });
+
+  // Audio
+  makeBlock('teal','🎵','Audio Strategy', body => {
+    body.innerHTML+=`<div style="font-size:0.88rem;line-height:1.75;color:var(--parchment);margin-bottom:0.9rem">${esc(st.audioStrategy||'')}</div>`;
+    (st.audioTips||[]).forEach(t=>{ body.innerHTML+=`<div class="eng-audio-tip">→ ${esc(t)}</div>`; });
+  });
+
+  // Posting
+  makeBlock('gold','📅','Posting & Timing Strategy', body => {
+    body.innerHTML+=`<div class="eng-grid2">
+      <div class="eng-stat"><div class="eng-stat-lbl">Best Days</div><div class="eng-stat-val">${esc(st.bestDays||'')}</div></div>
+      <div class="eng-stat"><div class="eng-stat-lbl">Best Times (EST)</div><div class="eng-stat-val">${esc(st.bestTimes||'')}</div></div>
+      <div class="eng-stat"><div class="eng-stat-lbl">Frequency</div><div class="eng-stat-val">${esc(st.postFrequency||'')}</div></div>
+      <div class="eng-stat"><div class="eng-stat-lbl">Weekly Cadence</div><div class="eng-stat-val">${esc(st.contentCadence||'')}</div></div>
+    </div><div style="font-size:0.78rem;color:var(--muted);line-height:1.7">${esc(st.timingNote||'')}</div>`;
+  });
+
+  // CTAs
+  makeBlock('pink','💬','Engagement Triggers & CTAs', body => {
+    body.innerHTML+=`<div style="font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:0.7rem">In-Video CTAs</div>`;
+    (st.ctas||[]).forEach(c=>{
+      const row=document.createElement('div'); row.className='eng-cta-item';
+      const t=document.createElement('span'); t.className='eng-cta-txt'; t.textContent=`"${c}"`;
+      row.appendChild(t); row.appendChild(makeCopyBtn(c)); body.appendChild(row);
+    });
+    body.innerHTML+=`<div style="font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin:1rem 0 0.6rem">Comment Bait Questions</div>`;
+    (st.commentBait||[]).forEach(q=>{ body.innerHTML+=`<div class="eng-cb">💬 ${esc(q)}</div>`; });
+  });
+
+  // Algorithm checklist
+  makeBlock('teal','🧠','Algorithm Signal Checklist', body => {
+    (st.algorithmChecklist||[]).forEach(item=>{
+      body.innerHTML+=`<div class="eng-algo-item"><span class="eng-algo-check">✓</span><div><div class="eng-algo-action">${esc(item.action||'')}</div><div class="eng-algo-why">${esc(item.why||'')}</div></div></div>`;
+    });
+  });
+
+  // Series arc
+  makeBlock('gold','🔗','Content Series Arc for NANDYBLOSSOM', body => {
+    body.innerHTML+=`<div style="font-size:0.88rem;line-height:1.75;color:var(--parchment);margin-bottom:0.9rem">${esc(st.seriesIdea||'')}</div>`;
+    (st.seriesEpisodes||[]).forEach((ep,i)=>{
+      body.innerHTML+=`<div class="eng-ep-item"><span class="eng-ep-num">Ep ${i+1}</span><span class="eng-ep-txt">${esc(ep)}</span></div>`;
+    });
+  });
+
+  // TikTok Shop
+  if (st.shopStrategy) {
+    makeBlock('pink','🛍️','TikTok Shop Integration', body => {
+      body.innerHTML+=`<div style="font-size:0.88rem;line-height:1.75;color:var(--parchment);margin-bottom:0.9rem">${esc(st.shopStrategy)}</div>`;
+      (st.shopTips||[]).forEach(t=>{ body.innerHTML+=`<div class="eng-shop-tip">→ ${esc(t)}</div>`; });
+    });
+  }
+}
+
+function showEngErr(id, msg) {
+  const el = document.getElementById(id);
+  if (msg) { el.textContent='⚠️ '+msg; el.style.display='block'; }
+  else { el.textContent=''; el.style.display='none'; }
+}
+</script>
+</body>
+</html>
