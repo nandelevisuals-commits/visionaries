@@ -27,16 +27,13 @@
 html { scroll-behavior: smooth; }
 body { background: var(--ink); color: var(--parchment); font-family: 'Instrument Sans', sans-serif; font-weight: 300; overflow-x: hidden; cursor: none; }
 
-/* CURSOR */
 .cursor { position: fixed; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background 0.2s; mix-blend-mode: screen; }
 .cursor-ring { position: fixed; width: 32px; height: 32px; border: 1px solid rgba(196,136,58,0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: all 0.12s ease; }
 body:has(a:hover) .cursor, body:has(button:hover) .cursor { width: 14px; height: 14px; background: var(--gold3); }
 body:has(a:hover) .cursor-ring, body:has(button:hover) .cursor-ring { width: 48px; height: 48px; border-color: var(--gold); }
 
-/* GRAIN */
 .grain { position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"); background-size: 256px 256px; pointer-events: none; z-index: 1000; opacity: 0.7; }
 
-/* NAV */
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 1.5rem 3rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border2); backdrop-filter: blur(20px); background: rgba(8,6,4,0.7); transition: padding 0.3s; }
 .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
 .nav-logo em { color: var(--parchment); font-style: italic; font-weight: 300; }
@@ -48,7 +45,6 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 1.5rem 
 .nav-studio { padding: 0.6rem 1.5rem; background: transparent; color: var(--teal); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; text-decoration: none; font-weight: 500; border: 1px solid rgba(0,212,200,0.35); transition: all 0.2s; }
 .nav-studio:hover { background: rgba(0,212,200,0.08); border-color: var(--teal); }
 
-/* HERO */
 .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 8rem 3rem 5rem; overflow: hidden; text-align: center; }
 .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(196,136,58,0.07) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(139,58,30,0.06) 0%, transparent 60%), radial-gradient(ellipse 30% 30% at 80% 20%, rgba(196,136,58,0.04) 0%, transparent 60%); }
 .hero-lines { position: absolute; inset: 0; background-image: linear-gradient(rgba(196,136,58,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(196,136,58,0.06) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 70%); }
@@ -60,18 +56,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 1.5rem 
 .hero-sub { font-size: clamp(0.95rem, 2vw, 1.15rem); color: var(--muted); max-width: 580px; line-height: 1.75; margin: 1.5rem auto 3rem; opacity: 0; animation: fadeUp 0.9s 0.5s ease forwards; }
 .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.9s 0.65s ease forwards; }
 
-/* HERO STUDIO BADGE */
-.hero-studio-badge {
-  display: inline-flex; align-items: center; gap: 0.6rem;
-  padding: 0.5rem 1.2rem 0.5rem 0.8rem;
-  border: 1px solid rgba(0,212,200,0.3);
-  background: rgba(0,212,200,0.05);
-  font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--teal); text-decoration: none;
-  margin-bottom: 1.5rem;
-  opacity: 0; animation: fadeUp 0.8s 0.15s ease forwards;
-  transition: background 0.2s, border-color 0.2s;
-}
+.hero-studio-badge { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.5rem 1.2rem 0.5rem 0.8rem; border: 1px solid rgba(0,212,200,0.3); background: rgba(0,212,200,0.05); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); text-decoration: none; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.8s 0.15s ease forwards; transition: background 0.2s, border-color 0.2s; }
 .hero-studio-badge:hover { background: rgba(0,212,200,0.1); border-color: rgba(0,212,200,0.5); }
 .hero-studio-badge .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
@@ -90,21 +75,18 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 1.5rem 
 @keyframes scrollPulse { 0%,100%{opacity:0.3;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.1)} }
 .scroll-label { font-size: 0.58rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--muted); }
 
-/* MARQUEE */
 .marquee-wrap { overflow: hidden; border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2); padding: 1rem 0; background: rgba(196,136,58,0.03); }
 .marquee-track { display: flex; gap: 0; width: max-content; animation: marquee 30s linear infinite; }
 .marquee-item { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-style: italic; color: var(--muted2); white-space: nowrap; padding: 0 2.5rem; letter-spacing: 0.05em; }
 .marquee-item span { color: var(--gold); margin: 0 0.5rem; }
 @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-/* SECTIONS */
 section { position: relative; }
 .section-eyebrow { font-size: 0.6rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 1rem; }
 .section-eyebrow::after { content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--gold); opacity: 0.4; }
 .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 600; line-height: 1.1; margin-bottom: 1.2rem; }
 .section-title em { font-style: italic; color: var(--gold); }
 
-/* PROBLEM */
 .problem { padding: 7rem 3rem; max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
 .problem-text .section-title { font-size: clamp(2rem, 4vw, 3.2rem); }
 .problem-text p { font-size: 1rem; color: var(--muted); line-height: 1.85; margin-top: 1.2rem; }
@@ -113,52 +95,20 @@ section { position: relative; }
 .problem-list li:hover { background: rgba(196,136,58,0.04); }
 .problem-list li strong { color: var(--parchment); display: block; font-size: 0.85rem; margin-bottom: 0.2rem; font-weight: 500; letter-spacing: 0.05em; }
 
-/* ── TIKTOK ENGINE FEATURE SECTION ── */
-.engine-feature {
-  padding: 7rem 3rem;
-  position: relative;
-  overflow: hidden;
-}
-.engine-feature::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0,212,200,0.4), transparent);
-}
-.engine-feature::after {
-  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
-}
-.engine-feature-bg {
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,212,200,0.04) 0%, transparent 70%),
-              radial-gradient(ellipse 40% 40% at 80% 30%, rgba(255,45,122,0.03) 0%, transparent 60%);
-}
+.engine-feature { padding: 7rem 3rem; position: relative; overflow: hidden; }
+.engine-feature::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,212,200,0.4), transparent); }
+.engine-feature::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+.engine-feature-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,212,200,0.04) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 80% 30%, rgba(255,45,122,0.03) 0%, transparent 60%); }
 .engine-inner { max-width: 1100px; margin: 0 auto; position: relative; }
 .engine-header { text-align: center; margin-bottom: 4rem; }
-.engine-eyebrow {
-  font-size: 0.6rem; letter-spacing: 0.4em; text-transform: uppercase;
-  color: var(--teal); margin-bottom: 1.2rem;
-  display: flex; align-items: center; justify-content: center; gap: 1rem;
-}
+.engine-eyebrow { font-size: 0.6rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--teal); margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 1rem; }
 .engine-eyebrow::before, .engine-eyebrow::after { content: ''; display: block; width: 40px; height: 1px; background: linear-gradient(90deg, transparent, var(--teal)); }
 .engine-eyebrow::after { transform: scaleX(-1); }
 .engine-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 600; line-height: 1.1; margin-bottom: 1rem; }
 .engine-title em { font-style: italic; color: var(--teal); }
 .engine-sub { font-size: 1rem; color: var(--muted); max-width: 560px; margin: 0 auto 3rem; line-height: 1.75; }
-
-.engine-features-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 3rem;
-}
-.engine-feat-card {
-  padding: 2rem;
-  border: 1px solid var(--border2);
-  background: var(--card);
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.25s, background 0.25s;
-}
+.engine-features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+.engine-feat-card { padding: 2rem; border: 1px solid var(--border2); background: var(--card); position: relative; overflow: hidden; transition: border-color 0.25s, background 0.25s; }
 .engine-feat-card:hover { border-color: rgba(0,212,200,0.25); background: rgba(0,212,200,0.03); }
 .engine-feat-card::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--teal); opacity: 0.5; }
 .engine-feat-card.pink-card::after { background: var(--pink); }
@@ -166,38 +116,19 @@ section { position: relative; }
 .engine-feat-icon { font-size: 1.4rem; margin-bottom: 1rem; display: block; }
 .engine-feat-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; color: var(--parchment); margin-bottom: 0.5rem; }
 .engine-feat-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.65; }
-
-.engine-tools {
-  display: flex; align-items: center; justify-content: center;
-  gap: 0.6rem; flex-wrap: wrap; margin-bottom: 3rem;
-}
-.tool-pill {
-  padding: 0.35rem 1rem;
-  font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
-  border-radius: 100px; font-weight: 500;
-}
+.engine-tools { display: flex; align-items: center; justify-content: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 3rem; }
+.tool-pill { padding: 0.35rem 1rem; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; border-radius: 100px; font-weight: 500; }
 .tool-pill.teal { border: 1px solid rgba(0,212,200,0.3); color: var(--teal); background: rgba(0,212,200,0.07); }
 .tool-pill.pink { border: 1px solid rgba(255,45,122,0.3); color: var(--pink); background: rgba(255,45,122,0.07); }
 .tool-pill.gold { border: 1px solid var(--border); color: var(--gold); background: rgba(196,136,58,0.07); }
-
-.engine-cta-block {
-  text-align: center;
-  padding: 2.5rem 3rem;
-  border: 1px solid rgba(0,212,200,0.2);
-  background: linear-gradient(135deg, rgba(0,212,200,0.04) 0%, transparent 60%, rgba(255,45,122,0.03) 100%);
-  position: relative;
-}
-.engine-cta-block::before {
-  content: ''; position: absolute; top: -1px; left: 40px; right: 40px; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--teal), transparent);
-}
+.engine-cta-block { text-align: center; padding: 2.5rem 3rem; border: 1px solid rgba(0,212,200,0.2); background: linear-gradient(135deg, rgba(0,212,200,0.04) 0%, transparent 60%, rgba(255,45,122,0.03) 100%); position: relative; }
+.engine-cta-block::before { content: ''; position: absolute; top: -1px; left: 40px; right: 40px; height: 2px; background: linear-gradient(90deg, transparent, var(--teal), transparent); }
 .engine-cta-label { font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.8rem; }
 .engine-cta-title { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600; margin-bottom: 0.5rem; }
 .engine-cta-title em { font-style: italic; color: var(--teal); }
 .engine-cta-desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.8rem; line-height: 1.7; max-width: 500px; margin-left: auto; margin-right: auto; }
 .engine-cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
-/* PRODUCTS */
 .products { padding: 7rem 3rem; background: var(--ink2); position: relative; overflow: hidden; }
 .products::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold) 70%, transparent 100%); opacity: 0.4; }
 .products-inner { max-width: 1100px; margin: 0 auto; }
@@ -235,7 +166,6 @@ section { position: relative; }
 .bundle-now { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 700; color: var(--gold); }
 .bundle-save { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.25rem 0.6rem; background: rgba(196,136,58,0.15); border: 1px solid var(--border); color: var(--gold); }
 
-/* INSIDE */
 .inside { padding: 7rem 3rem; max-width: 1100px; margin: 0 auto; }
 .inside-header { margin-bottom: 4rem; }
 .inside-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border2); margin-bottom: 3rem; overflow-x: auto; }
@@ -252,7 +182,6 @@ section { position: relative; }
 .prompt-excerpt { font-size: 0.8rem; color: var(--muted); line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .blur-overlay { position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(to top, var(--ink), transparent); }
 
-/* HOW */
 .how { padding: 7rem 3rem; background: var(--ink2); position: relative; }
 .how::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
 .how-inner { max-width: 1100px; margin: 0 auto; }
@@ -264,7 +193,6 @@ section { position: relative; }
 .step h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 0.6rem; color: var(--parchment); }
 .step p { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
 
-/* PROOF */
 .proof { padding: 7rem 3rem; max-width: 1100px; margin: 0 auto; }
 .proof-header { margin-bottom: 4rem; }
 .testimonials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 4rem; }
@@ -280,7 +208,6 @@ section { position: relative; }
 .stat-num { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 700; color: var(--gold); display: block; line-height: 1; }
 .stat-label { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 0.4rem; }
 
-/* FAQ */
 .faq { padding: 7rem 3rem; background: var(--ink2); position: relative; }
 .faq::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
 .faq-inner { max-width: 760px; margin: 0 auto; }
@@ -294,7 +221,6 @@ section { position: relative; }
 .faq-item.open .faq-answer { max-height: 300px; }
 .faq-answer p { font-size: 0.9rem; color: var(--muted); line-height: 1.8; padding-bottom: 1.5rem; }
 
-/* FINAL CTA */
 .final-cta { padding: 8rem 3rem; text-align: center; position: relative; overflow: hidden; }
 .final-cta-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(196,136,58,0.09) 0%, transparent 70%); }
 .cta-eyebrow { font-size: 0.62rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); margin-bottom: 2rem; }
@@ -303,7 +229,6 @@ section { position: relative; }
 .cta-sub { font-size: 1rem; color: var(--muted); max-width: 500px; margin: 0 auto 3rem; line-height: 1.75; }
 .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
-/* FOOTER */
 footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
 .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 700; letter-spacing: 0.1em; color: var(--gold); }
 .footer-logo em { color: var(--parchment); font-style: italic; font-weight: 300; }
@@ -312,12 +237,10 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
 .footer-links a:hover { color: var(--gold); }
 .footer-copy { font-size: 0.7rem; color: var(--muted2); }
 
-/* ANIMATIONS */
 @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* RESPONSIVE */
 @media (max-width: 900px) {
   nav { padding: 1.2rem 1.5rem; }
   .nav-links { display: none; }
@@ -345,7 +268,6 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
-<!-- NAV -->
 <nav>
   <div class="nav-logo">Vision<em>aire</em></div>
   <div class="nav-links">
@@ -354,16 +276,15 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
     <a href="#inside">What's Inside</a>
     <a href="#how">How It Works</a>
     <a href="#faq">FAQ</a>
-    <a href="visionaire-studio.html" class="nav-studio">Open Studio</a>
-    <a href="#products" class="nav-cta">Get Access</a>
+    <a href="https://wandiko.gumroad.com/l/ipywgc" target="_blank" class="nav-studio">Open Studio</a>
+    <a href="https://wandiko.gumroad.com/l/ipywgc" target="_blank" class="nav-cta">Get Access</a>
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-lines"></div>
-  <a href="visionaire-studio.html" class="hero-studio-badge">
+  <a href="https://wandiko.gumroad.com/l/ipywgc" target="_blank" class="hero-studio-badge">
     <span class="badge-dot"></span>
     New — TikTok Engine + Campaign Studio now live
   </a>
@@ -376,7 +297,7 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
     Campaign concepts, cinematic image prompts, reel scripts, and moodboard briefs — generated in seconds. For AI creators, social media managers, and brands who refuse to be generic.
   </p>
   <div class="hero-actions">
-    <a href="visionaire-studio.html" class="btn-teal">Open Studio →</a>
+    <a href="https://wandiko.gumroad.com/l/ipywgc" target="_blank" class="btn-teal">Get Studio Access →</a>
     <a href="#products" class="btn-primary">Explore Products</a>
     <a href="#inside" class="btn-outline">See What's Inside</a>
   </div>
@@ -386,7 +307,6 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
   </div>
 </section>
 
-<!-- MARQUEE -->
 <div class="marquee-wrap">
   <div class="marquee-track" id="marqueeTrack">
     <span class="marquee-item">50 Cinematic Prompts <span>·</span></span>
@@ -414,7 +334,6 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
   </div>
 </div>
 
-<!-- PROBLEM -->
 <section class="problem reveal">
   <div class="problem-text">
     <div class="section-eyebrow">The Problem</div>
@@ -429,19 +348,14 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
   </ul>
 </section>
 
-<!-- ══════════════════════════════════════
-     TIKTOK ENGINE FEATURE SECTION
-══════════════════════════════════════ -->
 <section class="engine-feature" id="engine">
   <div class="engine-feature-bg"></div>
   <div class="engine-inner">
-
     <div class="engine-header reveal">
-      <div class="engine-eyebrow">New — Free with Studio Access</div>
+      <div class="engine-eyebrow">New — Included with Studio Access</div>
       <h2 class="engine-title">The TikTok<br/><em>Cinematic Engine.</em></h2>
       <p class="engine-sub">Generate video prompts for Kling 3.0 Pro and Sora 2, plus a complete promotional strategy built on 2026 TikTok algorithm signals — all from one brief.</p>
     </div>
-
     <div class="engine-features-grid">
       <div class="engine-feat-card reveal">
         <span class="engine-feat-icon">🎬</span>
@@ -459,7 +373,6 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
         <p class="engine-feat-desc">No prompt? No problem. Drop a mood board, product photo, or visual inspo and the engine analyzes it — building your prompts and strategy from the image alone.</p>
       </div>
     </div>
-
     <div class="reveal" style="text-align:center;margin-bottom:2.5rem">
       <div style="font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem">Optimized for</div>
       <div class="engine-tools">
@@ -471,21 +384,18 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
         <span class="tool-pill pink">2026 Algorithm</span>
       </div>
     </div>
-
     <div class="engine-cta-block reveal">
       <div class="engine-cta-label">✦ Ready to use now</div>
       <h3 class="engine-cta-title">Your vision, <em>engineered</em> for the algorithm.</h3>
-      <p class="engine-cta-desc">The Campaign Studio and TikTok Engine are both inside one tool — open it, enter your brief, and generate. No setup. No subscription. Just results.</p>
+      <p class="engine-cta-desc">The Campaign Studio and TikTok Engine are both inside one tool — get access, enter your brief, and generate. No setup. No subscription. Just results.</p>
       <div class="engine-cta-actions">
-        <a href="visionaire-studio.html" class="btn-teal">Open the Studio →</a>
+        <a href="https://wandiko.gumroad.com/l/ipywgc" target="_blank" class="btn-teal">Get Studio Access →</a>
         <a href="#products" class="btn-outline">View Products</a>
       </div>
     </div>
-
   </div>
 </section>
 
-<!-- PRODUCTS -->
 <section class="products" id="products">
   <div class="products-inner">
     <div class="products-header reveal">
@@ -511,7 +421,7 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
           <span class="price-now">$67</span>
           <span class="price-note">one-time · forever access</span>
         </div>
-        <a href="visionaire-studio.html" class="product-cta">Open the Studio App →</a>
+        <a href="https://wandiko.gumroad.com/l/ipywgc" target="_blank" class="product-cta">Get Studio Access →</a>
       </div>
       <div class="product-card reveal" style="transition-delay:0.15s">
         <div class="product-badge hot">Digital Download — Instant Access</div>
@@ -545,14 +455,13 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
             <span class="bundle-now">$97</span>
             <span class="bundle-save">Save $47</span>
           </div>
-          <a href="https://wandiko.gumroad.com/l/fnvsr" class="btn-primary" style="white-space:nowrap;" target="_blank">Get the Bundle →</a>
+          <a href="https://wandiko.gumroad.com/l/vuaax" class="btn-primary" style="white-space:nowrap;" target="_blank">Get the Bundle →</a>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- WHAT'S INSIDE -->
 <section class="inside" id="inside">
   <div class="inside-header reveal">
     <div class="section-eyebrow">Prompt Pack Preview</div>
@@ -597,7 +506,6 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
 <section class="how" id="how">
   <div class="how-inner">
     <div class="how-header reveal">
@@ -605,15 +513,14 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
       <h2 class="section-title">From brief to <em>campaign</em><br/>in under a minute.</h2>
     </div>
     <div class="steps">
-      <div class="step reveal"><div class="step-num">01</div><h3>Enter Your Brief</h3><p>Brand name, product, audience, vibe, platform. 30 seconds of input.</p></div>
-      <div class="step reveal" style="transition-delay:0.1s"><div class="step-num">02</div><h3>VISIONAIRE Generates</h3><p>Full campaign concept — prompts, moodboard, reel scripts, content angles. All at once.</p></div>
-      <div class="step reveal" style="transition-delay:0.2s"><div class="step-num">03</div><h3>Copy &amp; Create</h3><p>Drop prompts directly into Midjourney, Flux, Sora, or Runway. No editing needed.</p></div>
+      <div class="step reveal"><div class="step-num">01</div><h3>Get Access</h3><p>Purchase the Studio App on Gumroad and receive your access code instantly.</p></div>
+      <div class="step reveal" style="transition-delay:0.1s"><div class="step-num">02</div><h3>Enter Your Brief</h3><p>Brand name, product, audience, vibe, platform. 30 seconds of input.</p></div>
+      <div class="step reveal" style="transition-delay:0.2s"><div class="step-num">03</div><h3>VISIONAIRE Generates</h3><p>Full campaign concept — prompts, moodboard, reel scripts, content angles. All at once.</p></div>
       <div class="step reveal" style="transition-delay:0.3s"><div class="step-num">04</div><h3>Post or Pitch</h3><p>Use the content for your channels or package it as a deliverable for brand clients.</p></div>
     </div>
   </div>
 </section>
 
-<!-- SOCIAL PROOF -->
 <section class="proof">
   <div class="proof-header reveal">
     <div class="section-eyebrow">Creator Reviews</div>
@@ -632,7 +539,6 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
   </div>
 </section>
 
-<!-- FAQ -->
 <section class="faq" id="faq">
   <div class="faq-inner">
     <div class="faq-header reveal">
@@ -643,32 +549,30 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
       <div class="faq-item"><button class="faq-question">What AI tools do these prompts work with? <span class="faq-icon">+</span></button><div class="faq-answer"><p>Image prompts are optimized for Midjourney, DALL-E 3, Flux, and Adobe Firefly. Video/reel prompts are built for Sora, Runway Gen-3, and Kling. They work with any text-to-image or text-to-video tool.</p></div></div>
       <div class="faq-item"><button class="faq-question">Can I use these prompts for client work? <span class="faq-icon">+</span></button><div class="faq-answer"><p>Yes. Both the Prompt Pack and Studio App come with a full commercial use license. Use the outputs for your own channels, for client deliverables, in brand campaigns, or as part of any service you sell.</p></div></div>
       <div class="faq-item"><button class="faq-question">Is the Studio App really unlimited? <span class="faq-icon">+</span></button><div class="faq-answer"><p>Yes — one-time purchase, unlimited campaign generations, forever. No subscription, no monthly fee, no generation cap. Every generation produces a full concept including the TikTok Engine output.</p></div></div>
-      <div class="faq-item"><button class="faq-question">I'm a beginner — do I need to know how to prompt? <span class="faq-icon">+</span></button><div class="faq-answer"><p>No prompting experience needed. Every prompt in the pack is copy-paste ready. The Studio App requires zero technical knowledge — fill in a brief and get a full campaign.</p></div></div>
+      <div class="faq-item"><button class="faq-question">How do I access the Studio after purchase? <span class="faq-icon">+</span></button><div class="faq-answer"><p>After purchasing on Gumroad you'll receive an access code in your receipt. Go to the Studio App, enter the code on the unlock screen, and you're in — instantly, on any device.</p></div></div>
       <div class="faq-item"><button class="faq-question">What's the refund policy? <span class="faq-icon">+</span></button><div class="faq-answer"><p>We offer a 7-day money-back guarantee on the Prompt Pack. Because the Studio App provides unlimited instant value from the first generation, all app sales are final after the first use.</p></div></div>
       <div class="faq-item"><button class="faq-question">Will there be more products? <span class="faq-icon">+</span></button><div class="faq-answer"><p>Yes. The VISIONAIRE ecosystem is expanding — a Content Calendar Generator, a Brand Pitch Kit, and seasonal prompt drops are all in development. Bundle buyers get early access and discounts on everything that comes next.</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- FINAL CTA -->
 <section class="final-cta">
   <div class="final-cta-bg"></div>
   <div class="cta-eyebrow reveal">Ready to Build</div>
   <h2 class="cta-title reveal">Stop creating content.<br/><em>Start building campaigns.</em></h2>
   <p class="cta-sub reveal">Everything a creative director brings to a brand shoot — strategy, concept, prompts, direction — available in seconds. One purchase. Unlimited use.</p>
   <div class="cta-actions reveal">
-    <a href="visionaire-studio.html" class="btn-teal">Open the Studio →</a>
-    <a href="https://wandiko.gumroad.com/l/fnvsr" class="btn-primary" target="_blank">Get the Bundle — $97</a>
+    <a href="https://wandiko.gumroad.com/l/ipywgc" target="_blank" class="btn-teal">Get Studio Access →</a>
+    <a href="https://wandiko.gumroad.com/l/vuaax" class="btn-primary" target="_blank">Get the Bundle — $97</a>
     <a href="#products" class="btn-outline">See Individual Products</a>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">Vision<em>aire</em></div>
   <div class="footer-links">
-    <a href="#">Products</a>
-    <a href="visionaire-studio.html">Studio</a>
+    <a href="#products">Products</a>
+    <a href="https://wandiko.gumroad.com/l/ipywgc" target="_blank">Studio</a>
     <a href="#">About</a>
     <a href="#">Contact</a>
     <a href="#">Terms</a>
@@ -677,7 +581,6 @@ footer { padding: 3rem; border-top: 1px solid var(--border2); display: flex; ali
 </footer>
 
 <script>
-// Cursor
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
 let mx=0,my=0,rx=0,ry=0;
@@ -685,14 +588,12 @@ document.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; });
 function animateCursor(){ cursor.style.left=mx+'px'; cursor.style.top=my+'px'; rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animateCursor); }
 animateCursor();
 
-// Scroll reveal
 const reveals = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver(entries=>{
   entries.forEach(e=>{ if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),60); observer.unobserve(e.target); } });
 },{threshold:0.1});
 reveals.forEach(el=>observer.observe(el));
 
-// Tabs
 document.getElementById('tabs').addEventListener('click', e=>{
   const tab = e.target.closest('.tab'); if(!tab) return;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -701,7 +602,6 @@ document.getElementById('tabs').addEventListener('click', e=>{
   document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
 });
 
-// FAQ
 document.getElementById('faqList').addEventListener('click', e=>{
   const btn = e.target.closest('.faq-question'); if(!btn) return;
   const item = btn.closest('.faq-item');
