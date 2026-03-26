@@ -214,9 +214,6 @@ textarea { resize: vertical; min-height: 80px; }
 .angle-list li { padding: 0.75rem 1.1rem; background: rgba(255,255,255,0.02); border-left: 2px solid var(--gold); font-size: 0.87rem; color: var(--parchment); line-height: 1.6; }
 .deliverables-text { font-size: 0.88rem; color: var(--parchment); line-height: 1.8; }
 
-/* ═══════════════════════════════════════
-   ENGINE TAB STYLES
-═══════════════════════════════════════ */
 .eng-section-block {
   border: 1px solid var(--border2); background: var(--card);
   position: relative; overflow: hidden; margin-bottom: 1rem;
@@ -366,7 +363,6 @@ textarea { resize: vertical; min-height: 80px; }
   <a href="index.html" class="back-link">← Back to Site</a>
 </nav>
 
-<!-- STUDIO TABS -->
 <div class="studio-tabs">
   <button class="studio-tab active" onclick="switchStudioTab('campaign')">Campaign Studio</button>
   <button class="studio-tab" onclick="switchStudioTab('engine')">TikTok Engine</button>
@@ -374,9 +370,6 @@ textarea { resize: vertical; min-height: 80px; }
 
 <div class="container">
 
-  <!-- ══════════════════════════════════
-       TAB 1 — CAMPAIGN STUDIO (original)
-  ══════════════════════════════════ -->
   <div class="tab-view active" id="tab-campaign">
     <div class="page-eyebrow">AI Campaign Generator</div>
     <h1 class="page-title">Build a <em>Full Campaign</em><br/>in Under a Minute.</h1>
@@ -423,24 +416,18 @@ textarea { resize: vertical; min-height: 80px; }
     <div id="results" style="display:none;"></div>
   </div>
 
-  <!-- ══════════════════════════════════
-       TAB 2 — TIKTOK ENGINE
-  ══════════════════════════════════ -->
   <div class="tab-view" id="tab-engine">
     <div class="page-eyebrow">TikTok Cinematic Engine</div>
     <h1 class="page-title">Your <em>Cinematic</em> Vision,<br/>Engineered for the Algorithm.</h1>
     <p class="page-sub">Generate video prompts for Kling 3.0 Pro and Sora 2, plus a complete TikTok promotional strategy — built on 2026 algorithm signals and your NandyVisuals brand.</p>
 
-    <!-- Engine Mode Tabs -->
     <div style="display:flex;gap:0.5rem;margin-bottom:2rem;border-bottom:1px solid var(--border2);padding-bottom:0;">
       <button class="studio-tab active" id="eng-tab-prompts" onclick="switchEngTab('prompts')" style="font-size:0.6rem">🎬 Prompt Generator</button>
       <button class="studio-tab" id="eng-tab-strategy" onclick="switchEngTab('strategy')" style="font-size:0.6rem">📊 Strategy Hub</button>
     </div>
 
-    <!-- Shared Input Panel -->
     <div class="form-card" id="engInputCard">
       <div class="form-grid">
-        <!-- Content Mode -->
         <div class="form-group full">
           <label>Content Mode</label>
           <div class="eng-modes" id="engModes">
@@ -451,7 +438,6 @@ textarea { resize: vertical; min-height: 80px; }
           </div>
         </div>
 
-        <!-- Image Upload -->
         <div class="form-group full">
           <label>Image Reference <span style="color:var(--muted);font-size:0.52rem;letter-spacing:0.1em;text-transform:none;font-weight:300"> — mood board, product photo, or visual inspo</span></label>
           <div class="upload-zone" id="engUploadZone" onclick="document.getElementById('engFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--gold)'" ondragleave="this.style.borderColor=''" ondrop="engHandleDrop(event)">
@@ -469,10 +455,9 @@ textarea { resize: vertical; min-height: 80px; }
           <div class="or-divider"><span>or describe your concept</span></div>
         </div>
 
-        <!-- Concept + Brand -->
         <div class="form-group full">
           <label>Raw Concept / Prompt <span style="color:var(--muted);font-size:0.52rem;letter-spacing:0.1em;text-transform:none;font-weight:300">(optional if image provided)</span></label>
-          <textarea id="engConcept" placeholder="e.g. Black woman with teal hair levitating above a rooftop at golden hour, surrounded by floating petals — showcasing a glow serum..."></textarea>
+          <textarea id="engConcept" placeholder="e.g. Black woman with braids levitating above a rooftop at golden hour, surrounded by floating petals — showcasing a glow serum..."></textarea>
         </div>
         <div class="form-group">
           <label>Brand / Product</label>
@@ -492,7 +477,6 @@ textarea { resize: vertical; min-height: 80px; }
           </select>
         </div>
 
-        <!-- Style Chips -->
         <div class="form-group full">
           <label>Style Modifiers</label>
           <div class="eng-chips" id="engChips">
@@ -503,7 +487,6 @@ textarea { resize: vertical; min-height: 80px; }
             <span class="eng-chip" data-val="constellation particle effects" data-c="teal">Constellation FX</span>
             <span class="eng-chip" data-val="slow motion hero shot">Slo-Mo Hero</span>
             <span class="eng-chip" data-val="impossible dolly zoom">Dolly Zoom</span>
-            <span class="eng-chip" data-val="teal hair Black woman protagonist">Teal Hair Protagonist</span>
             <span class="eng-chip" data-val="fashion editorial movement">Fashion Movement</span>
             <span class="eng-chip" data-val="ASMR close-up product texture" data-c="pink">ASMR Texture</span>
             <span class="eng-chip" data-val="Yoruba Afro-Caribbean mythology" data-c="teal">Afro-Caribbean Mythic</span>
@@ -513,7 +496,6 @@ textarea { resize: vertical; min-height: 80px; }
           </div>
         </div>
 
-        <!-- Platform + Count (prompts only) -->
         <div id="engPromptExtras" style="display:contents">
           <div class="form-group">
             <label>Platform</label>
@@ -535,7 +517,6 @@ textarea { resize: vertical; min-height: 80px; }
       </div>
     </div>
 
-    <!-- PROMPT GENERATOR view -->
     <div id="eng-view-prompts">
       <div id="engErrPrompts" class="error-box" style="display:none"></div>
       <button class="generate-btn" id="engBtnPrompts" onclick="engGenPrompts()">
@@ -545,7 +526,6 @@ textarea { resize: vertical; min-height: 80px; }
       <div id="engOutPrompts"></div>
     </div>
 
-    <!-- STRATEGY HUB view -->
     <div id="eng-view-strategy" style="display:none">
       <div class="eng-info-box">
         <div class="eng-info-ttl">What Strategy Hub generates for you</div>
@@ -558,19 +538,19 @@ textarea { resize: vertical; min-height: 80px; }
       <div id="engOutStrategy"></div>
     </div>
 
-  </div><!-- /tab-engine -->
-</div><!-- /container -->
+  </div>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════
-// SHARED
+// PROXY URL — routes through Vercel, works on all devices including iOS
 // ═══════════════════════════════════════════════
-const API_KEY = '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';
+const PROXY_URL = 'https://visionaries-rouge.vercel.app/api/proxy';
 
 const NANDY = `You know Nandy (NANDYBLOSSOM / @theeaivisualz):
 - Cinematic AI visual creator, Black woman, surrealist luxury aesthetic
-- Signature: Black woman protagonist with teal hair, Kling 3.0 Pro + Sora 2
-- Style DNA: levitation, liquid gold, constellation FX, Afro-Caribbean/Yoruba mythology, impossible camera moves, no static imagery
+- Style DNA: diverse Black woman protagonists with varied hairstyles (locs, braids, natural coils, sleek styles, updos, color variations), Kling 3.0 Pro + Sora 2
+- Visual language: levitation, liquid gold, constellation FX, Afro-Caribbean/Yoruba mythology, impossible camera moves, no static imagery
 - Brands: VELOUR, MAISON, LUMÉ (portfolio) + UGC brand collabs
 - Goals: FYP domination, brand inbound collabs, TikTok Shop conversions`;
 
@@ -596,13 +576,10 @@ async function callAPI(system, userMsg, imgB64, imgMime) {
   const content = imgB64
     ? [{ type:'image', source:{ type:'base64', media_type: imgMime||'image/jpeg', data: imgB64 }}, { type:'text', text: userMsg }]
     : userMsg;
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch(PROXY_URL, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': API_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
@@ -832,12 +809,11 @@ function engGetCtx() {
     vibe: document.getElementById('engVibe').value,
     platform: document.getElementById('engPlatform').value,
     count: document.getElementById('engCount').value,
-    chips: [...engSelectedChips].join(', ')||"Nandy's full aesthetic DNA — levitation, liquid gold, teal hair, constellation FX",
+    chips: [...engSelectedChips].join(', ')||"NANDYBLOSSOM aesthetic DNA — levitation, liquid gold, constellation FX, diverse Black woman protagonists",
     modeCtx: ENG_MODE_CTX[engMode]
   };
 }
 
-// ── PROMPTS ──────────────────────────────────────
 async function engGenPrompts() {
   if (!document.getElementById('engConcept').value.trim()&&!engImgB64) {
     showEngErr('engErrPrompts','Add an image or enter a concept first.'); return;
@@ -918,7 +894,6 @@ function renderEngPrompts(arr) {
   });
 }
 
-// ── STRATEGY ─────────────────────────────────────
 async function engGenStrategy() {
   if (!document.getElementById('engConcept').value.trim()&&!engImgB64) {
     showEngErr('engErrStrategy','Add an image or enter a concept first.'); return;
@@ -968,7 +943,6 @@ function renderEngStrategy(st) {
   const wrap = document.getElementById('engOutStrategy');
   wrap.innerHTML='';
 
-  // Overview
   const ov = document.createElement('div');
   ov.className='eng-section-block gold-accent'; ov.style.marginTop='1.5rem';
   ov.innerHTML=`
@@ -992,7 +966,6 @@ function renderEngStrategy(st) {
     buildFn(body); b.appendChild(body); wrap.appendChild(b);
   }
 
-  // Hooks
   makeBlock('pink','🎬','Opening Hook Scripts — First 3 Seconds', body => {
     (st.hooks||[]).forEach((h,i)=>{
       const row=document.createElement('div'); row.className='eng-hook-item';
@@ -1003,7 +976,6 @@ function renderEngStrategy(st) {
     });
   });
 
-  // Caption + Hashtags
   makeBlock('gold','✍️','Caption Formula + Hashtag Stack', body => {
     body.innerHTML+=`<div style="font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem">Caption Template</div>`;
     body.innerHTML+=`<div class="eng-caption-box">${esc(st.captionTemplate||'')}</div>`;
@@ -1018,13 +990,11 @@ function renderEngStrategy(st) {
     body.innerHTML+=`<div style="font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin:0.8rem 0 0.4rem">SEO Keywords</div><div class="eng-seo">${esc((st.seoKeywords||[]).join(' · '))}</div>`;
   });
 
-  // Audio
   makeBlock('teal','🎵','Audio Strategy', body => {
     body.innerHTML+=`<div style="font-size:0.88rem;line-height:1.75;color:var(--parchment);margin-bottom:0.9rem">${esc(st.audioStrategy||'')}</div>`;
     (st.audioTips||[]).forEach(t=>{ body.innerHTML+=`<div class="eng-audio-tip">→ ${esc(t)}</div>`; });
   });
 
-  // Posting
   makeBlock('gold','📅','Posting & Timing Strategy', body => {
     body.innerHTML+=`<div class="eng-grid2">
       <div class="eng-stat"><div class="eng-stat-lbl">Best Days</div><div class="eng-stat-val">${esc(st.bestDays||'')}</div></div>
@@ -1034,7 +1004,6 @@ function renderEngStrategy(st) {
     </div><div style="font-size:0.78rem;color:var(--muted);line-height:1.7">${esc(st.timingNote||'')}</div>`;
   });
 
-  // CTAs
   makeBlock('pink','💬','Engagement Triggers & CTAs', body => {
     body.innerHTML+=`<div style="font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:0.7rem">In-Video CTAs</div>`;
     (st.ctas||[]).forEach(c=>{
@@ -1046,14 +1015,12 @@ function renderEngStrategy(st) {
     (st.commentBait||[]).forEach(q=>{ body.innerHTML+=`<div class="eng-cb">💬 ${esc(q)}</div>`; });
   });
 
-  // Algorithm checklist
   makeBlock('teal','🧠','Algorithm Signal Checklist', body => {
     (st.algorithmChecklist||[]).forEach(item=>{
       body.innerHTML+=`<div class="eng-algo-item"><span class="eng-algo-check">✓</span><div><div class="eng-algo-action">${esc(item.action||'')}</div><div class="eng-algo-why">${esc(item.why||'')}</div></div></div>`;
     });
   });
 
-  // Series arc
   makeBlock('gold','🔗','Content Series Arc for NANDYBLOSSOM', body => {
     body.innerHTML+=`<div style="font-size:0.88rem;line-height:1.75;color:var(--parchment);margin-bottom:0.9rem">${esc(st.seriesIdea||'')}</div>`;
     (st.seriesEpisodes||[]).forEach((ep,i)=>{
@@ -1061,7 +1028,6 @@ function renderEngStrategy(st) {
     });
   });
 
-  // TikTok Shop
   if (st.shopStrategy) {
     makeBlock('pink','🛍️','TikTok Shop Integration', body => {
       body.innerHTML+=`<div style="font-size:0.88rem;line-height:1.75;color:var(--parchment);margin-bottom:0.9rem">${esc(st.shopStrategy)}</div>`;
