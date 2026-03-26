@@ -355,6 +355,52 @@ textarea { resize: vertical; min-height: 80px; }
 </style>
 </head>
 <body>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen" style="position:fixed;inset:0;background:#0a0805;z-index:9999;display:flex;align-items:center;justify-content:center;padding:2rem;">
+  <div style="max-width:420px;width:100%;text-align:center;">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:0.7rem;letter-spacing:0.4em;text-transform:uppercase;color:rgba(201,147,58,0.5);margin-bottom:1rem;">NANDYBLOSSOM</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:700;color:rgba(245,237,224,0.95);line-height:1;margin-bottom:0.5rem;">VISIONAIRE</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;font-weight:300;color:#c9933a;margin-bottom:2.5rem;">AI Campaign Studio</div>
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(201,147,58,0.2);padding:2rem;margin-bottom:1.5rem;">
+      <div style="font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(201,147,58,0.6);margin-bottom:1rem;">Enter Access Code</div>
+      <input type="password" id="lockInput" placeholder="••••••••••••" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,147,58,0.2);padding:0.9rem 1rem;color:rgba(245,237,224,0.9);font-family:'Instrument Sans',sans-serif;font-size:1rem;letter-spacing:0.2em;text-align:center;outline:none;margin-bottom:1rem;text-transform:uppercase;" />
+      <div id="lockErr" style="font-size:0.75rem;color:#e07050;margin-bottom:0.8rem;display:none;">Incorrect code. Purchase access at the link below.</div>
+      <button onclick="tryUnlock()" style="width:100%;padding:1rem;background:#c9933a;color:#0a0805;border:none;font-family:'Instrument Sans',sans-serif;font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;font-weight:500;cursor:pointer;">Unlock Studio →</button>
+    </div>
+    <div style="font-size:0.75rem;color:rgba(122,110,98,0.7);line-height:1.7;">
+      Don't have an access code?<br/>
+      <a href="https://wandiko.gumroad.com/l/ipywgc" target="_blank" style="color:#c9933a;text-decoration:none;">Purchase the Studio App — $67 →</a>
+    </div>
+    <div style="margin-top:1rem;">
+      <a href="https://wandiko.gumroad.com/l/vuaax" target="_blank" style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(122,110,98,0.5);text-decoration:none;">Or get the Complete Bundle — $97</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const CODE = 'NANDYBLOSSOM';
+  const KEY = 'vs_unlocked';
+  if(localStorage.getItem(KEY) === CODE){
+    document.getElementById('lockScreen').style.display='none';
+  }
+  document.getElementById('lockInput').addEventListener('keydown', function(e){
+    if(e.key==='Enter') tryUnlock();
+  });
+  window.tryUnlock = function(){
+    const val = document.getElementById('lockInput').value.trim().toUpperCase();
+    if(val === CODE){
+      localStorage.setItem(KEY, CODE);
+      document.getElementById('lockScreen').style.display='none';
+    } else {
+      document.getElementById('lockErr').style.display='block';
+      document.getElementById('lockInput').value='';
+    }
+  };
+})();
+</script>
+
 <div class="grain"></div>
 
 <nav>
