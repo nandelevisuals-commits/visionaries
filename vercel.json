@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/mediakit", "destination": "/mediakit.html" },
+    { "source": "/mediakit/", "destination": "/mediakit.html" }
+  ]
+}
