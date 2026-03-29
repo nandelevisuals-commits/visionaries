@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVATAR ENGINE v2 — Segments 1 & 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --surface: #111113;
+    --surface2: #18181c;
+    --border: #252529;
+    --accent: #e8ff47;
+    --text: #f0ede8;
+    --muted: #6b6b72;
+    --seg1: #4fffb0;
+    --seg3: #ff6b35;
+    --search: #a78bfa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 36px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,11,0.96);
+    backdrop-filter: blur(14px);
+    z-index: 100;
+  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px; color: var(--accent); }
+  .logo small { display: block; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--muted); margin-top: -3px; }
+  .tabs { display: flex; gap: 2px; margin-left: auto; }
+  .tab {
+    padding: 7px 18px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted);
+    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px;
+    cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+  }
+  .tab:hover:not(.active) { border-color: #3a3a3f; color: var(--text); }
+  .tab.active[data-tab="seg1"] { background: rgba(79,255,176,0.1); color: var(--seg1); border-color: var(--seg1); }
+  .tab.active[data-tab="seg3"] { background: rgba(255,107,53,0.1); color: var(--seg3); border-color: var(--seg3); }
+  .tab.active[data-tab="settings"] { background: rgba(167,139,250,0.1); color: var(--search); border-color: var(--search); }
+
+  /* ── MAIN ── */
+  main { max-width: 880px; margin: 0 auto; padding: 44px 36px; }
+
+  .panel { display: none; animation: fadeUp 0.35s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── SEGMENT HEADER ── */
+  .seg-badge {
+    display: inline-block; font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    padding: 3px 9px; border: 1px solid; margin-bottom: 10px;
+  }
+  .seg-badge.s1 { color: var(--seg1); border-color: var(--seg1); }
+  .seg-badge.s3 { color: var(--seg3); border-color: var(--seg3); }
+  .seg-badge.sv { color: var(--search); border-color: var(--search); }
+  .seg-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 2px; line-height: 0.92; margin-bottom: 8px; }
+  .seg-desc { color: var(--muted); font-size: 12px; line-height: 1.65; margin-bottom: 36px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 24px; margin-bottom: 16px; position: relative;
+  }
+  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; }
+  .card.s1::before { background: linear-gradient(90deg, var(--seg1), transparent); }
+  .card.s3::before { background: linear-gradient(90deg, var(--seg3), transparent); }
+  .card.sv::before { background: linear-gradient(90deg, var(--search), transparent); }
+
+  .card-label {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: 3px; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .card-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+  /* ── FORM ── */
+  .fg { display: grid; gap: 14px; margin-bottom: 14px; }
+  .fg.two { grid-template-columns: 1fr 1fr; }
+  .fg.three { grid-template-columns: 1fr 1fr 1fr; }
+  .fg.one { grid-template-columns: 1fr; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  input, select, textarea {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px;
+    padding: 9px 13px; outline: none; transition: border-color 0.2s; appearance: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: #3a3a42; }
+  textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+  select option { background: #1a1a1f; }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    display: none; align-items: center; gap: 10px;
+    padding: 10px 14px; border: 1px solid var(--border);
+    background: var(--surface2); margin-bottom: 12px;
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted);
+  }
+  .status-bar.visible { display: flex; }
+  .status-dot { width:6px; height:6px; border-radius:50%; background: var(--accent); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ── SEARCH RESULTS STRIP ── */
+  .search-strip {
+    display: none; padding: 14px; background: rgba(167,139,250,0.05);
+    border: 1px solid rgba(167,139,250,0.15); margin-bottom: 14px;
+  }
+  .search-strip.visible { display: block; }
+  .search-strip-label {
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--search); margin-bottom: 8px;
+  }
+  .search-tip {
+    font-size: 11px; color: #c8c5be; line-height: 1.55;
+    padding: 6px 0; border-bottom: 1px solid rgba(167,139,250,0.1);
+  }
+  .search-tip:last-child { border-bottom: none; padding-bottom: 0; }
+  .search-tip strong { color: var(--text); font-weight: 500; }
+
+  /* ── BUTTONS ── */
+  .btn-row { display: flex; gap: 8px; }
+  .gen-btn {
+    flex: 1; padding: 14px; border: none;
+    font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 4px;
+    cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .gen-btn.s1 { background: var(--seg1); color: #0a0a0b; }
+  .gen-btn.s3 { background: var(--seg3); color: #0a0a0b; }
+  .gen-btn.sv { background: var(--search); color: #0a0a0b; }
+  .gen-btn.ghost {
+    flex: 0 0 auto; padding: 14px 20px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); font-size: 12px;
+  }
+  .gen-btn:hover:not(:disabled) { opacity: 0.85; transform: translateY(-1px); }
+  .gen-btn:active:not(:disabled) { transform: translateY(0); }
+  .gen-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+  .spin {
+    display: inline-block; width: 12px; height: 12px;
+    border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
+    border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── ERROR ── */
+  .err {
+    display: none; padding: 10px 14px; margin-top: 10px;
+    background: rgba(255,80,80,0.07); border: 1px solid rgba(255,80,80,0.2);
+    color: #ff6b6b; font-family: 'DM Mono', monospace; font-size: 10px; line-height: 1.5;
+  }
+  .err.visible { display: block; }
+
+  /* ── OUTPUT ── */
+  .output-block { display: none; margin-top: 24px; animation: fadeUp 0.4s ease; }
+  .output-block.visible { display: block; }
+  .out-divider {
+    height: 1px; background: var(--border); margin: 28px 0; position: relative;
+  }
+  .out-divider span {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    background: var(--bg); padding: 0 14px;
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase;
+  }
+  .out-card { background: var(--surface2); border: 1px solid var(--border); margin-bottom: 14px; overflow: hidden; }
+  .out-head {
+    padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .out-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; }
+  .out-label.s1 { color: var(--seg1); }
+  .out-label.s3 { color: var(--seg3); }
+  .copy-btn {
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px;
+    padding: 4px 10px; cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+  }
+  .copy-btn:hover { border-color: var(--text); color: var(--text); }
+  .copy-btn.ok { border-color: var(--seg1); color: var(--seg1); }
+  .out-text {
+    padding: 16px; font-family: 'DM Mono', monospace; font-size: 11px;
+    line-height: 1.75; color: #c8c5be; white-space: pre-wrap; word-break: break-word;
+  }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 14px; }
+  .pill {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 4px 10px; font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase;
+  }
+  .pill b { color: var(--accent); margin-left: 4px; font-weight: 400; }
+
+  /* ── SETTINGS PANEL ── */
+  .api-status { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-family: 'DM Mono', monospace; font-size: 10px; }
+  .api-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+  .api-dot.green { background: var(--seg1); }
+  .api-dot.orange { background: var(--seg3); }
+
+  .info-box {
+    padding: 14px; background: rgba(232,255,71,0.04); border: 1px solid rgba(232,255,71,0.12);
+    font-size: 11px; line-height: 1.65; color: var(--muted); margin-top: 14px;
+  }
+  .info-box strong { color: var(--accent); }
+
+  /* ── SOUL ID GUIDE ── */
+  .guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+  .guide-item {
+    padding: 14px; background: var(--surface2); border: 1px solid var(--border);
+  }
+  .guide-item .g-title { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--seg1); text-transform: uppercase; margin-bottom: 6px; }
+  .guide-item p { font-size: 11px; line-height: 1.6; color: #c8c5be; }
+
+  @media (max-width: 620px) {
+    main { padding: 28px 18px; }
+    header { padding: 14px 18px; flex-wrap: wrap; gap: 10px; }
+    .tabs { margin-left: 0; }
+    .fg.two, .fg.three { grid-template-columns: 1fr; }
+    .seg-title { font-size: 36px; }
+    .guide-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">AVATAR ENGINE <small>SEGMENTS 01 & 03 — v2</small></div>
+  <div class="tabs">
+    <button class="tab active" data-tab="seg1" onclick="switchTab('seg1')">SEG 01</button>
+    <button class="tab" data-tab="seg3" onclick="switchTab('seg3')">SEG 03</button>
+    <button class="tab" data-tab="settings" onclick="switchTab('settings')">⚙ SETUP</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ══════════════════════════════════════
+       SETTINGS PANEL
+  ══════════════════════════════════════ -->
+  <div class="panel" id="settings">
+    <div class="seg-badge sv">Setup</div>
+    <div class="seg-title">API<br>SETUP</div>
+    <div class="seg-desc">Configure your API keys. Claude calls route through your Vercel proxy — no key needed here. Tavily is optional for Soul ID web research.</div>
+
+    <div class="card sv">
+      <div class="card-label">Claude via Vercel Proxy</div>
+      <div class="fg one">
+        <div class="field">
+          <label>Proxy Endpoint</label>
+          <input type="text" id="proxy-url" value="/api/proxy" placeholder="/api/proxy">
+        </div>
+      </div>
+      <div class="api-status">
+        <div class="api-dot green" id="proxy-dot"></div>
+        <span id="proxy-status" style="color:var(--muted)">Using /api/proxy — routes to Anthropic server-side</span>
+      </div>
+      <div class="info-box" style="margin-top:14px">
+        <strong>How it works:</strong> All Claude generation calls go to your Vercel serverless function at <strong>/api/proxy</strong>, which holds your Anthropic API key as an environment variable. This bypasses browser CORS restrictions. Your existing <strong>api/proxy.js</strong> on <strong>visionaries-rouge.vercel.app</strong> handles this already.
+      </div>
+    </div>
+
+    <div class="card sv">
+      <div class="card-label">Tavily Web Search (Optional)</div>
+      <div class="fg one">
+        <div class="field">
+          <label>Tavily API Key</label>
+          <input type="password" id="tavily-key" placeholder="tvly-xxxxxxxxxxxxxxxxxxxxxxxx" oninput="saveTavilyKey()">
+        </div>
+      </div>
+      <div class="api-status">
+        <div class="api-dot" id="tavily-dot"></div>
+        <span id="tavily-status" style="color:var(--muted)">No key set — web search disabled</span>
+      </div>
+      <div class="info-box">
+        <strong>Free tier:</strong> 1,000 searches/month at <strong>tavily.com</strong>. Used to pull live Higgsfield Soul ID tips and prompt examples before Claude generates your outputs. If no key is set, Claude generates from built-in knowledge only.
+      </div>
+    </div>
+
+    <div class="card sv">
+      <div class="card-label">Higgsfield Soul ID — Best Practices</div>
+      <div class="guide-grid">
+        <div class="guide-item">
+          <div class="g-title">Input Images</div>
+          <p>Use 5–15 photos minimum. All must show the <em>same hairstyle</em> — mixed styles will cause Soul ID to average between them and lose consistency.</p>
+        </div>
+        <div class="guide-item">
+          <div class="g-title">Image Variety</div>
+          <p>Include multiple angles (front, 3/4, side), different lighting conditions, and different expressions. No sunglasses. Face must be clearly visible.</p>
+        </div>
+        <div class="guide-item">
+          <div class="g-title">Resolution & Quality</div>
+          <p>Use the highest quality images available. Avoid blurry, compressed, or heavily filtered photos. Natural lighting performs better than flash.</p>
+        </div>
+        <div class="guide-item">
+          <div class="g-title">Prompt Anchoring</div>
+          <p>Always end prompts with: <em>"Ensure facial consistency is identical to the reference image with hyper realistic skin texture and open pores, exact facial hair and symmetry as the reference."</em></p>
+        </div>
+        <div class="guide-item">
+          <div class="g-title">Character Sheet First</div>
+          <p>Generate your Nanobanana 2 character sheet before creating your Soul ID. Upload the character sheet as one of your Soul ID reference inputs for stronger consistency locks.</p>
+        </div>
+        <div class="guide-item">
+          <div class="g-title">Nanobanana 2 Tips</div>
+          <p>Upload both your character sheet AND a product/scene reference image together. Include "Ensure product consistency" and "facial consistency" anchors in every prompt.</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="gen-btn sv" onclick="switchTab('seg1')" style="width:100%;margin-top:8px">START WITH SEGMENT 01 →</button>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SEGMENT 1
+  ══════════════════════════════════════ -->
+  <div class="panel active" id="seg1">
+    <div class="seg-badge s1">Segment 01</div>
+    <div class="seg-title">CHARACTER<br>SHEET</div>
+    <div class="seg-desc">Generates your Nanobanana 2 character reference sheet prompt + Soul ID portrait variations. Web search pulls live Higgsfield tips if Tavily key is set.</div>
+
+    <div class="card s1">
+      <div class="card-label">Subject Details</div>
+      <div class="fg two">
+        <div class="field">
+          <label>Gender</label>
+          <select id="s1-gender">
+            <option>Male</option><option>Female</option><option>Non-binary</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Age Range</label>
+          <select id="s1-age">
+            <option>Early 20s</option><option>Mid 20s</option><option selected>Late 20s</option>
+            <option>Early 30s</option><option>Mid 30s</option><option>Late 30s</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg two">
+        <div class="field">
+          <label>Skin / Ethnicity</label>
+          <input id="s1-skin" value="light-medium European, warm undertone">
+        </div>
+        <div class="field">
+          <label>Hair</label>
+          <input id="s1-hair" value="short brown, slightly textured, side-swept">
+        </div>
+      </div>
+      <div class="fg two">
+        <div class="field">
+          <label>Facial Features</label>
+          <input id="s1-face" value="slim jaw, light mustache, natural blemishes, defined cheekbones">
+        </div>
+        <div class="field">
+          <label>Eye Color</label>
+          <input id="s1-eyes" value="hazel-brown">
+        </div>
+      </div>
+      <div class="fg one">
+        <div class="field">
+          <label>Outfit</label>
+          <input id="s1-outfit" value="navy denim overshirt open, white t-shirt underneath, dark jeans, grey sneakers">
+        </div>
+      </div>
+      <div class="fg one">
+        <div class="field">
+          <label>Extra Details (tattoos, body type, accessories…)</label>
+          <textarea id="s1-extra" placeholder="Optional — add anything specific"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card s1">
+      <div class="card-label">Output Options</div>
+      <div class="fg three">
+        <div class="field">
+          <label>Model</label>
+          <select id="s1-model">
+            <option selected>Nanobanana 2</option>
+            <option>Soul 2</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Quality</label>
+          <select id="s1-quality">
+            <option selected>2K</option><option>4K</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Soul ID Variations</label>
+          <select id="s1-vars">
+            <option value="0">Sheet Only</option>
+            <option value="3" selected>+ 3 Variations</option>
+            <option value="5">+ 5 Variations</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar" id="s1-status">
+      <div class="status-dot"></div>
+      <span id="s1-status-text">Initializing…</span>
+    </div>
+    <div class="search-strip" id="s1-search-strip">
+      <div class="search-strip-label">🔍 Live Higgsfield Soul ID Research</div>
+      <div id="s1-search-tips"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="gen-btn s1" id="s1-btn" onclick="generateSeg1()">GENERATE CHARACTER SHEET</button>
+      <button class="gen-btn ghost" onclick="switchTab('settings')">SETUP</button>
+    </div>
+    <div class="err" id="s1-err"></div>
+
+    <div class="output-block" id="s1-out">
+      <div class="out-divider"><span>Generated Prompts</span></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SEGMENT 3
+  ══════════════════════════════════════ -->
+  <div class="panel" id="seg3">
+    <div class="seg-badge s3">Segment 03</div>
+    <div class="seg-title">CINEMATIC<br>B-ROLL</div>
+    <div class="seg-desc">Image + multi-shot Kling 3.0 video prompts. Follows Camera → Subject → Action → Environment → Lighting → Texture → Audio. Explosive cinematic movement always enforced.</div>
+
+    <div class="card s3">
+      <div class="card-label">Mode</div>
+      <div class="fg one">
+        <div class="field">
+          <label>B-Roll Type</label>
+          <select id="s3-mode" onchange="toggleMode()">
+            <option value="product">Product Ad — UGC Style</option>
+            <option value="cinematic">Cinematic Narrative B-roll</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCT FIELDS -->
+    <div id="prod-fields">
+      <div class="card s3">
+        <div class="card-label">Product Details</div>
+        <div class="fg two">
+          <div class="field">
+            <label>Product Name</label>
+            <input id="p-name" value="Rúngne Magdust Climbing Chalk">
+          </div>
+          <div class="field">
+            <label>Product Visual Description</label>
+            <input id="p-desc" value="black matte resealable bag, white Rúngne logo, MAGDUST text, 200g">
+          </div>
+        </div>
+        <div class="fg two">
+          <div class="field">
+            <label>Setting / Environment</label>
+            <input id="p-setting" value="indoor bouldering gym, colorful climbing holds, crash pads, chalk dust in air">
+          </div>
+          <div class="field">
+            <label>Model Outfit</label>
+            <input id="p-outfit" value="Under Armour athletic tee, climbing shorts, rock shoes with chalk marks">
+          </div>
+        </div>
+        <div class="fg three">
+          <div class="field">
+            <label>Lighting</label>
+            <select id="p-light">
+              <option>Natural gym overhead, harsh fluorescent</option>
+              <option>Golden hour warm diffused</option>
+              <option>Cool blue cinematic ambient</option>
+              <option>Soft editorial studio</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Video Duration</label>
+            <select id="p-dur">
+              <option>5 sec</option><option>6 sec</option><option>10 sec</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Shot Count</label>
+            <select id="p-shots">
+              <option>2</option><option selected>3</option><option>4</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg one">
+          <div class="field">
+            <label>Talent Action</label>
+            <textarea id="p-action">Sitting relaxed at crash pad, holds product toward camera with calm confidence, slow approving nod, gives thumbs up</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CINEMATIC FIELDS -->
+    <div id="cin-fields" style="display:none">
+      <div class="card s3">
+        <div class="card-label">Scene Details</div>
+        <div class="fg two">
+          <div class="field">
+            <label>Location</label>
+            <input id="c-loc" value="late-night Korean convenience store doorway">
+          </div>
+          <div class="field">
+            <label>Time / Atmosphere</label>
+            <input id="c-atmos" value="midnight, warm fluorescent interior glow vs dark street outside">
+          </div>
+        </div>
+        <div class="fg two">
+          <div class="field">
+            <label>Character Look</label>
+            <input id="c-look" value="oversized brown varsity jacket, cream tee, wide grey trousers, white sneakers">
+          </div>
+          <div class="field">
+            <label>Narrative Theme</label>
+            <input id="c-theme" value="late night isolation, distracted by a message on his phone">
+          </div>
+        </div>
+        <div class="fg three">
+          <div class="field">
+            <label>Scenes</label>
+            <select id="c-scenes">
+              <option>2</option><option selected>3</option><option>4</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Camera Mode</label>
+            <select id="c-cam">
+              <option selected>Multi-shot Cinematic Studio</option>
+              <option>Kling 3.0 Single Shot</option>
+              <option>First-Last Frame</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Color Grade</label>
+            <select id="c-grade">
+              <option selected>Warm amber shadows, cool midtones</option>
+              <option>Teal and orange cinematic</option>
+              <option>Desaturated cool grey</option>
+              <option>Rich warm golden</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg one">
+          <div class="field">
+            <label>Scene Arc</label>
+            <textarea id="c-arc">Man leans in doorway checking phone → camera reveals screen notification → slow close-up of face reacting</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar" id="s3-status">
+      <div class="status-dot"></div>
+      <span id="s3-status-text">Initializing…</span>
+    </div>
+    <div class="search-strip" id="s3-search-strip">
+      <div class="search-strip-label">🔍 Live Kling 3.0 Research</div>
+      <div id="s3-search-tips"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="gen-btn s3" id="s3-btn" onclick="generateSeg3()">GENERATE B-ROLL PROMPTS</button>
+      <button class="gen-btn ghost" onclick="switchTab('settings')">SETUP</button>
+    </div>
+    <div class="err" id="s3-err"></div>
+
+    <div class="output-block" id="s3-out">
+      <div class="out-divider"><span>Generated Prompts</span></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── STATE ──
+const PROXY = () => document.getElementById('proxy-url').value.trim() || '/api/proxy';
+const TAVILY = () => localStorage.getItem('tavily_key') || '';
+
+// Load saved Tavily key
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('tavily_key');
+  if (saved) {
+    document.getElementById('tavily-key').value = saved;
+    updateTavilyStatus(saved);
+  }
+  updateProxyStatus();
+});
+
+function saveTavilyKey() {
+  const key = document.getElementById('tavily-key').value.trim();
+  localStorage.setItem('tavily_key', key);
+  updateTavilyStatus(key);
+}
+
+function updateTavilyStatus(key) {
+  const dot = document.getElementById('tavily-dot');
+  const txt = document.getElementById('tavily-status');
+  if (key && key.startsWith('tvly-')) {
+    dot.className = 'api-dot green';
+    txt.textContent = 'Key saved — web search enabled ✓';
+    txt.style.color = 'var(--seg1)';
+  } else if (key) {
+    dot.className = 'api-dot orange';
+    txt.textContent = 'Key format looks off — should start with tvly-';
+    txt.style.color = 'var(--seg3)';
+  } else {
+    dot.className = 'api-dot';
+    txt.textContent = 'No key set — web search disabled';
+    txt.style.color = 'var(--muted)';
+  }
+}
+
+function updateProxyStatus() {
+  const endpoint = document.getElementById('proxy-url').value;
+  document.getElementById('proxy-status').textContent = `Routing to ${endpoint} on your Vercel deployment`;
+}
+
+// ── NAV ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === tab));
+}
+
+function toggleMode() {
+  const mode = document.getElementById('s3-mode').value;
+  document.getElementById('prod-fields').style.display = mode === 'product' ? 'block' : 'none';
+  document.getElementById('cin-fields').style.display = mode === 'cinematic' ? 'block' : 'none';
+}
+
+// ── LOADING ──
+function setStatus(seg, text) {
+  const bar = document.getElementById(`${seg}-status`);
+  bar.classList.add('visible');
+  document.getElementById(`${seg}-status-text`).textContent = text;
+}
+function clearStatus(seg) {
+  document.getElementById(`${seg}-status`).classList.remove('visible');
+}
+function setBtn(id, loading, label) {
+  const btn = document.getElementById(id);
+  btn.disabled = loading;
+  btn.innerHTML = loading ? `<span class="spin"></span>${label}` : label;
+}
+function showErr(seg, msg) {
+  const el = document.getElementById(`${seg}-err`);
+  el.textContent = '⚠ ' + msg;
+  el.classList.add('visible');
+}
+function clearErr(seg) {
+  document.getElementById(`${seg}-err`).classList.remove('visible');
+}
+
+// ── TAVILY SEARCH ──
+async function tavilySearch(query) {
+  const key = TAVILY();
+  if (!key) return null;
+  try {
+    const res = await fetch('https://api.tavily.com/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: key,
+        query,
+        search_depth: 'basic',
+        max_results: 5,
+        include_answer: true
+      })
+    });
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    console.warn('Tavily search failed:', e);
+    return null;
+  }
+}
+
+function showSearchResults(seg, results, title) {
+  const strip = document.getElementById(`${seg}-search-strip`);
+  const tipsEl = document.getElementById(`${seg}-search-tips`);
+  if (!results) { strip.classList.remove('visible'); return; }
+
+  const tips = [];
+  if (results.answer) tips.push(`<div class="search-tip"><strong>AI Summary:</strong> ${results.answer}</div>`);
+  if (results.results) {
+    results.results.slice(0, 3).forEach(r => {
+      if (r.content) {
+        const snip = r.content.slice(0, 160).replace(/</g, '&lt;').trim();
+        tips.push(`<div class="search-tip"><strong>${r.title || 'Source'}:</strong> ${snip}…</div>`);
+      }
+    });
+  }
+  tipsEl.innerHTML = tips.join('');
+  strip.classList.add('visible');
+}
+
+// ── CLAUDE VIA PROXY ──
+async function callClaude(system, userMsg) {
+  const endpoint = PROXY();
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system,
+      messages: [{ role: 'user', content: userMsg }]
+    })
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Proxy error ${res.status}: ${err.slice(0, 200)}`);
+  }
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+  const block = data.content?.find(b => b.type === 'text');
+  if (!block) throw new Error('No text in response');
+  return block.text;
+}
+
+// ── RENDER OUTPUT ──
+function renderOutput(containerId, raw, colorClass) {
+  const container = document.getElementById(containerId);
+  container.classList.add('visible');
+  const divider = container.querySelector('.out-divider');
+  container.innerHTML = '';
+  container.appendChild(divider);
+
+  // Parse [LABEL]\ncontent blocks
+  const parts = raw.split(/\n?\[([^\]]+)\]\n?/);
+  const cards = [];
+
+  if (parts.length <= 1) {
+    // No labels found — single card
+    cards.push({ label: 'OUTPUT', text: raw.trim() });
+  } else {
+    for (let i = 1; i < parts.length; i += 2) {
+      if (parts[i + 1]) cards.push({ label: parts[i].trim(), text: parts[i + 1].trim() });
+    }
+  }
+
+  cards.forEach(card => {
+    const isVideo = /video|scene|shot/i.test(card.label);
+    const isImage = /image|frame|sheet|soul|portrait/i.test(card.label);
+
+    const div = document.createElement('div');
+    div.className = 'out-card';
+    div.innerHTML = `
+      <div class="out-head">
+        <span class="out-label ${colorClass}">${escH(card.label)}</span>
+        <button class="copy-btn" onclick="doCopy(this, ${JSON.stringify(card.text)})">COPY</button>
+      </div>
+      <div class="out-text">${escH(card.text)}</div>
+    `;
+
+    // Pills
+    const pills = [];
+    if (isVideo) { pills.push(['MODEL','Kling 3.0'],['PLATFORM','Higgsfield'],['RATIO','9:16']); }
+    else if (isImage) { pills.push(['MODEL','Nanobanana 2'],['TYPE','Image Gen'],['ASPECT','16:9 or 9:16']); }
+
+    if (pills.length) {
+      const row = document.createElement('div');
+      row.className = 'pills';
+      pills.forEach(([k,v]) => {
+        const p = document.createElement('div');
+        p.className = 'pill';
+        p.innerHTML = k + '<b>' + v + '</b>';
+        row.appendChild(p);
+      });
+      div.appendChild(row);
+    }
+
+    container.appendChild(div);
+  });
+}
+
+function escH(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function doCopy(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'COPIED ✓';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+
+// ══════════════════════════════════════
+// SEGMENT 1 — CHARACTER SHEET
+// ══════════════════════════════════════
+async function generateSeg1() {
+  clearErr('s1');
+  setBtn('s1-btn', true, 'GENERATING…');
+
+  try {
+    // 1. Optional web search
+    const tavilyKey = TAVILY();
+    let searchContext = '';
+    if (tavilyKey) {
+      setStatus('s1', 'Searching for Higgsfield Soul ID tips…');
+      const results = await tavilySearch('Higgsfield Soul ID character consistency best practices 2025');
+      showSearchResults('s1', results, 'Soul ID Research');
+      if (results?.answer) searchContext = `\n\nLIVE RESEARCH CONTEXT:\n${results.answer}`;
+      if (results?.results) {
+        searchContext += '\n' + results.results.slice(0,2).map(r => r.content?.slice(0,300)).filter(Boolean).join('\n');
+      }
+    }
+
+    // 2. Build prompt
+    setStatus('s1', 'Generating prompts with Claude…');
+
+    const gender = document.getElementById('s1-gender').value;
+    const age = document.getElementById('s1-age').value;
+    const skin = document.getElementById('s1-skin').value;
+    const hair = document.getElementById('s1-hair').value;
+    const face = document.getElementById('s1-face').value;
+    const eyes = document.getElementById('s1-eyes').value;
+    const outfit = document.getElementById('s1-outfit').value;
+    const extra = document.getElementById('s1-extra').value;
+    const model = document.getElementById('s1-model').value;
+    const quality = document.getElementById('s1-quality').value;
+    const vars = parseInt(document.getElementById('s1-vars').value);
+
+    const system = `You are an expert AI image prompt engineer for Higgsfield's ${model} model. You write hyper-precise, production-ready prompts. Output ONLY prompt text — no explanations, no markdown fences, no preamble. Separate each prompt with [LABEL] on its own line followed by the prompt.${searchContext}`;
+
+    const varInstructions = vars === 0
+      ? 'Generate the character reference sheet prompt only.'
+      : `Generate the character reference sheet prompt. Then generate ${vars} distinct Soul ID portrait prompts, each in a different real-world environment or lighting scenario, labeled [SOUL ID 1 — Environment Name] etc.`;
+
+    const user = `Generate Higgsfield ${model} (${quality}) prompts for this subject:
+Gender: ${gender} | Age: ${age}
+Skin: ${skin}
+Hair: ${hair}
+Face: ${face}
+Eyes: ${eyes}
+Outfit: ${outfit}
+${extra ? 'Extra: ' + extra : ''}
+
+${varInstructions}
+
+CHARACTER SHEET must use this exact layout:
+- Two rows on plain white background
+- Top row: 4 close-up headshots equally sized — front facing, left profile, right profile, back of head
+- Bottom row: 3 full body shots — front, side profile, back
+- Replicate every facial detail exactly: skin texture, open pores, natural blemishes, hair texture, eye catchlights
+- Soft neutral flat studio lighting, no shadows, no color cast
+- Shot on Hasselblad X2D 100C, photorealistic, sharp micro detail, RAW photograph
+
+SOUL ID PORTRAITS must each:
+- Be a single cinematic environment portrait
+- End with: "Ensure facial consistency is identical to the reference with hyper realistic skin texture and open pores, exact facial hair and symmetry as the reference image."
+- Include specific camera model
+
+Format:
+[CHARACTER SHEET]
+(full prompt here)
+
+[SOUL ID 1 — Name]
+(full prompt here)
+etc.`;
+
+    const result = await callClaude(system, user);
+    renderOutput('s1-out', result, 's1');
+
+  } catch (e) {
+    showErr('s1', e.message);
+  } finally {
+    clearStatus('s1');
+    setBtn('s1-btn', false, 'GENERATE CHARACTER SHEET');
+  }
+}
+
+// ══════════════════════════════════════
+// SEGMENT 3 — CINEMATIC B-ROLL
+// ══════════════════════════════════════
+async function generateSeg3() {
+  clearErr('s3');
+  setBtn('s3-btn', true, 'GENERATING…');
+
+  try {
+    const mode = document.getElementById('s3-mode').value;
+
+    // 1. Optional web search
+    const tavilyKey = TAVILY();
+    let searchContext = '';
+    if (tavilyKey) {
+      setStatus('s3', 'Searching for Kling 3.0 cinematic prompt tips…');
+      const query = mode === 'product'
+        ? 'Higgsfield Kling 3.0 UGC product ad prompt structure best practices'
+        : 'Higgsfield Kling 3.0 cinematic multi-shot narrative b-roll prompt techniques 2025';
+      const results = await tavilySearch(query);
+      showSearchResults('s3', results, 'Kling 3.0 Research');
+      if (results?.answer) searchContext = `\n\nLIVE RESEARCH CONTEXT:\n${results.answer}`;
+      if (results?.results) {
+        searchContext += '\n' + results.results.slice(0,2).map(r => r.content?.slice(0,300)).filter(Boolean).join('\n');
+      }
+    }
+
+    setStatus('s3', 'Generating cinematic prompts with Claude…');
+
+    const system = `You are an expert AI video and image prompt engineer specializing in Higgsfield Kling 3.0. You follow the exact structure: Camera → Subject → Action → Environment → Lighting → Texture → Audio. All video prompts must have explosive Hollywood-cinematic movement — NO static or posed shots. Output ONLY prompt text, no explanations, no markdown fences.${searchContext}`;
+
+    let user = '';
+
+    if (mode === 'product') {
+      const pn = document.getElementById('p-name').value;
+      const pd = document.getElementById('p-desc').value;
+      const ps = document.getElementById('p-setting').value;
+      const po = document.getElementById('p-outfit').value;
+      const pl = document.getElementById('p-light').value;
+      const pDur = document.getElementById('p-dur').value;
+      const pShots = document.getElementById('p-shots').value;
+      const pa = document.getElementById('p-action').value;
+
+      user = `Generate a complete product ad prompt package for: ${pn} (${pd})
+Setting: ${ps}
+Model outfit: ${po}
+Lighting: ${pl}
+Action: ${pa}
+Duration: ${pDur} | Shots: ${pShots}
+
+Generate these in order:
+
+[IMAGE PROMPT — MODEL WITH PRODUCT]
+Nanobanana 2. Candid, authentic UGC shot. Model seated at gym, holding product toward camera. Exact product text readable. Gritty real environment. End with: "Ensure product text is legible and consistent with reference. Ensure facial consistency is identical to the reference image with hyper realistic skin texture and open pores, exact facial hair and symmetry as the reference image. Shot on iPhone, handheld, slightly imperfect framing."
+
+[IMAGE PROMPT — HAND HOLD CLOSEUP]
+Close-up hand hold, product dominant in foreground, text fully readable, same environment. End with: "Ensure product text is legible and consistent with reference. Shot on iPhone, shallow depth of field."
+
+[VIDEO PROMPT — MAIN SHOT]
+Kling 3.0 ${pDur}. Camera→Subject→Action→Environment→Lighting→Texture→Audio structure. Talent performs: ${pa}. Cinematic movement enforced. No dialogue unless action specifies.
+
+${parseInt(pShots) >= 3 ? '[VIDEO PROMPT — PRODUCT BEAUTY CLOSEUP]\nKling 3.0 tight product beauty shot. Dynamic macro camera push-in or orbit. Product fills frame. Kinetic movement.' : ''}
+
+No preamble. Just the labeled prompts.`;
+
+    } else {
+      const loc = document.getElementById('c-loc').value;
+      const atmos = document.getElementById('c-atmos').value;
+      const look = document.getElementById('c-look').value;
+      const theme = document.getElementById('c-theme').value;
+      const scenes = document.getElementById('c-scenes').value;
+      const cam = document.getElementById('c-cam').value;
+      const grade = document.getElementById('c-grade').value;
+      const arc = document.getElementById('c-arc').value;
+
+      user = `Generate a cinematic b-roll prompt package for Higgsfield ${cam}:
+
+Location: ${loc}
+Atmosphere: ${atmos}
+Character look: ${look}
+Theme: ${theme}
+Color grade: ${grade}
+Scene arc: ${arc}
+Number of scenes: ${scenes}
+
+Generate:
+
+[IMAGE PROMPT — ESTABLISHING FRAME]
+Nanobanana 2. Primary scene still image used as video start frame. Cinematic composition, full environment visible, character positioned. Moody atmosphere. ${grade}. End with "Shot on ARRI ALEXA 35, 35mm, photorealistic."
+
+[IMAGE PROMPT — ALTERNATE ANGLE]
+Second angle for cut-away or end frame. Different focal length or camera position. Same color grade.
+
+Then generate ${scenes} scene prompts using Camera→Subject→Action→Environment→Lighting→Texture→Audio:
+
+[SCENE 1 — (short name)] (X sec)
+[SCENE 2 — (short name)] (X sec)
+etc.
+
+Each scene: assign duration (longer for wide establishing, shorter for close reaction cuts). Include [AUDIO: description] at end of each scene. Every scene must have purposeful camera movement OR significant character motion. No static shots.`;
+    }
+
+    const result = await callClaude(system, user);
+    renderOutput('s3-out', result, 's3');
+
+  } catch (e) {
+    showErr('s3', e.message);
+  } finally {
+    clearStatus('s3');
+    setBtn('s3-btn', false, 'GENERATE B-ROLL PROMPTS');
+  }
+}
+</script>
+</body>
+</html>
