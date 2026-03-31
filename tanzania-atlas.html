@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Tanzania — NANDYVISUALS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #080d14;
+    --bg2:      #0e1520;
+    --bg3:      #131c2a;
+    --surface:  #192234;
+    --surface2: #1e2940;
+    --border:   rgba(255,255,255,0.07);
+    --border2:  rgba(255,255,255,0.13);
+    --text:     #dce4f0;
+    --muted:    #6b7d9a;
+    --muted2:   #8fa0bc;
+    --accent:   #2dd4bf;
+    --accentd:  #0d9488;
+    --gold:     #c9a84c;
+    --goldd:    #a8852a;
+    --amber:    #f59e0b;
+    --red:      #e05050;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  .app { max-width: 680px; margin: 0 auto; padding: 0 0 100px; position: relative; z-index: 1; }
+
+  /* ─── HEADER ─── */
+  .header {
+    padding: 60px 24px 48px;
+    text-align: center;
+    position: relative;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+  .brand {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(38px, 8vw, 56px);
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.05;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .header-tagline {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .header-desc {
+    font-size: 14px;
+    color: var(--muted2);
+    max-width: 420px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  /* ─── TABS ─── */
+  .tab-row {
+    display: flex;
+    gap: 2px;
+    margin: 48px 24px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+  }
+  .tab {
+    flex: 1;
+    padding: 9px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.5px;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-radius: 9px;
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--accent); color: #080d14; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* ─── SECTION LABELS ─── */
+  .sec-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* ─── SYSTEM PILLARS ─── */
+  .pillars-section { padding: 40px 24px 0; }
+  .pillars { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .pillar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 14px;
+    transition: border-color 0.2s;
+  }
+  .pillar:hover { border-color: var(--border2); }
+  .pillar-glyph { font-size: 18px; margin-bottom: 8px; }
+  .pillar-title { font-size: 11px; font-weight: 500; color: var(--accent); margin-bottom: 5px; line-height: 1.4; }
+  .pillar-body { font-size: 10px; color: var(--muted); line-height: 1.6; }
+
+  /* ─── CHAPTERS ─── */
+  .chapters-section { padding: 32px 24px 0; }
+  .chapters-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .chapter-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .chapter-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--ch-color, var(--accent));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .chapter-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .chapter-card:hover::before { opacity: 1; }
+  .chapter-card.active { border-color: var(--accent); background: var(--bg3); }
+  .chapter-card.active::before { opacity: 1; }
+
+  .ch-icon {
+    width: 44px; height: 44px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  .ch-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .ch-tags { font-size: 11px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+  .ch-cta { font-size: 11px; color: var(--accent); font-weight: 500; }
+
+  /* ─── CHAPTER DETAIL ─── */
+  .detail-panel {
+    display: none;
+    padding: 0 24px;
+    margin-top: 24px;
+    animation: fadeUp 0.25s ease;
+  }
+  .detail-panel.open { display: block; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    margin-bottom: 16px;
+    padding: 0;
+    transition: color 0.15s;
+  }
+  .back-btn:hover { color: var(--accent); }
+
+  .detail-head {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .detail-icon {
+    width: 54px; height: 54px;
+    border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .detail-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 3px;
+    line-height: 1.15;
+  }
+  .detail-sub { font-size: 11px; color: var(--muted); margin-bottom: 10px; letter-spacing: 0.5px; }
+  .detail-quote {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--muted2);
+    border-left: 2px solid var(--accent);
+    padding-left: 12px;
+    line-height: 1.7;
+  }
+
+  /* ─── MOMENTS ─── */
+  .moment-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .moment-card:hover { border-color: var(--border2); background: var(--bg3); }
+  .moment-card.selected { border-color: var(--amber); background: rgba(245,158,11,0.05); }
+  .moment-name { font-size: 13px; font-weight: 500; margin-bottom: 10px; }
+  .angles { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 10px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    cursor: pointer;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .chip:hover { border-color: var(--amber); color: var(--amber); }
+  .chip.on { background: var(--amber); border-color: var(--amber); color: #1a0a00; font-weight: 500; }
+
+  /* ─── REALISM BOX ─── */
+  .realism-card {
+    background: var(--surface);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 14px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  .realism-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .realism-head-title { font-size: 13px; font-weight: 500; color: var(--gold); }
+  .realism-head-sub { font-size: 11px; color: var(--muted); }
+  .realism-items { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .realism-items li { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted2); }
+  .r-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(201,168,76,0.12);
+    color: var(--gold);
+    font-size: 10px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ─── GENERATE ─── */
+  .gen-section { margin-top: 4px; }
+  .gen-btn {
+    width: 100%;
+    padding: 17px;
+    background: linear-gradient(135deg, var(--accentd), #0e7490);
+    border: none;
+    border-radius: 13px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: opacity 0.2s, transform 0.15s;
+    position: relative;
+  }
+  .gen-btn:not(:disabled):hover { opacity: 0.9; transform: translateY(-1px); }
+  .gen-btn:not(:disabled):active { transform: scale(0.99); }
+  .gen-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .output-panel {
+    display: none;
+    margin-top: 14px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    padding: 20px;
+    animation: fadeUp 0.2s ease;
+  }
+  .output-panel.show { display: block; }
+  .out-label { font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .out-text { font-size: 13px; color: #c0cce0; line-height: 1.9; white-space: pre-wrap; }
+  .out-error { font-size: 12px; color: #f87171; line-height: 1.7; }
+  .out-actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .act-btn {
+    font-size: 11px;
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .act-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .act-btn.done { border-color: var(--accent); color: var(--accent); }
+
+  /* ─── LIBRARY ─── */
+  .library-section { padding: 32px 24px 0; }
+  .lib-empty { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 13px; line-height: 1.8; }
+  .lib-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .lib-meta { font-size: 10px; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.3px; }
+  .lib-body { font-size: 12px; color: var(--muted2); line-height: 1.8; }
+  .lib-del {
+    position: absolute; top: 12px; right: 14px;
+    background: none; border: none;
+    color: var(--muted); font-size: 18px; cursor: pointer;
+    line-height: 1; transition: color 0.15s;
+  }
+  .lib-del:hover { color: var(--red); }
+  .lib-actions { margin-top: 10px; display: flex; gap: 8px; }
+
+  /* ─── REALISM TAB ─── */
+  .realism-section { padding: 32px 24px 0; }
+  .truth-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 4px;
+  }
+  .truth-item { display: flex; gap: 12px; margin-bottom: 14px; }
+  .truth-item:last-child { margin-bottom: 0; }
+  .truth-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); margin-top: 7px; flex-shrink: 0; }
+  .truth-label { font-size: 12px; font-weight: 500; color: var(--amber); margin-bottom: 3px; }
+  .truth-body { font-size: 12px; color: var(--muted2); line-height: 1.6; }
+
+  /* ─── SPINNER ─── */
+  .spin {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spinning 0.65s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spinning { to { transform: rotate(360deg); } }
+
+  .badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 17px; height: 17px; border-radius: 50%;
+    background: var(--accent); color: #080d14;
+    font-size: 9px; font-weight: 700;
+    margin-left: 4px; vertical-align: middle;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <span class="brand">NANDYVISUALS</span>
+    <h1>Real <em>Tanzania</em></h1>
+    <div class="header-tagline">Lived Culture Realism System</div>
+    <p class="header-desc">A Cultural Atlas documenting Tanzania through one woman's lived experiences. Not random prompts — chapters of truth.</p>
+  </header>
+
+  <!-- TABS -->
+  <div class="tab-row">
+    <button class="tab active" onclick="switchTab('chapters')">Chapters</button>
+    <button class="tab" onclick="switchTab('library')">Library <span class="badge" id="lib-badge">0</span></button>
+    <button class="tab" onclick="switchTab('realism')">Realism Check</button>
+  </div>
+
+  <!-- ═══ TAB: CHAPTERS ═══ -->
+  <div class="tab-pane active" id="tab-chapters">
+
+    <div class="pillars-section">
+      <div class="sec-label">The System</div>
+      <div class="pillars">
+        <div class="pillar">
+          <div class="pillar-glyph">📖</div>
+          <div class="pillar-title">Cultural Atlas, Not Posts</div>
+          <div class="pillar-body">Think in chapters. Each equals one lived experience angle.</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-glyph">👁</div>
+          <div class="pillar-title">One Woman, Many Moments</div>
+          <div class="pillar-body">Same subject across time. Different hair equals timeline.</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-glyph">✓</div>
+          <div class="pillar-title">7-Point Realism Check</div>
+          <div class="pillar-body">Every prompt answers all 7. Documentary, not decorative.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapters-section">
+      <div class="sec-label">Cultural Chapters</div>
+      <div class="chapters-grid" id="chapters-grid"></div>
+    </div>
+
+    <div class="detail-panel" id="detail-panel"></div>
+
+  </div>
+
+  <!-- ═══ TAB: LIBRARY ═══ -->
+  <div class="tab-pane" id="tab-library">
+    <div class="library-section">
+      <div class="sec-label">Saved Prompts</div>
+      <div id="lib-list"></div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: REALISM ═══ -->
+  <div class="tab-pane" id="tab-realism">
+    <div class="realism-section">
+      <div class="sec-label">7-Point Realism Checklist</div>
+      <div class="realism-card">
+        <div class="realism-head">
+          <span style="font-size:16px;">⊙</span>
+          <div>
+            <div class="realism-head-title">Every prompt must answer ALL 7</div>
+            <div class="realism-head-sub">Documentary, not decorative.</div>
+          </div>
+        </div>
+        <ul class="realism-items" id="full-realism-list"></ul>
+      </div>
+
+      <div class="sec-label" style="margin-top:28px;">What makes prompts feel lived-in</div>
+      <div class="truth-box">
+        <div class="truth-item">
+          <div class="truth-dot"></div>
+          <div><div class="truth-label">No generic African woman.</div><div class="truth-body">She is Tanzanian. From a specific place. Dar es Salaam street, Moshi market, Zanzibar doorway. Ground her.</div></div>
+        </div>
+        <div class="truth-item">
+          <div class="truth-dot"></div>
+          <div><div class="truth-label">Hair = timeline.</div><div class="truth-body">Short natural coils in morning shots. Long box braids in evening scenes. Hair is character continuity across the atlas.</div></div>
+        </div>
+        <div class="truth-item">
+          <div class="truth-dot"></div>
+          <div><div class="truth-label">Texture is truth.</div><div class="truth-body">Worn sandal edge. Flour on wrist. Ink-stained fingers. Phone screen cracked at corner. Details that say: this is real.</div></div>
+        </div>
+        <div class="truth-item">
+          <div class="truth-dot"></div>
+          <div><div class="truth-label">Sound is presence.</div><div class="truth-body">Call to prayer echo. Charcoal smoke haze. Rain hammering an iron roof. Matatu engine at idle. Name the sound.</div></div>
+        </div>
+        <div class="truth-item">
+          <div class="truth-dot"></div>
+          <div><div class="truth-label">Imperfection is art.</div><div class="truth-body">Slightly overexposed highlights. One strand of hair across the face. Motion blur on moving hands. Imperfect = alive.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PROXY = 'https://visionaries-rouge.vercel.app/api/proxy';
+
+const CHAPTERS = [
+  {
+    id: 'transport',
+    name: 'Transport & Movement',
+    tags: 'daladala, waiting, walking',
+    icon: '🚌',
+    color: '#2563eb',
+    grad: 'linear-gradient(135deg,#1d4ed8,#3b82f6)',
+    quote: 'Movement is the rhythm of daily survival — bodies packed, routes memorized, waiting as meditation.',
+    moments: [
+      'Boarding a packed daladala at rush hour',
+      'Waiting at a dusty bus stop alone',
+      'Walking home with groceries balanced on head',
+      'Vendor leaning into bus window mid-route',
+      'Boda boda weaving through market traffic',
+      'Sleeping against window on long bus ride',
+      'Feet in red dust at roadside stop',
+    ]
+  },
+  {
+    id: 'food',
+    name: 'Food & Heat',
+    tags: 'chapati, mishkaki, markets',
+    icon: '☕',
+    color: '#ea580c',
+    grad: 'linear-gradient(135deg,#c2410c,#f97316)',
+    quote: 'Food is preparation, community, heat, and hands.',
+    moments: [
+      'Rolling chapati dough on a metal table',
+      'Smoke rising from a mishkaki grill',
+      'Morning uji preparation before sunrise',
+      'Market bargaining over a pile of tomatoes',
+      'Peeling cassava with a short knife',
+      'Frying mandazi in deep oil at market stall',
+      'Coconut rice steam curling toward ceiling',
+    ]
+  },
+  {
+    id: 'music',
+    name: 'Sound & Music',
+    tags: 'Bongo Flava, studios, streets',
+    icon: '♪',
+    color: '#7c3aed',
+    grad: 'linear-gradient(135deg,#5b21b6,#8b5cf6)',
+    quote: 'Sound is the invisible architecture of every street.',
+    moments: [
+      'Phone speaker playing Bongo Flava at a kiosk',
+      'Young man singing alone on a rooftop at dusk',
+      'Church choir rehearsal through open iron windows',
+      'Outdoor speaker crackling at evening market',
+      'Recording studio session, late night in Dar',
+      'Local FM station radio DJ booth',
+      'Drum circle gathering in open courtyard',
+    ]
+  },
+  {
+    id: 'domestic',
+    name: 'Domestic Life',
+    tags: 'laundry, hair, courtyards',
+    icon: '⌂',
+    color: '#059669',
+    grad: 'linear-gradient(135deg,#047857,#10b981)',
+    quote: 'Home is where the rituals live — the daily performances no one performs for.',
+    moments: [
+      'Hanging laundry across a shared courtyard line',
+      'Braiding hair on the front step in morning sun',
+      'Sweeping a packed-earth floor at dawn',
+      'Cooking over a charcoal jiko in evening light',
+      'Children doing homework by a phone's glow',
+      'Washing dishes in a metal basin outside',
+      'Folding kanga fabric on top of a bed',
+    ]
+  },
+  {
+    id: 'faith',
+    name: 'Faith & Pause',
+    tags: 'Sunday walks, silence, breath',
+    icon: '◎',
+    color: '#6366f1',
+    grad: 'linear-gradient(135deg,#4338ca,#818cf8)',
+    quote: 'Pause is not empty — it is full of presence.',
+    moments: [
+      'Head bowed, empty street mid-afternoon',
+      'Listening to the mosque call at dusk alone',
+      'Sitting on a doorstep watching nothing in particular',
+      'Hands folded in lap, waiting for rain to start',
+      'Walking from Sunday service alone on red road',
+      'A single candle burning in a window at night',
+      'Woman in white headwrap standing at iron gate',
+    ]
+  },
+  {
+    id: 'night',
+    name: 'Night & Rooftops',
+    tags: 'city hum, reflection',
+    icon: '☽',
+    color: '#0891b2',
+    grad: 'linear-gradient(135deg,#0e7490,#22d3ee)',
+    quote: 'Night is when the city exhales — rooftops hold what daylight hides.',
+    moments: [
+      'Standing at rooftop edge watching city lights',
+      'Sitting alone on a plastic chair under night sky',
+      'Street light casting through iron window bars',
+      'Night market with phone glow on every face',
+      'Power cut — multiple candles appearing in windows',
+      'Rain hitting iron roof loudly in full darkness',
+      'Watching a neighbor\'s courtyard from the floor above',
+    ]
+  },
+];
+
+const ANGLES = ['Ground-level','Shoulder POV','Reflection','Obstructed','Overhead','Follow-behind','Close hands'];
+
+const REALISM = [
+  'Camera position physically defined',
+  'Specific time of day mentioned',
+  'Ambient sound described',
+  'Skin texture contact noted',
+  'Intentional imperfection included',
+  'Purposeful cropping specified',
+  'Cultural specificity grounded — Tanzanian, not generic African',
+];
+
+let library = [];
+let activeChapter = null;
+let activeMoment = null;
+let activeAngle  = null;
+let busy = false;
+
+// ─── TABS ───
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['chapters','library','realism'][i] === name);
+  });
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'library') renderLibrary();
+}
+
+// ─── CHAPTERS ───
+function renderChapters() {
+  const grid = document.getElementById('chapters-grid');
+  grid.innerHTML = CHAPTERS.map(ch => `
+    <div class="chapter-card" id="card-${ch.id}" style="--ch-color:${ch.color}" onclick="openChapter('${ch.id}')">
+      <div class="ch-icon" style="background:${ch.grad}">${ch.icon}</div>
+      <div class="ch-name">${ch.name}</div>
+      <div class="ch-tags">${ch.tags}</div>
+      <div class="ch-cta">Explore Chapter ›</div>
+    </div>
+  `).join('');
+}
+
+function openChapter(id) {
+  const ch = CHAPTERS.find(c => c.id === id);
+  if (!ch) return;
+  activeChapter = ch;
+  activeMoment  = null;
+  activeAngle   = null;
+
+  document.querySelectorAll('.chapter-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('card-' + id)?.classList.add('active');
+
+  const panel = document.getElementById('detail-panel');
+  panel.innerHTML = `
+    <button class="back-btn" onclick="closeChapter()">← All Chapters</button>
+
+    <div class="detail-head">
+      <div class="detail-icon" style="background:${ch.grad}">${ch.icon}</div>
+      <div>
+        <div class="detail-title">${ch.name}</div>
+        <div class="detail-sub">${ch.tags}</div>
+        <div class="detail-quote">${ch.quote}</div>
+      </div>
+    </div>
+
+    <div class="sec-label">Key Moments</div>
+
+    ${ch.moments.map((m,i) => `
+      <div class="moment-card" id="mc-${i}" onclick="pickMoment(${i})">
+        <div class="moment-name">${m}</div>
+        <div class="angles">
+          ${ANGLES.map(a => `
+            <button class="chip" id="chip-${i}-${slug(a)}" onclick="pickAngle(event,${i},'${a}')">${a}</button>
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}
+
+    <div class="realism-card" style="margin-top:20px;">
+      <div class="realism-head">
+        <span style="font-size:15px;">⊙</span>
+        <div>
+          <div class="realism-head-title">7-Point Realism Checklist</div>
+          <div class="realism-head-sub">Every prompt must answer ALL 7</div>
+        </div>
+      </div>
+      <ul class="realism-items">
+        ${REALISM.map((r,i) => `<li><span class="r-num">${i+1}</span>${r}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="gen-section">
+      <button class="gen-btn" id="gen-btn" onclick="generate()" disabled>
+        Select a moment + angle to generate
+      </button>
+      <div class="output-panel" id="out-panel">
+        <div class="out-label">Generated Prompt</div>
+        <div id="out-body"></div>
+        <div class="out-actions">
+          <button class="act-btn" id="copy-btn" onclick="copyOut()">Copy Prompt</button>
+          <button class="act-btn" id="save-btn" onclick="saveOut()">Save to Library</button>
+          <button class="act-btn" onclick="generate()">Regenerate ↺</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  panel.classList.add('open');
+  setTimeout(() => panel.scrollIntoView({ behavior:'smooth', block:'start' }), 60);
+}
+
+function closeChapter() {
+  document.getElementById('detail-panel').classList.remove('open');
+  document.querySelectorAll('.chapter-card').forEach(c => c.classList.remove('active'));
+  activeChapter = activeMoment = activeAngle = null;
+}
+
+function slug(s) { return s.replace(/\s+/g,'_'); }
+
+function pickMoment(idx) {
+  activeMoment = idx;
+  document.querySelectorAll('.moment-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('mc-' + idx)?.classList.add('selected');
+  updateGenBtn();
+}
+
+function pickAngle(e, idx, angle) {
+  e.stopPropagation();
+  pickMoment(idx);
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  document.getElementById(`chip-${idx}-${slug(angle)}`)?.classList.add('on');
+  activeAngle = angle;
+  updateGenBtn();
+}
+
+function updateGenBtn() {
+  const btn = document.getElementById('gen-btn');
+  if (!btn) return;
+  const ready = activeMoment !== null && activeAngle;
+  btn.disabled = !ready;
+  btn.textContent = ready ? 'Generate AI Prompt ›' : 'Select a moment + angle to generate';
+}
+
+// ─── GENERATE ───
+async function generate() {
+  if (busy || !activeChapter || activeMoment === null || !activeAngle) return;
+  busy = true;
+
+  const ch  = activeChapter;
+  const mom = ch.moments[activeMoment];
+  const btn = document.getElementById('gen-btn');
+  const panel = document.getElementById('out-panel');
+  const body  = document.getElementById('out-body');
+
+  btn.innerHTML = '<span class="spin"></span>Generating…';
+  btn.disabled  = true;
+  panel.classList.remove('show');
+
+  const sys = `You are a documentary AI cinematography prompt writer for NANDYVISUALS — a real Tanzania cultural realism project. You write hyper-specific, tactile AI video/image prompts that feel lived-in and true. Always feature a Black Tanzanian woman as the subject. Rotate her look across: short natural coils, long box braids, locs, braided updo, sleek bun — NEVER teal hair. Rotate outfits: kanga wrap, printed cotton dress, work uniform, casual jeans, market seller wear.
+
+Your prompts MUST answer all 7 Realism Checks:
+1. Camera position physically defined
+2. Specific time of day mentioned
+3. Ambient sound described
+4. Skin texture contact noted
+5. Intentional imperfection included
+6. Purposeful cropping specified
+7. Cultural specificity grounded (Tanzanian, not generic African)
+
+Format: Write ONE vivid cinematic prompt paragraph of 80–120 words. No headers. No lists. Start with the camera position. End with a sound or texture detail. Make every word feel like a real documentary frame.`;
+
+  const msg = `Chapter: ${ch.name} (${ch.tags})
+Chapter tone: "${ch.quote}"
+Key moment: ${mom}
+Camera angle: ${activeAngle}
+
+Write a documentary AI prompt for this exact moment from this exact angle. Make it deeply, specifically Tanzanian.`;
+
+  try {
+    const res = await fetch(PROXY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model:      'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system:     sys,
+        messages:   [{ role:'user', content: msg }]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`Proxy ${res.status}: ${err.slice(0,200)}`);
+    }
+
+    const data = await res.json();
+    const text = (data.content || []).map(b => b.text || '').join('').trim();
+    if (!text) throw new Error('Empty response — check proxy logs.');
+
+    body.className = 'out-text';
+    body.textContent = text;
+    document.getElementById('copy-btn').textContent = 'Copy Prompt';
+    document.getElementById('copy-btn').classList.remove('done');
+
+  } catch(err) {
+    body.className = 'out-error';
+    body.innerHTML = `<b>Could not reach the AI engine.</b><br><br>${err.message}<br><br>Check that your Vercel proxy is live and has CORS headers set.`;
+  }
+
+  panel.classList.add('show');
+  busy = false;
+  btn.disabled  = false;
+  btn.textContent = 'Generate AI Prompt ›';
+}
+
+function copyOut() {
+  const text = document.getElementById('out-body')?.textContent || '';
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('done');
+    setTimeout(() => { btn.textContent = 'Copy Prompt'; btn.classList.remove('done'); }, 2000);
+  });
+}
+
+function saveOut() {
+  const text = document.getElementById('out-body')?.textContent || '';
+  if (!text || text.length < 20 || !activeChapter) return;
+  library.unshift({
+    id:      Date.now(),
+    chapter: activeChapter.name,
+    moment:  activeChapter.moments[activeMoment],
+    angle:   activeAngle,
+    text,
+    date:    new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+  });
+  document.getElementById('lib-badge').textContent = library.length;
+  const btn = document.getElementById('save-btn');
+  if (btn) { btn.textContent = 'Saved ✓'; btn.classList.add('done'); setTimeout(() => { btn.textContent = 'Save to Library'; btn.classList.remove('done'); }, 1600); }
+}
+
+// ─── LIBRARY ───
+function renderLibrary() {
+  const el = document.getElementById('lib-list');
+  if (!library.length) {
+    el.innerHTML = '<div class="lib-empty">No prompts saved yet.<br>Generate a prompt from any chapter and save it here.</div>';
+    return;
+  }
+  el.innerHTML = library.map(item => `
+    <div class="lib-card" id="lib-${item.id}">
+      <button class="lib-del" onclick="delLib(${item.id})">×</button>
+      <div class="lib-meta">${item.chapter} · ${item.angle} · ${item.date}</div>
+      <div class="lib-body">${item.text}</div>
+      <div class="lib-actions">
+        <button class="act-btn" onclick="copyLib(${item.id})">Copy</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function delLib(id) {
+  library = library.filter(i => i.id !== id);
+  document.getElementById('lib-badge').textContent = library.length;
+  renderLibrary();
+}
+
+function copyLib(id) {
+  const item = library.find(i => i.id === id);
+  if (item) navigator.clipboard.writeText(item.text);
+}
+
+// ─── REALISM CHECKLIST ───
+function renderRealism() {
+  document.getElementById('full-realism-list').innerHTML =
+    REALISM.map((r,i) => `<li><span class="r-num">${i+1}</span>${r}</li>`).join('');
+}
+
+// ─── INIT ───
+renderChapters();
+renderRealism();
+renderLibrary();
+</script>
+</body>
+</html>
