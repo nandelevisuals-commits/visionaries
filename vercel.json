@@ -1,6 +1,8 @@
 {
   "rewrites": [
     { "source": "/mediakit", "destination": "/mediakit.html" },
-    { "source": "/mediakit/", "destination": "/mediakit.html" }
+    { "source": "/mediakit/", "destination": "/mediakit.html" },
+    { "source": "/tanzania-atlas", "destination": "/tanzania-atlas.html" },
+    { "source": "/tanzania-atlas/", "destination": "/tanzania-atlas.html" }
   ]
 }
