@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Tanzania — NANDYVISUALS</title>
+<meta name="description" content="A Cultural Atlas of Tanzania through one woman's lived experiences. 7 chapters. 70+ documentary prompts. AI content that feels true.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #070d12;
+  --bg2: #0b1319;
+  --surface: #111c24;
+  --surface2: #172230;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text: #dce6f0;
+  --muted: #6b7d90;
+  --muted2: #8fa0b8;
+  --accent: #2dd4bf;
+  --accentd: #0d9488;
+  --gold: #c9a84c;
+  --amber: #f59e0b;
+  --pink: #ec4899;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── GRAIN ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* ── NAV ── */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(7,13,18,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-brand {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: none;
+}
+.nav-cta {
+  padding: 9px 20px;
+  background: var(--accent);
+  color: #070d12;
+  border-radius: 40px;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.2s, transform 0.15s;
+  letter-spacing: 0.3px;
+}
+.nav-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 28px 60px;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 500px;
+  background: radial-gradient(ellipse at center, rgba(45,212,191,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 28px;
+  padding: 7px 16px;
+  border: 1px solid rgba(45,212,191,0.2);
+  border-radius: 40px;
+  background: rgba(45,212,191,0.05);
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 12vw, 96px);
+  font-weight: 600;
+  line-height: 0.95;
+  color: #fff;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero-sub {
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+.hero-desc {
+  font-size: 16px;
+  color: var(--muted2);
+  max-width: 480px;
+  line-height: 1.85;
+  margin-bottom: 48px;
+}
+.hero-desc strong { color: var(--text); font-weight: 500; }
+
+.hero-btns {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 60px;
+}
+.btn-primary {
+  padding: 16px 36px;
+  background: linear-gradient(135deg, var(--accentd), #0e7490);
+  color: #fff;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.2s, transform 0.15s;
+  letter-spacing: 0.3px;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn-ghost {
+  padding: 16px 28px;
+  border: 1px solid var(--border2);
+  color: var(--muted2);
+  border-radius: 50px;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+/* STATS ROW */
+.stats {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.stat { text-align: center; }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-num span { color: var(--accent); }
+.stat-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── DIVIDER ── */
+.divider {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--border2), transparent);
+  margin: 0 auto;
+}
+
+/* ── SECTIONS ── */
+section { padding: 80px 28px; max-width: 720px; margin: 0 auto; }
+
+.sec-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sec-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.sec-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 6vw, 48px);
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.sec-title em { font-style: italic; color: var(--accent); }
+.sec-body { font-size: 15px; color: var(--muted2); line-height: 1.85; max-width: 560px; }
+
+/* ── CHAPTERS GRID ── */
+.chapters-showcase {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 40px;
+}
+@media (max-width: 520px) { .chapters-showcase { grid-template-columns: 1fr; } }
+
+.ch-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.ch-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.ch-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--ch-col, var(--accent));
+}
+.ch-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.ch-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.ch-tags { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* NEW CHAPTER HIGHLIGHT */
+.ch-card.featured {
+  border-color: rgba(236,72,153,0.3);
+  background: linear-gradient(135deg, rgba(157,23,77,0.08), rgba(17,28,36,1));
+}
+.ch-card.featured:hover { border-color: rgba(236,72,153,0.5); }
+.new-badge {
+  position: absolute;
+  top: 14px; right: 14px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--pink);
+  background: rgba(236,72,153,0.1);
+  border: 1px solid rgba(236,72,153,0.25);
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+/* ── REALISM SECTION ── */
+.realism-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 36px;
+}
+@media (max-width: 520px) { .realism-grid { grid-template-columns: 1fr; } }
+
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.r-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.12);
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.r-text { font-size: 12px; color: var(--muted2); line-height: 1.6; }
+
+/* ── SAMPLE PROMPT ── */
+.prompt-box {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 28px;
+  margin-top: 36px;
+  position: relative;
+}
+.prompt-box::before {
+  content: '"';
+  position: absolute;
+  top: 16px; left: 22px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 60px;
+  color: var(--accent);
+  opacity: 0.2;
+  line-height: 1;
+}
+.prompt-label { font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+.prompt-meta { font-size: 10px; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.5px; }
+.prompt-text { font-size: 13px; color: #c0cce0; line-height: 1.95; font-style: italic; }
+
+/* ── WHAT YOU GET ── */
+.gets {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 36px;
+}
+.get-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+}
+.get-icon {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  background: rgba(45,212,191,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.get-title { font-size: 13px; font-weight: 500; margin-bottom: 3px; color: var(--text); }
+.get-body { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* ── PRICING ── */
+.pricing-box {
+  background: var(--surface);
+  border: 1px solid rgba(45,212,191,0.2);
+  border-radius: 20px;
+  padding: 40px 36px;
+  text-align: center;
+  margin-top: 0;
+  position: relative;
+  overflow: hidden;
+}
+.pricing-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 300px; height: 200px;
+  background: radial-gradient(ellipse, rgba(45,212,191,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.price-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+.price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 72px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.price sup { font-size: 32px; vertical-align: top; margin-top: 12px; }
+.price-sub { font-size: 12px; color: var(--muted); margin-bottom: 32px; }
+.price-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 36px;
+  text-align: left;
+}
+.price-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted2);
+}
+.price-features li::before {
+  content: '✓';
+  color: var(--accent);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.buy-btn {
+  display: block;
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, var(--accentd), #0e7490);
+  color: #fff;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.2s, transform 0.15s;
+  letter-spacing: 0.3px;
+  margin-bottom: 14px;
+}
+.buy-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+.buy-note { font-size: 11px; color: var(--muted); }
+
+/* ── CREATOR ── */
+.creator-section {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-top: 0;
+}
+@media (max-width: 520px) { .creator-section { flex-direction: column; } }
+.creator-avatar {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accentd), #0e7490);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+  flex-shrink: 0;
+}
+.creator-name { font-size: 15px; font-weight: 500; margin-bottom: 3px; }
+.creator-handle { font-size: 11px; color: var(--accent); margin-bottom: 12px; }
+.creator-bio { font-size: 13px; color: var(--muted2); line-height: 1.75; }
+
+/* ── FAQ ── */
+.faq { display: flex; flex-direction: column; gap: 12px; margin-top: 0; }
+.faq-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.faq-q { font-size: 13px; font-weight: 500; margin-bottom: 8px; color: var(--text); }
+.faq-a { font-size: 12px; color: var(--muted2); line-height: 1.7; }
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 40px 28px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+}
+footer a { color: var(--accent); text-decoration: none; }
+
+/* ── SCROLL ANIMATION ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#">NANDYVISUALS</a>
+  <a class="nav-cta" href="https://wandiko.gumroad.com" target="_blank">Get Access — $37</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">New Release</div>
+  <h1>Real<br><em>Tanzania</em></h1>
+  <div class="hero-sub">Lived Culture Realism System</div>
+  <p class="hero-desc">
+    A Cultural Atlas of Tanzania told through <strong>one woman's lived experiences.</strong>
+    Not random prompts — <strong>chapters of truth.</strong> AI content that actually feels like home.
+  </p>
+  <div class="hero-btns">
+    <a class="btn-primary" href="https://wandiko.gumroad.com" target="_blank">Get Access for $37 →</a>
+    <a class="btn-ghost" href="#chapters">See the Chapters</a>
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">7<span>+</span></div>
+      <div class="stat-label">Cultural Chapters</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">70<span>+</span></div>
+      <div class="stat-label">Key Moments</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">7</div>
+      <div class="stat-label">Realism Checks</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Prompts Generated</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- WHAT IS IT -->
+<section class="reveal">
+  <div class="sec-label">The Concept</div>
+  <h2 class="sec-title">Not a prompt pack.<br>A <em>cultural atlas.</em></h2>
+  <p class="sec-body">
+    Most AI content about Africa is decorative — beautiful, but hollow. Real Tanzania is built differently. Every prompt is grounded in a specific cultural chapter, a specific moment, a specific camera angle. The result? AI visuals that feel like documentary photography, not stock images.
+  </p>
+</section>
+
+<!-- CHAPTERS -->
+<section id="chapters" class="reveal" style="padding-top:0;">
+  <div class="sec-label">Cultural Chapters</div>
+  <h2 class="sec-title">Seven lenses.<br><em>One woman's life.</em></h2>
+  <div class="chapters-showcase">
+    <div class="ch-card" style="--ch-col:#2563eb;">
+      <div class="ch-icon" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6)">🚌</div>
+      <div class="ch-name">Transport & Movement</div>
+      <div class="ch-tags">daladala, waiting, walking</div>
+    </div>
+    <div class="ch-card" style="--ch-col:#ea580c;">
+      <div class="ch-icon" style="background:linear-gradient(135deg,#c2410c,#f97316)">☕</div>
+      <div class="ch-name">Food & Heat</div>
+      <div class="ch-tags">chapati, mishkaki, markets</div>
+    </div>
+    <div class="ch-card" style="--ch-col:#7c3aed;">
+      <div class="ch-icon" style="background:linear-gradient(135deg,#5b21b6,#8b5cf6)">♪</div>
+      <div class="ch-name">Sound & Music</div>
+      <div class="ch-tags">Bongo Flava, studios, streets</div>
+    </div>
+    <div class="ch-card" style="--ch-col:#059669;">
+      <div class="ch-icon" style="background:linear-gradient(135deg,#047857,#10b981)">⌂</div>
+      <div class="ch-name">Domestic Life</div>
+      <div class="ch-tags">laundry, hair, courtyards</div>
+    </div>
+    <div class="ch-card" style="--ch-col:#6366f1;">
+      <div class="ch-icon" style="background:linear-gradient(135deg,#4338ca,#818cf8)">◎</div>
+      <div class="ch-name">Faith & Pause</div>
+      <div class="ch-tags">Sunday walks, silence, breath</div>
+    </div>
+    <div class="ch-card" style="--ch-col:#0891b2;">
+      <div class="ch-icon" style="background:linear-gradient(135deg,#0e7490,#22d3ee)">☽</div>
+      <div class="ch-name">Night & Rooftops</div>
+      <div class="ch-tags">city hum, reflection</div>
+    </div>
+    <div class="ch-card featured" style="--ch-col:#ec4899; grid-column: 1 / -1;">
+      <span class="new-badge">New Chapter</span>
+      <div class="ch-icon" style="background:linear-gradient(135deg,#9d174d,#ec4899)">✈</div>
+      <div class="ch-name">The Arrival Back Home</div>
+      <div class="ch-tags">airport, commute, first moments, family gate, the first meal</div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE PROMPT -->
+<section class="reveal" style="padding-top:0;">
+  <div class="sec-label">Sample Output</div>
+  <h2 class="sec-title">What a <em>real</em> prompt looks like.</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Generated Prompt</div>
+    <div class="prompt-meta">Chapter: Food & Heat · Moment: Rolling chapati dough · Angle: Close hands</div>
+    <p class="prompt-text">
+      Extreme close-up, hands-only frame, 35mm documentary lens at countertop height — a young Tanzanian woman's hands press and roll chapati dough on a weathered metal table, the heel of her palm leaving a slight impression. Early morning, 6:47am, the kitchen window behind her is pale blue-grey. Her knuckles are slightly ashen from the flour, a single gold ring on her right hand. The dough is imperfect — slightly torn at one edge where she pressed too hard. The sound underneath everything: a gas burner hissing low, and outside, a rooster beginning.
+    </p>
+  </div>
+</section>
+
+<!-- REALISM SYSTEM -->
+<section class="reveal" style="padding-top:0;">
+  <div class="sec-label">The System</div>
+  <h2 class="sec-title">Every prompt passes<br>the <em>7-Point Check.</em></h2>
+  <p class="sec-body" style="margin-bottom:0;">No prompt leaves the tool without answering all seven. This is what separates documentary AI from decorative AI.</p>
+  <div class="realism-grid">
+    <div class="r-card"><span class="r-num">1</span><span class="r-text">Camera position physically defined</span></div>
+    <div class="r-card"><span class="r-num">2</span><span class="r-text">Specific time of day mentioned</span></div>
+    <div class="r-card"><span class="r-num">3</span><span class="r-text">Ambient sound described</span></div>
+    <div class="r-card"><span class="r-num">4</span><span class="r-text">Skin texture contact noted</span></div>
+    <div class="r-card"><span class="r-num">5</span><span class="r-text">Intentional imperfection included</span></div>
+    <div class="r-card"><span class="r-num">6</span><span class="r-text">Purposeful cropping specified</span></div>
+    <div class="r-card" style="grid-column:1/-1;"><span class="r-num">7</span><span class="r-text">Cultural specificity grounded — Tanzanian, not generic African</span></div>
+  </div>
+</section>
+
+<!-- WHAT YOU GET -->
+<section class="reveal" style="padding-top:0;">
+  <div class="sec-label">What's Inside</div>
+  <h2 class="sec-title">Everything you <em>get.</em></h2>
+  <div class="gets">
+    <div class="get-row">
+      <div class="get-icon">📖</div>
+      <div><div class="get-title">7 Cultural Chapters</div><div class="get-body">Transport, Food, Music, Domestic Life, Faith, Night, and the brand new Arrival Back Home chapter — each with 7–10 key moments.</div></div>
+    </div>
+    <div class="get-row">
+      <div class="get-icon">⚡</div>
+      <div><div class="get-title">AI Prompt Generator</div><div class="get-body">Pick a moment, pick a camera angle, hit generate. Claude writes your full documentary prompt in seconds — tuned to the 7-Point Realism Check every time.</div></div>
+    </div>
+    <div class="get-row">
+      <div class="get-icon">📐</div>
+      <div><div class="get-title">7 Camera Angles Per Moment</div><div class="get-body">Ground-level, Shoulder POV, Reflection, Obstructed, Overhead, Follow-behind, Close hands — every moment told seven different ways.</div></div>
+    </div>
+    <div class="get-row">
+      <div class="get-icon">💾</div>
+      <div><div class="get-title">Personal Prompt Library</div><div class="get-body">Save your best generated prompts inside the tool. Copy and take them straight into Midjourney, Kling, Sora or any AI image tool.</div></div>
+    </div>
+    <div class="get-row">
+      <div class="get-icon">♾</div>
+      <div><div class="get-title">Unlimited Generations</div><div class="get-body">One price, generate forever. No credits, no limits. Yours to use for content, client work, or personal projects.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="reveal" style="padding-top:0;">
+  <div class="sec-label">Pricing</div>
+  <div class="pricing-box">
+    <div class="price-label">One-Time Access</div>
+    <div class="price"><sup>$</sup>37</div>
+    <div class="price-sub">Pay once. Use forever. No subscription.</div>
+    <ul class="price-features">
+      <li>Full access to all 7 Cultural Chapters</li>
+      <li>AI Prompt Generator (unlimited)</li>
+      <li>7 camera angles per moment</li>
+      <li>Personal prompt library</li>
+      <li>The Arrival Back Home chapter</li>
+      <li>All future chapter updates included</li>
+    </ul>
+    <a class="buy-btn" href="https://wandiko.gumroad.com" target="_blank">Get Real Tanzania — $37 →</a>
+    <div class="buy-note">Instant access · Secure checkout via Gumroad</div>
+  </div>
+</section>
+
+<!-- CREATOR -->
+<section class="reveal" style="padding-top:0;">
+  <div class="sec-label">The Creator</div>
+  <div class="creator-section">
+    <div class="creator-avatar">N</div>
+    <div>
+      <div class="creator-name">Nandy</div>
+      <div class="creator-handle">@nandyvisuals · @theeaivisualz</div>
+      <p class="creator-bio">
+        AI visual content creator and digital product entrepreneur. Originally from Tanzania, now based in America — building cinematic AI content rooted in real cultural memory. Real Tanzania was built from lived experience, not research. Every chapter is a place I know.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="reveal" style="padding-top:0;">
+  <div class="sec-label">FAQ</div>
+  <div class="faq">
+    <div class="faq-item">
+      <div class="faq-q">What AI tools do the prompts work with?</div>
+      <div class="faq-a">Midjourney, Kling, Sora, Runway, Hailuo, Seedream — any text-to-image or text-to-video tool. The prompts are formatted to work across all of them.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is this a prompt pack PDF or a live tool?</div>
+      <div class="faq-a">It's a live web app. You select a chapter, a moment, and a camera angle — then the AI generates a fresh, unique prompt every time. Not a static document.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I use these for client work or commercial projects?</div>
+      <div class="faq-a">Yes. Once you purchase, you can use the generated prompts for your own content, client projects, social media, and commercial AI visuals.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Will more chapters be added?</div>
+      <div class="faq-a">Yes — the atlas is growing. Markets, school life, water & rivers, and more chapters are planned. All future additions are included with your one-time purchase.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Do I need an Anthropic or AI API key?</div>
+      <div class="faq-a">No. The AI generation is built into the tool. You just open it in your browser and start generating. Nothing to set up.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="reveal" style="text-align:center; padding-bottom:100px;">
+  <div class="sec-label" style="justify-content:center;">Ready?</div>
+  <h2 class="sec-title" style="margin-bottom:16px;">Stop making content<br>that looks <em>about</em> Africa.</h2>
+  <p class="sec-body" style="margin:0 auto 40px; text-align:center;">Make content that feels like it's <em>from</em> Tanzania.</p>
+  <a class="btn-primary" style="display:inline-block;" href="https://wandiko.gumroad.com" target="_blank">Get Real Tanzania — $37 →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 NANDYVISUALS · <a href="https://wandiko.gumroad.com" target="_blank">Gumroad</a> · <a href="https://visionaries-rouge.vercel.app/tanzania-atlas" target="_blank">Open the Tool</a></p>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
