@@ -1,10 +1,8 @@
 {
   "rewrites": [
-    { "source": "/mediakit", "destination": "/mediakit.html" },
-    { "source": "/mediakit/", "destination": "/mediakit.html" },
-    { "source": "/tanzania-atlas", "destination": "/tanzania-atlas.html" },
-    { "source": "/tanzania-atlas/", "destination": "/tanzania-atlas.html" },
-    { "source": "/real-tanzania", "destination": "/real-tanzania-landing.html" },
-    { "source": "/real-tanzania/", "destination": "/real-tanzania-landing.html" }
+    { "source": "/brand-deal-engine", "destination": "/brand-deal-engine/index.html" },
+    { "source": "/brand-deal-engine/", "destination": "/brand-deal-engine/index.html" },
+    { "source": "/brand-deal-engine/access", "destination": "/brand-deal-engine/access.html" },
+    { "source": "/brand-deal-engine/app", "destination": "/brand-deal-engine/access.html" }
   ]
 }

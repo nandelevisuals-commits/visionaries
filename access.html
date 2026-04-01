@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Deal Engine — Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070707;--card:#111;--b:#1e1e1e;--accent:#d4f53c;--text:#f2f2f2;--muted:#555;--m2:#888;--a2:#ff4f4f;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.bg-grid{position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(var(--b) 1px,transparent 1px),linear-gradient(90deg,var(--b) 1px,transparent 1px);background-size:44px 44px;opacity:0.18;mask-image:radial-gradient(ellipse at center,black 20%,transparent 70%);}
+.gate{background:var(--card);border:1px solid var(--b);padding:48px 40px;width:100%;max-width:400px;position:relative;animation:up 0.4s ease;}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:36px;}
+.logo-sq{width:36px;height:36px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:20px;color:#000;}
+.logo-text{font-family:'Bebas Neue';font-size:17px;letter-spacing:3px;}
+.logo-sub{font-size:8px;letter-spacing:2px;color:var(--m2);font-family:'Space Mono';margin-top:1px;}
+h2{font-family:'Bebas Neue';font-size:36px;letter-spacing:2px;line-height:1;margin-bottom:6px;}
+.sub{font-size:12px;color:var(--m2);margin-bottom:28px;line-height:1.6;}
+.sub strong{color:var(--text);}
+label{font-family:'Space Mono';font-size:9px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:7px;}
+input{width:100%;background:var(--bg);border:1px solid #2a2a2a;color:var(--text);padding:13px 14px;font-family:'Space Mono';font-size:14px;letter-spacing:3px;outline:none;transition:border-color 0.2s;margin-bottom:6px;}
+input:focus{border-color:var(--accent);}
+input::placeholder{color:var(--muted);letter-spacing:1px;font-size:12px;}
+.err{color:var(--a2);font-family:'Space Mono';font-size:10px;height:16px;margin-bottom:12px;letter-spacing:0.5px;}
+.btn-enter{width:100%;background:var(--accent);color:#000;border:none;padding:14px;font-family:'Bebas Neue';font-size:20px;letter-spacing:3px;cursor:pointer;transition:all 0.15s;margin-bottom:20px;}
+.btn-enter:hover{opacity:0.85;}
+.buy-link{text-align:center;font-size:11px;color:var(--m2);font-family:'Space Mono';}
+.buy-link a{color:var(--accent);text-decoration:none;}
+.buy-link a:hover{text-decoration:underline;}
+.divider{border:none;border-top:1px solid var(--b);margin:20px 0;}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="gate">
+  <div class="logo">
+    <div class="logo-sq">N</div>
+    <div><div class="logo-text">NANDYVISUALS</div><div class="logo-sub">BRAND DEAL ENGINE</div></div>
+  </div>
+  <h2>ENTER<br>ACCESS CODE</h2>
+  <p class="sub">Enter the code from your <strong>Gumroad purchase confirmation</strong> to access the Brand Deal Engine.</p>
+  <label for="code">ACCESS CODE</label>
+  <input type="password" id="code" placeholder="Enter your code..." autocomplete="off" onkeydown="if(event.key==='Enter')unlock()">
+  <div class="err" id="err"></div>
+  <button class="btn-enter" onclick="unlock()">ENTER →</button>
+  <div class="buy-link">
+    Don't have a code? <a href="./index.html">Get access here →</a>
+  </div>
+  <hr class="divider">
+  <div class="buy-link" style="font-size:10px;color:var(--muted)">Questions? DM <a href="https://instagram.com/nandyvisuals" target="_blank">@nandyvisuals</a> on Instagram</div>
+</div>
+<script>
+// Access codes — add more as you sell (each Gumroad purchase can get a unique code or all use the same)
+const CODES = [
+  'BRANDDEAL2025',
+  'NANDYBLOSSOM',
+  'DEALENGINE37',
+  'CREATOR2025',
+];
+
+function unlock() {
+  const input = document.getElementById('code').value.trim().toUpperCase();
+  const err = document.getElementById('err');
+  if (CODES.includes(input)) {
+    err.textContent = '';
+    // Store access in sessionStorage so they stay in on refresh
+    sessionStorage.setItem('bde_access', 'granted');
+    window.location.href = './engine.html';
+  } else {
+    err.textContent = '✕ Invalid code. Check your Gumroad email.';
+    document.getElementById('code').style.borderColor = '#ff4f4f';
+    setTimeout(() => {
+      document.getElementById('code').style.borderColor = '#2a2a2a';
+    }, 1500);
+  }
+}
+
+// If already has access, skip gate
+if (sessionStorage.getItem('bde_access') === 'granted') {
+  window.location.href = './engine.html';
+}
+</script>
+</body>
+</html>
