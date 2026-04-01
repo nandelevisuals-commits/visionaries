@@ -10,12 +10,3 @@
     }
   ]
 }
-```
-
-**5.** Click **"Commit changes"** → **"Commit changes"** again
-
----
-
-Then wait 60 seconds and try this URL directly — no rewrites needed for this one:
-```
-visionaries-rouge.vercel.app/brand-deal-engine/access.html
