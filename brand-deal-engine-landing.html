@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Deal Engine — NANDYVISUALS</title>
+<meta name="description" content="Land paid brand deals faster. Direct contact info, AI-powered outreach, follow-up sequences, and 20+ brands open to UGC collabs right now.">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060606;--s:#0c0c0c;--card:#111;
+  --b:#1c1c1c;--b2:#272727;
+  --accent:#d4f53c;--adim:rgba(212,245,60,0.08);
+  --a2:#ff4f4f;--a3:#3cf5c8;
+  --text:#f0f0f0;--muted:#555;--m2:#888;--gold:#f5c842;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:#222;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--b);padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.nl-sq{width:32px;height:32px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:18px;color:#000;}
+.nl-t{font-family:'Bebas Neue';font-size:15px;letter-spacing:3px;}
+.nl-s{font-size:8px;letter-spacing:2px;color:var(--m2);font-family:'Space Mono';margin-top:1px;}
+.nav-cta{background:var(--accent);color:#000;border:none;padding:9px 22px;font-family:'Bebas Neue';font-size:15px;letter-spacing:2px;cursor:pointer;transition:opacity 0.15s;text-decoration:none;display:inline-block;}
+.nav-cta:hover{opacity:0.85;}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 80px;position:relative;overflow:hidden;text-align:center;}
+.hero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--b) 1px,transparent 1px),linear-gradient(90deg,var(--b) 1px,transparent 1px);background-size:48px 48px;opacity:0.2;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 20%,transparent 70%);}
+.hero-glow{position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(212,245,60,0.06) 0%,transparent 65%);pointer-events:none;}
+
+.tag{display:inline-flex;align-items:center;gap:7px;background:var(--adim);border:1px solid rgba(212,245,60,0.18);color:var(--accent);font-family:'Space Mono';font-size:9px;letter-spacing:2px;padding:5px 14px;margin-bottom:32px;animation:fd 0.5s ease;}
+@keyframes fd{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.tag::before{content:'';width:6px;height:6px;border-radius:50%;background:#3cf57a;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+h1{font-family:'Bebas Neue';font-size:clamp(52px,13vw,110px);line-height:0.88;letter-spacing:2px;margin-bottom:24px;animation:fu 0.5s ease 0.1s both;}
+h1 .g{color:var(--accent);}
+h1 .dim{color:var(--m2);}
+.hero-sub{max-width:500px;font-size:16px;line-height:1.7;color:var(--m2);margin:0 auto 48px;animation:fu 0.5s ease 0.2s both;}
+.hero-sub strong{color:var(--text);}
+
+.price-block{display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:32px;animation:fu 0.5s ease 0.3s both;}
+.price-strike{font-size:16px;color:var(--muted);text-decoration:line-through;font-family:'Space Mono';}
+.price-main{font-family:'Bebas Neue';font-size:72px;color:var(--accent);line-height:1;}
+.price-note{font-size:11px;color:var(--m2);font-family:'Space Mono';letter-spacing:1px;}
+
+.cta-stack{display:flex;flex-direction:column;align-items:center;gap:10px;animation:fu 0.5s ease 0.4s both;}
+.btn-buy{background:var(--accent);color:#000;border:none;padding:18px 52px;font-family:'Bebas Neue';font-size:24px;letter-spacing:4px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
+.btn-buy:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(212,245,60,0.25);}
+.btn-preview{background:transparent;color:var(--m2);border:1px solid var(--b2);padding:12px 28px;font-family:'Space Mono';font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
+.btn-preview:hover{color:var(--text);border-color:var(--text);}
+.guarantee{font-size:11px;color:var(--muted);font-family:'Space Mono';margin-top:8px;letter-spacing:0.5px;}
+
+/* TICKER */
+.ticker-wrap{border-top:1px solid var(--b);border-bottom:1px solid var(--b);background:var(--s);overflow:hidden;height:34px;display:flex;align-items:center;margin-bottom:0;}
+.ticker{display:flex;gap:48px;white-space:nowrap;animation:tick 25s linear infinite;font-family:'Space Mono';font-size:10px;color:var(--muted);letter-spacing:1px;}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker span{display:flex;align-items:center;gap:8px;}
+.ticker span::before{content:'✦';color:var(--accent);font-size:7px;}
+
+/* PROOF STRIP */
+.proof-strip{display:flex;justify-content:center;gap:0;border-bottom:1px solid var(--b);overflow-x:auto;}
+.ps{padding:20px 32px;border-right:1px solid var(--b);text-align:center;flex-shrink:0;}
+.ps:last-child{border-right:none;}
+.ps-n{font-family:'Bebas Neue';font-size:40px;color:var(--accent);line-height:1;}
+.ps-l{font-size:9px;color:var(--muted);letter-spacing:1.5px;font-family:'Space Mono';margin-top:2px;}
+
+/* SECTIONS */
+section{padding:80px 24px;}
+.sec-label{font-family:'Space Mono';font-size:9px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:16px;}
+.sec-title{font-family:'Bebas Neue';font-size:clamp(36px,7vw,64px);line-height:0.95;letter-spacing:2px;margin-bottom:24px;}
+.sec-title .g{color:var(--accent);}
+
+/* FEATURES */
+.features{background:var(--s);}
+.feat-inner{max-width:1100px;margin:0 auto;}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--b);border:1px solid var(--b);}
+.feat-card{background:var(--card);padding:28px 24px;position:relative;overflow:hidden;transition:background 0.15s;}
+.feat-card:hover{background:#161616;}
+.feat-card::before{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:var(--accent);opacity:0;transition:opacity 0.2s;}
+.feat-card:hover::before{opacity:1;}
+.feat-icon{font-size:28px;margin-bottom:14px;}
+.feat-name{font-family:'Bebas Neue';font-size:20px;letter-spacing:1px;margin-bottom:8px;}
+.feat-desc{font-size:13px;line-height:1.65;color:var(--m2);}
+.feat-tag{display:inline-block;margin-top:10px;background:var(--adim);border:1px solid rgba(212,245,60,0.15);color:var(--accent);font-family:'Space Mono';font-size:8px;letter-spacing:1px;padding:3px 8px;}
+
+/* HOW IT WORKS */
+.hiw-inner{max-width:800px;margin:0 auto;}
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{display:flex;gap:24px;padding:28px 0;border-bottom:1px solid var(--b);position:relative;}
+.step:last-child{border-bottom:none;}
+.step-num{font-family:'Bebas Neue';font-size:48px;color:var(--accent);line-height:1;flex-shrink:0;width:52px;opacity:0.35;}
+.step-body{}
+.step-title{font-family:'Bebas Neue';font-size:22px;letter-spacing:1px;margin-bottom:6px;}
+.step-desc{font-size:13px;line-height:1.65;color:var(--m2);}
+
+/* BRAND PREVIEW */
+.brands-sec{background:var(--s);}
+.brands-inner{max-width:1100px;margin:0 auto;}
+.mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--b);border:1px solid var(--b);margin-bottom:32px;}
+.mini-card{background:var(--card);padding:16px;display:flex;align-items:center;gap:10px;}
+.mini-logo{width:36px;height:36px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:13px;flex-shrink:0;}
+.mini-info{}
+.mini-name{font-size:12px;font-weight:700;}
+.mini-budget{font-size:9px;color:var(--accent);font-family:'Space Mono';margin-top:2px;}
+.mini-tag{font-size:9px;color:var(--m2);font-family:'Space Mono';}
+.more-brands{text-align:center;font-family:'Space Mono';font-size:10px;color:var(--muted);letter-spacing:1px;padding:16px;border:1px solid var(--b);border-top:none;}
+
+/* TESTIMONIAL / TRUST */
+.trust-inner{max-width:900px;margin:0 auto;}
+.trust-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--b);border:1px solid var(--b);}
+.tcard{background:var(--card);padding:24px;}
+.tcard-quote{font-size:13px;line-height:1.7;color:var(--m2);margin-bottom:14px;font-style:italic;}
+.tcard-author{font-family:'Space Mono';font-size:10px;color:var(--accent);letter-spacing:0.5px;}
+.tcard-role{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* PRICING */
+.pricing-inner{max-width:700px;margin:0 auto;text-align:center;}
+.price-card{background:var(--s);border:1px solid rgba(212,245,60,0.25);padding:48px 40px;position:relative;overflow:hidden;}
+.price-card::before{content:'BEST VALUE';position:absolute;top:20px;right:-28px;background:var(--accent);color:#000;font-family:'Space Mono';font-size:8px;letter-spacing:1px;padding:4px 40px;transform:rotate(45deg);font-weight:700;}
+.pc-title{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;margin-bottom:6px;}
+.pc-sub{font-size:12px;color:var(--m2);font-family:'Space Mono';margin-bottom:32px;}
+.pc-price{font-family:'Bebas Neue';font-size:88px;color:var(--accent);line-height:1;margin-bottom:4px;}
+.pc-og{font-size:16px;color:var(--muted);text-decoration:line-through;font-family:'Space Mono';margin-bottom:32px;}
+.pc-includes{text-align:left;margin-bottom:32px;}
+.pc-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b);font-size:13px;}
+.pc-item:last-child{border-bottom:none;}
+.pc-item::before{content:'✓';color:var(--accent);font-family:'Space Mono';font-size:12px;flex-shrink:0;}
+.btn-buy-main{width:100%;background:var(--accent);color:#000;border:none;padding:20px;font-family:'Bebas Neue';font-size:26px;letter-spacing:4px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:block;text-align:center;}
+.btn-buy-main:hover{opacity:0.88;transform:translateY(-2px);}
+.refund{font-size:10px;color:var(--muted);font-family:'Space Mono';margin-top:14px;letter-spacing:0.5px;}
+
+/* FAQ */
+.faq-inner{max-width:680px;margin:0 auto;}
+.faq-item{border-bottom:1px solid var(--b);padding:20px 0;}
+.faq-q{font-size:15px;font-weight:700;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+.faq-q::after{content:'+';color:var(--accent);font-family:'Space Mono';font-size:18px;flex-shrink:0;}
+.faq-a{font-size:13px;line-height:1.7;color:var(--m2);}
+
+/* FOOTER CTA */
+.footer-cta{background:var(--s);border-top:1px solid var(--b);padding:80px 24px;text-align:center;}
+.fc-title{font-family:'Bebas Neue';font-size:clamp(40px,9vw,80px);line-height:0.9;letter-spacing:2px;margin-bottom:20px;}
+.fc-title .g{color:var(--accent);}
+.fc-sub{font-size:14px;color:var(--m2);max-width:400px;margin:0 auto 36px;}
+
+footer{border-top:1px solid var(--b);padding:24px;text-align:center;font-family:'Space Mono';font-size:9px;color:var(--muted);letter-spacing:1px;}
+
+@media(max-width:600px){
+  .proof-strip{flex-wrap:wrap;}
+  .ps{flex:1;min-width:50%;}
+  .price-card{padding:32px 20px;}
+  h1{font-size:clamp(44px,16vw,80px);}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <div class="nl-sq">N</div>
+    <div><div class="nl-t">NANDYVISUALS</div><div class="nl-s">BRAND DEAL ENGINE</div></div>
+  </div>
+  <a href="#pricing" class="nav-cta">GET ACCESS →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="tag">✦ FOR AI VISUAL CREATORS & UGC CREATORS ✦</div>
+  <h1>LAND PAID<br><span class="g">BRAND DEALS</span><br><span class="dim">IN DAYS, NOT MONTHS</span></h1>
+  <p class="hero-sub">The complete system to find, pitch, and close paid brand collaborations. <strong>Direct contact info</strong>, AI-powered outreach, follow-up sequences, and 20+ brands actively looking for creators — right now.</p>
+  <div class="price-block">
+    <div class="price-strike">$97</div>
+    <div class="price-main">$47</div>
+    <div class="price-note">ONE-TIME · INSTANT ACCESS · NO SUBSCRIPTION</div>
+  </div>
+  <div class="cta-stack">
+    <a href="https://wandiko.gumroad.com/l/branddealengine" target="_blank" class="btn-buy">GET INSTANT ACCESS →</a>
+    <a href="./app.html" class="btn-preview">PREVIEW THE APP FIRST</a>
+    <div class="guarantee">🔒 Instant delivery via email · Works in any browser</div>
+  </div>
+</section>
+
+<div class="ticker-wrap"><div class="ticker">
+  <span>FENTY BEAUTY · $500–$1.5K · CASH</span><span>PATTERN BEAUTY · $200–$600 · OPEN</span>
+  <span>RARE BEAUTY · $300–$900 · CASH</span><span>GYMSHARK · $300–$800 · OPEN</span>
+  <span>AESOP · $500–$2K · CASH</span><span>LIQUID IV · $200–$600 · OPEN</span>
+  <span>MAISON MARGIELA · $1K–$5K · CASH</span><span>AMAZON · $500–$3K · CASH</span>
+  <span>FENTY BEAUTY · $500–$1.5K · CASH</span><span>PATTERN BEAUTY · $200–$600 · OPEN</span>
+  <span>RARE BEAUTY · $300–$900 · CASH</span><span>GYMSHARK · $300–$800 · OPEN</span>
+  <span>AESOP · $500–$2K · CASH</span><span>LIQUID IV · $200–$600 · OPEN</span>
+  <span>MAISON MARGIELA · $1K–$5K · CASH</span><span>AMAZON · $500–$3K · CASH</span>
+</div></div>
+
+<!-- PROOF -->
+<div class="proof-strip">
+  <div class="ps"><div class="ps-n">20+</div><div class="ps-l">BRANDS LISTED</div></div>
+  <div class="ps"><div class="ps-n">8</div><div class="ps-l">COUNTRIES</div></div>
+  <div class="ps"><div class="ps-n">$47</div><div class="ps-l">ONE-TIME PRICE</div></div>
+  <div class="ps"><div class="ps-n">3</div><div class="ps-l">AI TOOLS INSIDE</div></div>
+</div>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="feat-inner">
+    <div class="sec-label">WHAT'S INSIDE</div>
+    <div class="sec-title">EVERYTHING YOU NEED TO<br><span class="g">CLOSE THE DEAL</span></div>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">📬</div>
+        <div class="feat-name">DIRECT CONTACT INFO</div>
+        <div class="feat-desc">Email addresses, Instagram handles, TikTok profiles, and collab portal links for every brand — plus a step-by-step guide to verify and find the right decision-maker.</div>
+        <div class="feat-tag">VERIFIED STARTING POINTS</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-name">AI OUTREACH GENERATOR</div>
+        <div class="feat-desc">Claude AI writes custom pitch messages for every brand — choose pitch type (UGC, AI Visual, Campaign), tone, and channel (DM, email, portal). Regenerate unlimited times.</div>
+        <div class="feat-tag">POWERED BY CLAUDE AI</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔁</div>
+        <div class="feat-name">FOLLOW-UP SEQUENCES</div>
+        <div class="feat-desc">Most deals close on follow-up, not first contact. Get AI-written Day 3, Day 7, and Day 14 follow-up messages — brand-specific, never generic, never desperate.</div>
+        <div class="feat-tag">3-TOUCH SEQUENCE</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔗</div>
+        <div class="feat-name">WHERE TO DM — PER BRAND</div>
+        <div class="feat-desc">Each brand shows you exactly which platforms to DM on, follower counts, direct profile links, and a DM strategy that actually gets read — including the pre-engagement method.</div>
+        <div class="feat-tag">INSTAGRAM · TIKTOK · MORE</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎯</div>
+        <div class="feat-name">ADVANCED FILTERS</div>
+        <div class="feat-desc">Filter by niche, region (US/UK/EU/AU/Global), platform, budget range, cash-only payments, open collabs, and UGC score. Find exactly the right brand for you in seconds.</div>
+        <div class="feat-tag">8 FILTER DIMENSIONS</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📋</div>
+        <div class="feat-name">COLLAB BRIEF + TRACKER</div>
+        <div class="feat-desc">Every brand includes a full collab brief (deliverables, usage rights, turnaround). Track your applications in a Drafted → Sent → Replied pipeline — no spreadsheet needed.</div>
+        <div class="feat-tag">BUILT-IN PIPELINE</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="padding:80px 24px;">
+  <div class="hiw-inner">
+    <div class="sec-label">HOW IT WORKS</div>
+    <div class="sec-title">FROM ZERO TO<br><span class="g">PITCH SENT TODAY</span></div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <div class="step-title">FIND YOUR BRAND</div>
+          <div class="step-desc">Browse 20+ brands filtered by your niche, region, and budget. Every brand shows budget range, pay type (cash vs product), and a UGC fit score so you target the right ones first.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <div class="step-title">GET THEIR CONTACT INFO</div>
+          <div class="step-desc">Open any brand's Contact tab for their email, Instagram, TikTok, and collab portal. Use the built-in guide to find and verify the right person before you reach out.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <div class="step-title">GENERATE YOUR PITCH</div>
+          <div class="step-desc">Select pitch type, tone, and channel. Claude AI writes a custom outreach message in seconds — specific to that brand's aesthetic, your creator identity, and the platform you're pitching on.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <div class="step-title">SEND + FOLLOW UP</div>
+          <div class="step-desc">Copy, send, and add to your tracker. If no reply in 3 days, generate your Day 3 follow-up. Still nothing by Day 7 — generate the Day 7 message. Let the system do the heavy lifting.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-body">
+          <div class="step-title">CLOSE THE DEAL</div>
+          <div class="step-desc">Use the Collab Brief to know exactly what they want — deliverables, usage rights, turnaround — so when they reply, you're ready to negotiate and close like a pro.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDS PREVIEW -->
+<section class="brands-sec">
+  <div class="brands-inner">
+    <div class="sec-label">BRAND PREVIEW</div>
+    <div class="sec-title">SOME OF THE BRANDS<br><span class="g">WAITING FOR YOU</span></div>
+    <div class="mini-grid">
+      <div class="mini-card"><div class="mini-logo" style="background:#b23a8e22;color:#b23a8e;border:1px solid #b23a8e30">FB</div><div class="mini-info"><div class="mini-name">FENTY BEAUTY</div><div class="mini-budget">$500–$1.5K · CASH</div><div class="mini-tag">Beauty · 🇺🇸 US</div></div></div>
+      <div class="mini-card"><div class="mini-logo" style="background:#4a7c5922;color:#4a7c59;border:1px solid #4a7c5930">PB</div><div class="mini-info"><div class="mini-name">PATTERN BEAUTY</div><div class="mini-budget">$200–$600 · CASH</div><div class="mini-tag">Beauty · 🇺🇸 US</div></div></div>
+      <div class="mini-card"><div class="mini-logo" style="background:#c4748c22;color:#c4748c;border:1px solid #c4748c30">RB</div><div class="mini-info"><div class="mini-name">RARE BEAUTY</div><div class="mini-budget">$300–$900 · CASH</div><div class="mini-tag">Beauty · 🇺🇸 US</div></div></div>
+      <div class="mini-card"><div class="mini-logo" style="background:#3a3a6c22;color:#6a6ab4;border:1px solid #3a3a6c30">GS</div><div class="mini-info"><div class="mini-name">GYMSHARK</div><div class="mini-budget">$300–$800 · CASH</div><div class="mini-tag">Fashion · 🇬🇧 UK</div></div></div>
+      <div class="mini-card"><div class="mini-logo" style="background:#5c4a3a22;color:#8c7a6a;border:1px solid #5c4a3a30">AE</div><div class="mini-info"><div class="mini-name">AESOP</div><div class="mini-budget">$500–$2K · CASH</div><div class="mini-tag">Skincare · 🇦🇺 AU</div></div></div>
+      <div class="mini-card"><div class="mini-logo" style="background:#c8c4bc22;color:#c8c4bc;border:1px solid #c8c4bc30">MM</div><div class="mini-info"><div class="mini-name">MAISON MARGIELA</div><div class="mini-budget">$1K–$5K · CASH</div><div class="mini-tag">Fashion · 🇫🇷 EU</div></div></div>
+      <div class="mini-card"><div class="mini-logo" style="background:#3a7bc822;color:#3a7bc8;border:1px solid #3a7bc830">LI</div><div class="mini-info"><div class="mini-name">LIQUID IV</div><div class="mini-budget">$200–$600 · OPEN</div><div class="mini-tag">Wellness · 🌐 Global</div></div></div>
+      <div class="mini-card"><div class="mini-logo" style="background:#ff990022;color:#ff9900;border:1px solid #ff990030">AM</div><div class="mini-info"><div class="mini-name">AMAZON</div><div class="mini-budget">$500–$3K · CASH</div><div class="mini-tag">Tech · 🌐 Global</div></div></div>
+    </div>
+    <div class="more-brands">+ 12 MORE BRANDS INSIDE — BEAUTY · SKINCARE · WELLNESS · HOME · FOOD · TECH</div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="padding:80px 24px;background:var(--bg);">
+  <div class="pricing-inner">
+    <div class="sec-label" style="text-align:center">PRICING</div>
+    <div class="sec-title" style="text-align:center">ONE PAYMENT.<br><span class="g">YOURS FOREVER.</span></div>
+    <div class="price-card">
+      <div class="pc-title">BRAND DEAL ENGINE</div>
+      <div class="pc-sub">COMPLETE ACCESS · ALL FEATURES · ALL BRANDS</div>
+      <div class="pc-price">$47</div>
+      <div class="pc-og">Regular price: $97</div>
+      <div class="pc-includes">
+        <div class="pc-item">20+ brands with direct contact info & social links</div>
+        <div class="pc-item">AI outreach generator (unlimited uses)</div>
+        <div class="pc-item">Day 3, Day 7 & Day 14 follow-up sequences</div>
+        <div class="pc-item">Where to DM guide per brand (IG, TikTok, portal)</div>
+        <div class="pc-item">Advanced filters: niche, region, budget, platform</div>
+        <div class="pc-item">Collab brief for every brand</div>
+        <div class="pc-item">Application tracker pipeline</div>
+        <div class="pc-item">Works in any browser — no install needed</div>
+        <div class="pc-item">Lifetime access — no subscription</div>
+      </div>
+      <a href="https://wandiko.gumroad.com/l/branddealengine" target="_blank" class="btn-buy-main">GET INSTANT ACCESS — $47 →</a>
+      <div class="refund">Delivered instantly via Gumroad · Questions? DM @theeaivisualz</div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section style="padding:80px 24px;background:var(--s);">
+  <div class="faq-inner">
+    <div class="sec-label">FAQ</div>
+    <div class="sec-title">QUESTIONS<br><span class="g">ANSWERED</span></div>
+    <div class="faq-item"><div class="faq-q">Does this guarantee I'll get brand deals?</div><div class="faq-a">No tool can guarantee results — and anyone who says otherwise is lying. What this tool does is remove the two biggest barriers: not knowing who to contact and not knowing what to say. The results depend on your content quality, how many brands you reach out to, and your consistency. Most deals happen from volume + follow-up.</div></div>
+    <div class="faq-item"><div class="faq-q">Is the contact info 100% verified?</div><div class="faq-a">It's curated from the best available sources — but brand contacts change. Every contact entry is labeled as a starting point. The tool includes a step-by-step guide to verify any email or portal before you reach out. Real brand emails always end in @brandname.com — never Gmail.</div></div>
+    <div class="faq-item"><div class="faq-q">Do I need any technical skills to use this?</div><div class="faq-a">Zero. It runs in any browser — Chrome, Safari, Firefox — on desktop, iPhone, or iPad. You just click, filter, and generate. No installs, no accounts, no coding.</div></div>
+    <div class="faq-item"><div class="faq-q">Is this just for big creators with huge followings?</div><div class="faq-a">No. Several brands in the list specifically work with micro and UGC creators regardless of follower count — they care about content quality, not just numbers. The UGC model is specifically built for creators who produce great content for brand ad use, which doesn't require a huge audience.</div></div>
+    <div class="faq-item"><div class="faq-q">Can I use this outside the US?</div><div class="faq-a">Yes. The tool includes brands from the US, UK, Europe, Australia, and Global brands that work with creators worldwide. The region filter lets you target brands in your area or pitch globally.</div></div>
+    <div class="faq-item"><div class="faq-q">How is this different from Reputo or other paid tools?</div><div class="faq-a">Those tools charge $19+/month forever. This is a one-time $47 payment with no recurring fees. It also includes AI-powered pitch writing and follow-up sequences built specifically for AI visual creators — not just a brand list.</div></div>
+  </div>
+</section>
+
+<!-- FOOTER CTA -->
+<div class="footer-cta">
+  <div class="fc-title">STOP WAITING.<br><span class="g">START PITCHING.</span></div>
+  <p class="fc-sub">Every day you don't pitch is a day someone else closes the deal you could have had.</p>
+  <a href="https://wandiko.gumroad.com/l/branddealengine" target="_blank" class="btn-buy">GET ACCESS FOR $47 →</a>
+</div>
+
+<footer>
+  © 2025 NANDYVISUALS · Built by Nandy · @theeaivisualz · @nandyvisuals
+</footer>
+
+</body>
+</html>
