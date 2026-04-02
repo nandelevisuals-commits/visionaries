@@ -1,12 +1,27 @@
 {
   "rewrites": [
     {
-      "source": "/brand-deal-engine",
-      "destination": "/brand-deal-engine/index.html"
+      "source": "/bde-index",
+      "destination": "/bde-index.html"
     },
     {
-      "source": "/brand-deal-engine/",
-      "destination": "/brand-deal-engine/index.html"
+      "source": "/bde-engine",
+      "destination": "/bde-engine.html"
+    },
+    {
+      "source": "/bde-access",
+      "destination": "/bde-access.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*).html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
     }
   ]
 }
