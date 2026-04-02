@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NANDYVISUALS — Brand Deal Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070707;--surface:#0e0e0e;--card:#111;--card2:#161616;
+  --border:#1e1e1e;--border2:#2a2a2a;
+  --accent:#d4f53c;--adim:rgba(212,245,60,0.09);
+  --a2:#ff4f4f;--a3:#3cf5c8;--gold:#f5c842;
+  --text:#f2f2f2;--muted:#555;--muted2:#888;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-thumb{background:#222;}
+header{position:sticky;top:0;z-index:300;background:rgba(7,7,7,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;height:54px;}
+.logo{display:flex;align-items:center;gap:9px;}
+.logo-sq{width:30px;height:30px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:17px;color:#000;}
+.logo-text{font-family:'Bebas Neue';font-size:15px;letter-spacing:3px;line-height:1;}
+.logo-sub{font-size:8px;letter-spacing:2px;color:var(--muted2);font-family:'Space Mono';margin-top:1px;}
+.live{display:flex;align-items:center;gap:6px;font-family:'Space Mono';font-size:9px;color:var(--muted2);}
+.live-dot{width:5px;height:5px;border-radius:50%;background:#3cf57a;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.nav{display:flex;border:1px solid var(--border);}
+.ntab{padding:7px 13px;font-family:'Space Mono';font-size:9px;letter-spacing:1.5px;color:var(--muted);cursor:pointer;background:none;border:none;border-right:1px solid var(--border);transition:all 0.15s;}
+.ntab:last-child{border-right:none;}
+.ntab.active,.ntab:hover{background:var(--accent);color:#000;}
+.view{display:none;}
+.view.active{display:block;}
+.hero{min-height:calc(100vh - 54px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 20px 80px;position:relative;overflow:hidden;}
+.bgrid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:44px 44px;opacity:0.22;mask-image:radial-gradient(ellipse at center,black 25%,transparent 70%);}
+.hbadge{background:var(--adim);border:1px solid rgba(212,245,60,0.18);color:var(--accent);font-family:'Space Mono';font-size:9px;letter-spacing:2px;padding:5px 14px;margin-bottom:28px;animation:fdown 0.5s ease;}
+@keyframes fdown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hh1{font-family:'Bebas Neue';font-size:clamp(46px,12vw,104px);line-height:0.9;letter-spacing:2px;text-align:center;margin-bottom:22px;animation:fup 0.5s ease 0.1s both;}
+.hh1 .grn{color:var(--accent);}
+.hh1 .sml{font-size:0.5em;letter-spacing:6px;color:var(--muted2);display:block;margin-top:8px;}
+.hdesc{max-width:440px;text-align:center;font-size:14px;line-height:1.7;color:var(--muted2);margin-bottom:36px;animation:fup 0.5s ease 0.2s both;}
+.fpills{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:40px;animation:fup 0.5s ease 0.3s both;}
+.fpill{display:flex;align-items:center;gap:7px;border:1px solid var(--border2);padding:7px 12px;font-size:11px;color:var(--muted2);}
+.pi{color:var(--accent);font-size:13px;}
+.hctas{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;animation:fup 0.5s ease 0.4s both;}
+.btnA{background:var(--accent);color:#000;border:none;padding:14px 36px;font-family:'Bebas Neue';font-size:19px;letter-spacing:3px;cursor:pointer;transition:all 0.2s;}
+.btnA:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,245,60,0.2);}
+.btnB{background:transparent;color:var(--text);border:1px solid var(--border2);padding:14px 26px;font-family:'Bebas Neue';font-size:19px;letter-spacing:3px;cursor:pointer;transition:all 0.2s;}
+.btnB:hover{border-color:var(--accent);color:var(--accent);}
+.hstats{display:flex;border:1px solid var(--border);margin-top:52px;animation:fup 0.5s ease 0.5s both;}
+.hs{padding:16px 28px;border-right:1px solid var(--border);text-align:center;}
+.hs:last-child{border-right:none;}
+.hs-n{font-family:'Bebas Neue';font-size:36px;color:var(--accent);line-height:1;}
+.hs-l{font-size:9px;color:var(--muted);letter-spacing:1.5px;font-family:'Space Mono';margin-top:2px;}
+.ticker-wrap{position:absolute;bottom:0;left:0;right:0;border-top:1px solid var(--border);background:var(--surface);overflow:hidden;height:30px;display:flex;align-items:center;}
+.ticker{display:flex;gap:44px;white-space:nowrap;animation:tick 28s linear infinite;font-family:'Space Mono';font-size:9px;color:var(--muted);letter-spacing:1px;}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker span{display:flex;align-items:center;gap:8px;}
+.ticker span::before{content:'✦';color:var(--accent);font-size:7px;}
+.finder{display:grid;grid-template-columns:248px 1fr;min-height:calc(100vh - 54px);}
+.sb{border-right:1px solid var(--border);padding:16px 13px;position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;background:var(--surface);}
+.sbs{margin-bottom:22px;}
+.sbl{font-family:'Space Mono';font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;display:flex;justify-content:space-between;}
+.sbl em{color:var(--accent);font-style:normal;}
+.sinp{width:100%;background:var(--bg);border:1px solid var(--border2);color:var(--text);padding:8px 10px;font-family:'Syne';font-size:12px;outline:none;transition:border-color 0.2s;margin-bottom:9px;}
+.sinp:focus{border-color:var(--accent);}
+.sinp::placeholder{color:var(--muted);}
+.nlist{display:flex;flex-direction:column;gap:3px;}
+.ni{display:flex;align-items:center;gap:7px;padding:5px 8px;cursor:pointer;font-size:11px;color:var(--muted2);border:1px solid transparent;transition:all 0.13s;}
+.ni:hover{background:var(--card);color:var(--text);}
+.ni.active{background:var(--adim);border-color:rgba(212,245,60,0.16);color:var(--accent);}
+.ndot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+.pb{padding:6px 4px;text-align:center;font-size:9px;letter-spacing:0.5px;font-family:'Space Mono';color:var(--muted);border:1px solid var(--border);cursor:pointer;transition:all 0.13s;background:none;}
+.pb:hover,.pb.active{background:var(--accent);color:#000;border-color:var(--accent);}
+.rsel{width:100%;background:var(--bg);border:1px solid var(--border2);color:var(--text);padding:7px 9px;font-family:'Syne';font-size:11px;outline:none;cursor:pointer;appearance:none;}
+.trow{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted2);}
+.trow:last-child{border-bottom:none;}
+.tog{width:28px;height:16px;background:var(--border2);border-radius:8px;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0;}
+.tog.on{background:var(--accent);}
+.tog::after{content:'';width:10px;height:10px;border-radius:50%;background:#000;position:absolute;top:3px;left:3px;transition:left 0.18s;}
+.tog.on::after{left:15px;}
+.afilter{width:100%;background:var(--accent);color:#000;border:none;padding:10px;font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;cursor:pointer;transition:opacity 0.15s;margin-top:5px;}
+.afilter:hover{opacity:0.85;}
+.main{padding:0;}
+.rbar{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:54px;z-index:50;}
+.rc{font-size:12px;color:var(--muted2);}
+.rc strong{color:var(--text);}
+.srow{display:flex;gap:4px;}
+.sbtn{padding:4px 10px;font-size:9px;letter-spacing:1px;font-family:'Space Mono';color:var(--muted);border:1px solid var(--border);background:none;cursor:pointer;transition:all 0.13s;}
+.sbtn.active,.sbtn:hover{background:var(--accent);color:#000;border-color:var(--accent);}
+.bgrid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1px;background:var(--border);}
+.bc{background:var(--card);padding:18px;cursor:pointer;transition:background 0.13s;position:relative;overflow:hidden;}
+.bc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:transparent;transition:background 0.18s;}
+.bc:hover{background:var(--card2);}
+.bc:hover::after{background:var(--accent);}
+.bc.hot::before{content:'🔥 HOT';position:absolute;top:11px;right:11px;background:var(--a2);color:#fff;font-family:'Space Mono';font-size:7px;letter-spacing:1px;padding:2px 6px;}
+.bc.isnew::before{content:'NEW';position:absolute;top:11px;right:11px;background:var(--accent);color:#000;font-family:'Space Mono';font-size:7px;letter-spacing:1px;padding:2px 6px;font-weight:700;}
+.bc-top{display:flex;align-items:center;gap:11px;margin-bottom:12px;}
+.bc-logo{width:40px;height:40px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:14px;flex-shrink:0;}
+.bc-meta h3{font-size:13px;font-weight:700;}
+.bc-meta p{font-size:9px;color:var(--muted);font-family:'Space Mono';margin-top:1px;}
+.bc-reg{font-size:9px;color:var(--muted2);font-family:'Space Mono';}
+.bctags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:11px;}
+.bct{padding:2px 6px;font-size:8px;letter-spacing:0.5px;font-family:'Space Mono';border:1px solid var(--border2);color:var(--muted2);}
+.bct.ni{color:var(--accent);border-color:rgba(212,245,60,0.18);background:rgba(212,245,60,0.04);}
+.bct.pl{color:var(--a3);border-color:rgba(60,245,200,0.16);background:rgba(60,245,200,0.04);}
+.bcrows{margin-bottom:11px;}
+.bcr{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #181818;font-size:10px;}
+.bcr:last-child{border-bottom:none;}
+.bck{color:var(--muted);}
+.bcv{font-family:'Space Mono';font-size:9px;}
+.bcv.g{color:#5cff8a;}.bcv.y{color:var(--accent);}.bcv.b{color:var(--a3);}
+.bc-sh{display:flex;justify-content:space-between;font-size:8px;color:var(--muted);font-family:'Space Mono';margin-bottom:3px;}
+.bc-bar{height:2px;background:var(--border2);margin-bottom:13px;}
+.bc-bfill{height:100%;background:var(--accent);}
+.bcacts{display:flex;gap:6px;}
+.btn-ap{flex:1;background:var(--accent);color:#000;border:none;padding:9px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;transition:opacity 0.13s;}
+.btn-ap:hover{opacity:0.85;}
+.btn-w{background:var(--surface);color:var(--muted);border:1px solid var(--border);padding:9px 11px;font-size:13px;cursor:pointer;transition:all 0.13s;}
+.btn-w:hover,.btn-w.saved{color:var(--a2);border-color:var(--a2);background:rgba(255,79,79,0.07);}
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:500;backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;}
+.moverlay.open{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border2);border-bottom:none;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;animation:sup 0.3s cubic-bezier(0.16,1,0.3,1);}
+@keyframes sup{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.mtopbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border);}
+.mbrand{display:flex;align-items:center;gap:11px;}
+.mlog{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:14px;}
+.mn{font-family:'Bebas Neue';font-size:20px;letter-spacing:1px;}
+.ms{font-size:9px;color:var(--muted);font-family:'Space Mono';}
+.mx{background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all 0.13s;}
+.mx:hover{color:var(--text);border-color:var(--text);}
+.mtabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;}
+.mt{padding:10px 16px;font-family:'Space Mono';font-size:9px;letter-spacing:1.5px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.13s;background:none;border-top:none;border-left:none;border-right:none;}
+.mt.active{color:var(--accent);border-bottom-color:var(--accent);}
+.mbody{padding:18px 20px 36px;}
+.warn-box{background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.25);padding:12px 14px;margin-bottom:16px;font-size:11px;line-height:1.65;color:#c9a83a;}
+.warn-box strong{color:var(--gold);font-family:'Space Mono';font-size:9px;letter-spacing:1px;display:block;margin-bottom:3px;}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px;}
+.cc{background:var(--surface);border:1px solid var(--border);padding:11px;position:relative;}
+.ccl{font-size:8px;font-family:'Space Mono';color:var(--muted);letter-spacing:1px;margin-bottom:4px;}
+.ccv{font-size:11px;font-weight:600;word-break:break-all;line-height:1.4;}
+.ccv a{color:var(--a3);text-decoration:none;font-size:10px;}
+.cc-cp{position:absolute;top:8px;right:8px;background:none;border:1px solid var(--border);color:var(--muted);padding:2px 6px;font-size:7px;font-family:'Space Mono';cursor:pointer;transition:all 0.13s;}
+.cc-cp:hover{border-color:var(--accent);color:var(--accent);}
+.how-to{background:var(--adim);border:1px solid rgba(212,245,60,0.13);padding:12px 14px;font-size:11px;color:var(--muted2);line-height:1.65;}
+.how-to strong{color:var(--accent);font-family:'Space Mono';font-size:8px;letter-spacing:1px;display:block;margin-bottom:6px;}
+.how-to ol{padding-left:16px;}
+.how-to ol li{margin-bottom:5px;}
+.pt-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
+.ptb{padding:5px 11px;font-size:9px;letter-spacing:1px;font-family:'Space Mono';color:var(--muted);border:1px solid var(--border);background:none;cursor:pointer;transition:all 0.13s;}
+.ptb.active{background:var(--accent);color:#000;border-color:var(--accent);}
+.slbl{font-family:'Space Mono';font-size:8px;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px;}
+.tone-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;}
+.tb{padding:4px 10px;font-size:9px;letter-spacing:0.5px;font-family:'Space Mono';color:var(--muted);border:1px solid var(--border);background:none;cursor:pointer;transition:all 0.13s;}
+.tb.active,.tb:hover{background:var(--adim);color:var(--accent);border-color:rgba(212,245,60,0.22);}
+.ch-row{display:flex;gap:5px;margin-bottom:12px;}
+.chb{padding:5px 11px;font-size:9px;font-family:'Space Mono';letter-spacing:1px;border:1px solid var(--border);color:var(--muted);background:none;cursor:pointer;transition:all 0.13s;}
+.chb.active{border-color:var(--a3);color:var(--a3);background:rgba(60,245,200,0.06);}
+.aiout{background:var(--surface);border:1px solid var(--border);padding:14px;font-size:12px;line-height:1.75;color:#ccc;min-height:180px;white-space:pre-wrap;font-family:'Syne';}
+.ail{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:11px;font-family:'Space Mono';}
+.dots span{display:inline-block;width:4px;height:4px;background:var(--accent);border-radius:50%;margin:0 2px;animation:db 1.2s infinite;}
+.dots span:nth-child(2){animation-delay:0.2s;}.dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes db{0%,80%,100%{transform:scale(0.5);opacity:0.3}40%{transform:scale(1);opacity:1}}
+.oacts{display:flex;gap:7px;margin-top:9px;}
+.btn-gen{flex:1;background:var(--accent);color:#000;border:none;padding:11px;font-family:'Bebas Neue';font-size:16px;letter-spacing:3px;cursor:pointer;transition:opacity 0.13s;}
+.btn-gen:hover{opacity:0.85;}.btn-gen:disabled{opacity:0.35;cursor:not-allowed;}
+.btn-cp2{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:11px 14px;font-family:'Space Mono';font-size:9px;letter-spacing:1px;cursor:pointer;transition:all 0.13s;}
+.btn-cp2:hover{border-color:var(--accent);color:var(--accent);}
+.fu-intro{background:var(--adim);border:1px solid rgba(212,245,60,0.13);padding:11px 13px;font-size:11px;color:var(--muted2);line-height:1.6;margin-bottom:14px;}
+.fu-intro strong{color:var(--accent);font-family:'Space Mono';font-size:8px;letter-spacing:1px;display:block;margin-bottom:3px;}
+.fu-days{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.fday{padding:7px 14px;font-size:10px;letter-spacing:1px;font-family:'Space Mono';color:var(--muted);border:1px solid var(--border);background:none;cursor:pointer;transition:all 0.13s;}
+.fday.active{background:var(--a3);color:#000;border-color:var(--a3);}
+.fu-out{background:var(--surface);border:1px solid var(--border);padding:14px;font-size:12px;line-height:1.75;color:#ccc;min-height:160px;white-space:pre-wrap;font-family:'Syne';}
+.fu-tip{background:rgba(60,245,200,0.05);border:1px solid rgba(60,245,200,0.15);padding:10px 13px;font-size:10px;color:var(--a3);line-height:1.6;margin-top:10px;font-family:'Space Mono';}
+.btitle{font-family:'Bebas Neue';font-size:17px;letter-spacing:1px;color:var(--accent);margin-bottom:11px;}
+.brow{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.bk{color:var(--muted2);}.bv{font-family:'Space Mono';font-size:10px;}
+.btn-track{width:100%;background:var(--accent);color:#000;border:none;padding:11px;font-family:'Bebas Neue';font-size:15px;letter-spacing:2px;cursor:pointer;margin-top:14px;}
+.plat-guide{margin-bottom:12px;}
+.pg-head{font-family:'Bebas Neue';font-size:15px;letter-spacing:1px;color:var(--a3);margin-bottom:8px;}
+.pg-row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.pg-row:last-child{border-bottom:none;}
+.pg-icon{font-size:18px;flex-shrink:0;width:28px;text-align:center;}
+.pg-name{font-size:12px;font-weight:700;margin-bottom:2px;}
+.pg-desc{font-size:11px;color:var(--muted2);line-height:1.55;}
+.pg-link a{color:var(--a3);font-size:10px;font-family:'Space Mono';text-decoration:none;}
+.pg-link a:hover{text-decoration:underline;}
+.dm-tip{background:rgba(212,245,60,0.06);border:1px solid rgba(212,245,60,0.15);padding:10px 13px;font-size:10px;color:var(--muted2);line-height:1.65;margin-top:12px;}
+.dm-tip strong{color:var(--accent);font-family:'Space Mono';font-size:8px;letter-spacing:1px;display:block;margin-bottom:4px;}
+.trwrap{padding:22px 18px;max-width:900px;margin:0 auto;}
+.trtitle{font-family:'Bebas Neue';font-size:30px;letter-spacing:2px;margin-bottom:18px;}
+.sstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:20px;}
+.ss{background:var(--card);padding:14px 16px;}
+.ssn{font-family:'Bebas Neue';font-size:32px;line-height:1;}
+.ssl{font-size:8px;color:var(--muted);letter-spacing:1.5px;font-family:'Space Mono';margin-top:2px;}
+.pipeline{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:22px;}
+.pcol{background:var(--card);border:1px solid var(--border);}
+.ph{padding:10px 12px;border-bottom:1px solid var(--border);font-family:'Space Mono';font-size:8px;letter-spacing:2px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+.phc{background:var(--accent);color:#000;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+.pitems{padding:7px;min-height:80px;}
+.pitem{background:var(--surface);border:1px solid var(--border);padding:8px 10px;margin-bottom:4px;}
+.pitem:last-child{margin-bottom:0;}
+.pi-br{font-weight:700;font-size:11px;margin-bottom:1px;}
+.pi-bu{color:var(--accent);font-family:'Space Mono';font-size:9px;}
+.pi-da{color:var(--muted);font-family:'Space Mono';font-size:8px;margin-top:4px;}
+.pi-btns{display:flex;gap:3px;margin-top:5px;flex-wrap:wrap;}
+.pi-mv{background:var(--accent);color:#000;border:none;padding:3px 7px;font-size:8px;font-family:'Space Mono';cursor:pointer;letter-spacing:1px;}
+.pi-rp{background:var(--a3);color:#000;border:none;padding:3px 7px;font-size:8px;font-family:'Space Mono';cursor:pointer;letter-spacing:1px;}
+.pi-dl{background:none;border:1px solid var(--border);color:var(--muted);padding:3px 7px;font-size:8px;font-family:'Space Mono';cursor:pointer;}
+.saved-sec{margin-bottom:20px;}
+.saved-ttl{font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--muted2);margin-bottom:11px;}
+.si{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--border);}
+.si-logo{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:11px;border-radius:2px;}
+.si-info{flex:1;}
+.si-info h4{font-size:12px;font-weight:700;}
+.si-info p{font-size:9px;color:var(--muted);font-family:'Space Mono';margin-top:1px;}
+.btn-sap{background:var(--accent);color:#000;border:none;padding:5px 10px;font-family:'Bebas Neue';font-size:11px;letter-spacing:1px;cursor:pointer;}
+@media(max-width:720px){
+  .finder{grid-template-columns:1fr;}
+  .sb{position:static;height:auto;}
+  .cgrid{grid-template-columns:1fr;}
+  .hstats,.hero-stats{flex-direction:column;}
+  .hs{border-right:none;border-bottom:1px solid var(--border);}
+  .pipeline{grid-template-columns:1fr;}
+  .sstrip{grid-template-columns:repeat(2,1fr);}
+  .ntab{padding:7px 8px;font-size:8px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-sq">N</div>
+    <div><div class="logo-text">NANDYVISUALS</div><div class="logo-sub">BRAND DEAL ENGINE</div></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="live"><div class="live-dot"></div>LIVE</div>
+    <div class="nav">
+      <button class="ntab active" onclick="sv('home',this)">HOME</button>
+      <button class="ntab" onclick="sv('finder',this)">BRANDS</button>
+      <button class="ntab" onclick="sv('tracker',this)">TRACKER</button>
+    </div>
+  </div>
+</header>
+<div id="view-home" class="view active">
+  <div class="hero">
+    <div class="bgrid"></div>
+    <div class="hbadge">✦ BUILT FOR AI VISUAL CREATORS ✦</div>
+    <h1 class="hh1">LAND PAID<br><span class="grn">BRAND DEALS</span><span class="sml">AROUND THE WORLD</span></h1>
+    <p class="hdesc">Everything you need to close your first paid collaboration. Direct contact methods, AI outreach, follow-up sequences, and new opportunities added regularly.</p>
+    <div class="fpills">
+      <div class="fpill"><span class="pi">📬</span>Verified contact methods per brand</div>
+      <div class="fpill"><span class="pi">⚡</span>AI-powered outreach messages</div>
+      <div class="fpill"><span class="pi">🔁</span>Day 3 & Day 7 follow-up sequences</div>
+      <div class="fpill"><span class="pi">♾️</span>Unlimited applications</div>
+      <div class="fpill"><span class="pi">🎯</span>Advanced filters: niche, budget, platform, region</div>
+      <div class="fpill"><span class="pi">🌍</span>US · UK · EU · AU · Global brands</div>
+    </div>
+    <div class="hctas">
+      <button class="btnA" onclick="sv('finder',document.querySelectorAll('.ntab')[1])">BROWSE BRANDS →</button>
+      <button class="btnB" onclick="sv('tracker',document.querySelectorAll('.ntab')[2])">MY TRACKER</button>
+    </div>
+    <div class="hstats">
+      <div class="hs"><div class="hs-n" id="cu1">0</div><div class="hs-l">BRANDS LISTED</div></div>
+      <div class="hs"><div class="hs-n" id="cu2">0</div><div class="hs-l">OPEN COLLABS</div></div>
+      <div class="hs"><div class="hs-n" id="cu3">0</div><div class="hs-l">CASH PAYING</div></div>
+      <div class="hs"><div class="hs-n" id="cu4">0</div><div class="hs-l">COUNTRIES</div></div>
+    </div>
+    <div class="ticker-wrap"><div class="ticker">
+      <span>FENTY BEAUTY · $500–$1.5K · OPEN</span><span>PATTERN BEAUTY · $200–$600 · CASH</span>
+      <span>GYMSHARK · $300–$800 · OPEN</span><span>RARE BEAUTY · $300–$900 · CASH</span>
+      <span>AESOP · $500–$2K · OPEN</span><span>MAISON MARGIELA · $1K–$5K · CASH</span>
+      <span>LIQUID IV · $200–$600 · OPEN</span><span>AMAZON · $500–$3K · CASH</span>
+      <span>GLOSSIER · $100–$500 · OPEN</span><span>DJERF AVENUE · $200–$600 · CASH</span>
+      <span>FENTY BEAUTY · $500–$1.5K · OPEN</span><span>PATTERN BEAUTY · $200–$600 · CASH</span>
+      <span>GYMSHARK · $300–$800 · OPEN</span><span>RARE BEAUTY · $300–$900 · CASH</span>
+      <span>AESOP · $500–$2K · OPEN</span><span>MAISON MARGIELA · $1K–$5K · CASH</span>
+    </div></div>
+  </div>
+</div>
+<div id="view-finder" class="view">
+  <div class="finder">
+    <div class="sb">
+      <div class="sbs"><div class="sbl">SEARCH</div>
+        <input class="sinp" id="sinp" placeholder="Brand, niche, country..." oninput="doF()">
+      </div>
+      <div class="sbs">
+        <div class="sbl">NICHE <em id="nem">ALL</em></div>
+        <div class="nlist">
+          <div class="ni active" onclick="setN('All',this)"><span class="ndot" style="background:#888"></span>All Niches</div>
+          <div class="ni" onclick="setN('Beauty',this)"><span class="ndot" style="background:#e87db5"></span>Beauty</div>
+          <div class="ni" onclick="setN('Fashion',this)"><span class="ndot" style="background:#e8c47d"></span>Fashion</div>
+          <div class="ni" onclick="setN('Skincare',this)"><span class="ndot" style="background:#7dc4e8"></span>Skincare</div>
+          <div class="ni" onclick="setN('Wellness',this)"><span class="ndot" style="background:#7de8a0"></span>Wellness</div>
+          <div class="ni" onclick="setN('Tech',this)"><span class="ndot" style="background:#7da0e8"></span>Tech</div>
+          <div class="ni" onclick="setN('Home',this)"><span class="ndot" style="background:#b87de8"></span>Home & Living</div>
+          <div class="ni" onclick="setN('Food',this)"><span class="ndot" style="background:#e8907d"></span>Food & Bev</div>
+        </div>
+      </div>
+      <div class="sbs"><div class="sbl">PLATFORM</div>
+        <div class="pgrid">
+          <button class="pb active" onclick="this.classList.toggle('active')">TIKTOK</button>
+          <button class="pb active" onclick="this.classList.toggle('active')">INSTAGRAM</button>
+          <button class="pb active" onclick="this.classList.toggle('active')">YOUTUBE</button>
+          <button class="pb active" onclick="this.classList.toggle('active')">REELS</button>
+        </div>
+      </div>
+      <div class="sbs"><div class="sbl">REGION</div>
+        <select class="rsel" id="rsel" onchange="doF()">
+          <option value="All">🌍 All Regions</option>
+          <option value="US">🇺🇸 United States</option>
+          <option value="UK">🇬🇧 United Kingdom</option>
+          <option value="EU">🇪🇺 Europe</option>
+          <option value="AU">🇦🇺 Australia</option>
+          <option value="Global">🌐 Global</option>
+        </select>
+      </div>
+      <div class="sbs">
+        <div class="sbl">FILTERS</div>
+        <div class="trow"><span>Cash Payment Only</span><div class="tog" id="t1" onclick="togF(1)"></div></div>
+        <div class="trow"><span>Open Collabs</span><div class="tog on" id="t2" onclick="togF(2)"></div></div>
+        <div class="trow"><span>Accepts DMs</span><div class="tog on" id="t3" onclick="togF(3)"></div></div>
+        <div class="trow"><span>UGC Score 8+</span><div class="tog" id="t4" onclick="togF(4)"></div></div>
+      </div>
+      <button class="afilter" onclick="doF()">APPLY FILTERS</button>
+    </div>
+    <div class="main">
+      <div class="rbar">
+        <div class="rc">Showing <strong id="rnum">0</strong> brands</div>
+        <div class="srow">
+          <button class="sbtn active" onclick="setSort('score',this)">TOP SCORE</button>
+          <button class="sbtn" onclick="setSort('budget',this)">BUDGET ↑</button>
+          <button class="sbtn" onclick="setSort('new',this)">NEWEST</button>
+        </div>
+      </div>
+      <div class="bgrid2" id="bgrid"></div>
+    </div>
+  </div>
+</div>
+<div id="view-tracker" class="view">
+  <div class="trwrap">
+    <div class="trtitle">APPLICATION TRACKER</div>
+    <div class="sstrip">
+      <div class="ss"><div class="ssn" style="color:var(--accent)" id="tt">0</div><div class="ssl">TOTAL APPLIED</div></div>
+      <div class="ss"><div class="ssn" style="color:var(--a3)" id="ts">0</div><div class="ssl">PITCHES SENT</div></div>
+      <div class="ss"><div class="ssn" style="color:#5cff8a" id="tr">0</div><div class="ssl">REPLIES</div></div>
+      <div class="ss"><div class="ssn" style="color:var(--a2)" id="tsv">0</div><div class="ssl">SAVED BRANDS</div></div>
+    </div>
+    <div class="pipeline">
+      <div class="pcol"><div class="ph">DRAFTED<div class="phc" id="dc">0</div></div><div class="pitems" id="col-draft"></div></div>
+      <div class="pcol"><div class="ph">SENT<div class="phc" id="sc">0</div></div><div class="pitems" id="col-sent"></div></div>
+      <div class="pcol"><div class="ph">REPLIED<div class="phc" id="rc">0</div></div><div class="pitems" id="col-replied"></div></div>
+    </div>
+    <div class="saved-sec">
+      <div class="saved-ttl">♥ SAVED BRANDS</div>
+      <div id="savedList"><div style="color:var(--muted);font-size:11px;font-family:'Space Mono'">No saved brands yet. Click ♥ on any brand card.</div></div>
+    </div>
+  </div>
+</div>
+<div class="moverlay" id="moverlay" onclick="handleOv(event)">
+  <div class="modal">
+    <div class="mtopbar">
+      <div class="mbrand">
+        <div class="mlog" id="mlog"></div>
+        <div><div class="mn" id="mname"></div><div class="ms" id="msub"></div></div>
+      </div>
+      <button class="mx" onclick="closeM()">✕</button>
+    </div>
+    <div class="mtabs">
+      <button class="mt active" onclick="setMT('contact',this)">📬 CONTACT</button>
+      <button class="mt" onclick="setMT('platforms',this)">🔗 WHERE TO DM</button>
+      <button class="mt" onclick="setMT('outreach',this)">⚡ AI OUTREACH</button>
+      <button class="mt" onclick="setMT('followup',this)">🔁 FOLLOW-UP</button>
+      <button class="mt" onclick="setMT('brief',this)">📋 BRIEF</button>
+    </div>
+    <div class="mbody">
+      <div id="tab-contact">
+        <div class="warn-box">
+          <strong>⚠ IMPORTANT — READ BEFORE OUTREACH</strong>
+          Brand contact info changes frequently. Always verify any email by going to the brand's official website first. If an email comes from Gmail/Yahoo/Hotmail — it's a scam. Real brand emails end in @brandname.com.
+        </div>
+        <div class="cgrid">
+          <div class="cc"><div class="ccl">OFFICIAL EMAIL</div><div class="ccv" id="c-em"></div><button class="cc-cp" onclick="copyC('c-em')">COPY</button></div>
+          <div class="cc"><div class="ccl">INSTAGRAM</div><div class="ccv"><a id="c-ig" href="#" target="_blank"></a></div><button class="cc-cp" onclick="copyC('c-ig')">COPY</button></div>
+          <div class="cc"><div class="ccl">TIKTOK</div><div class="ccv"><a id="c-tt" href="#" target="_blank"></a></div><button class="cc-cp" onclick="copyC('c-tt')">COPY</button></div>
+          <div class="cc"><div class="ccl">COLLAB PORTAL</div><div class="ccv"><a id="c-po" href="#" target="_blank" style="font-size:10px"></a></div><button class="cc-cp" onclick="copyC('c-po')">COPY</button></div>
+          <div class="cc" style="grid-column:1/-1"><div class="ccl">BEST PITCH WINDOW</div><div class="ccv" id="c-wn"></div></div>
+        </div>
+        <div class="how-to">
+          <strong>HOW TO FIND THE RIGHT PERSON TO CONTACT</strong>
+          <ol>
+            <li>Go to the brand's official website → scroll to footer → look for "Partnerships", "Press", or "Creators"</li>
+            <li>Search LinkedIn for "[Brand Name] influencer marketing manager" or "brand partnerships"</li>
+            <li>Check their Instagram bio — many brands link their creator portal directly there</li>
+            <li>Search TikTok for "[Brand Name] UGC collab" to see what emails real creators have shared</li>
+          </ol>
+        </div>
+      </div>
+      <div id="tab-platforms" style="display:none">
+        <div class="plat-guide">
+          <div class="pg-head">WHERE TO DM THIS BRAND</div>
+          <div id="plat-list"></div>
+        </div>
+        <div class="dm-tip">
+          <strong>DM STRATEGY THAT ACTUALLY WORKS</strong>
+          Don't just send a cold DM immediately. First: follow the brand, like 3–5 of their recent posts, and leave a genuine comment. Then wait 24–48 hours before sending your DM pitch.
+        </div>
+      </div>
+      <div id="tab-outreach" style="display:none">
+        <div class="pt-row">
+          <button class="ptb active" onclick="setPT('ugc',this)">UGC VIDEO</button>
+          <button class="ptb" onclick="setPT('ai_visual',this)">AI VISUAL</button>
+          <button class="ptb" onclick="setPT('campaign',this)">CAMPAIGN</button>
+          <button class="ptb" onclick="setPT('longterm',this)">LONG-TERM</button>
+        </div>
+        <div class="slbl">TONE</div>
+        <div class="tone-row">
+          <button class="tb active" onclick="setTone('confident',this)">CONFIDENT</button>
+          <button class="tb" onclick="setTone('casual',this)">CASUAL</button>
+          <button class="tb" onclick="setTone('bold',this)">BOLD & DIRECT</button>
+          <button class="tb" onclick="setTone('story',this)">STORYTELLING</button>
+        </div>
+        <div class="slbl">CHANNEL</div>
+        <div class="ch-row">
+          <button class="chb active" onclick="setCH('dm',this)">DM</button>
+          <button class="chb" onclick="setCH('email',this)">EMAIL</button>
+          <button class="chb" onclick="setCH('portal',this)">PORTAL</button>
+        </div>
+        <div class="aiout" id="aiout"><div class="ail"><div class="dots"><span></span><span></span><span></span></div>Hit Generate to write your pitch</div></div>
+        <div class="oacts">
+          <button class="btn-gen" id="genBtn" onclick="genOut()">⚡ GENERATE OUTREACH</button>
+          <button class="btn-cp2" onclick="cpOut('aiout')">COPY</button>
+        </div>
+      </div>
+      <div id="tab-followup" style="display:none">
+        <div class="fu-intro">
+          <strong>WHY FOLLOW-UPS ARE EVERYTHING</strong>
+          Most brand deals don't close on the first message. Send Day 3 if no reply. Send Day 7 if still no reply. Day 14 is your final graceful touchpoint.
+        </div>
+        <div class="fu-days">
+          <button class="fday active" onclick="setFU(3,this)">DAY 3 FOLLOW-UP</button>
+          <button class="fday" onclick="setFU(7,this)">DAY 7 FOLLOW-UP</button>
+          <button class="fday" onclick="setFU(14,this)">DAY 14 LAST TOUCH</button>
+        </div>
+        <div class="fu-out" id="fuout"><div class="ail"><div class="dots"><span></span><span></span><span></span></div>Hit Generate to write your follow-up</div></div>
+        <div class="oacts">
+          <button class="btn-gen" id="fuBtn" onclick="genFU()">🔁 GENERATE FOLLOW-UP</button>
+          <button class="btn-cp2" onclick="cpOut('fuout')">COPY</button>
+        </div>
+        <div class="fu-tip">💡 Send Day 3 follow-up 9–10am brand local time. Keep it 2–3 sentences. Never apologize for following up.</div>
+      </div>
+      <div id="tab-brief" style="display:none">
+        <div class="btitle">COLLAB BRIEF</div>
+        <div class="brow"><span class="bk">Brand</span><span class="bv" id="bb1"></span></div>
+        <div class="brow"><span class="bk">Niche</span><span class="bv" id="bb2"></span></div>
+        <div class="brow"><span class="bk">Budget</span><span class="bv" style="color:var(--accent)" id="bb3"></span></div>
+        <div class="brow"><span class="bk">Pay Type</span><span class="bv" id="bb4"></span></div>
+        <div class="brow"><span class="bk">Deliverables</span><span class="bv" id="bb5"></span></div>
+        <div class="brow"><span class="bk">Platforms</span><span class="bv" id="bb6"></span></div>
+        <div class="brow"><span class="bk">Usage Rights</span><span class="bv" id="bb7"></span></div>
+        <div class="brow"><span class="bk">Turnaround</span><span class="bv" id="bb8"></span></div>
+        <div class="brow"><span class="bk">Region</span><span class="bv" id="bb9"></span></div>
+        <button class="btn-track" onclick="addTrack()">+ ADD TO TRACKER</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// ✅ FIXED: Session guard now points to correct URL
+if (sessionStorage.getItem("bde_access") !== "granted") {
+  window.location.href = "/bde-access.html";
+}
+const BRANDS=[
+  {id:1,name:"FENTY BEAUTY",handle:"@fentybeauty",niche:"Beauty",sub:"D2C",followers:"12.4M",region:"US",flag:"🇺🇸",budget:"$500–$1.5K",cashOnly:true,score:9,color:"#b23a8e",initials:"FB",tags:["Beauty","Skincare","Inclusive"],platforms:["TikTok","Instagram","Reels","YouTube"],email:"partnerships@fentybeauty.com (verify on site)",ig:"instagram.com/fentybeauty",tt:"tiktok.com/@fentybeauty",portal:"fentybeauty.com/pages/press",window:"Mon–Wed 9–11am EST",deliverables:"2× UGC videos, 3× Story frames",rights:"30-day paid usage",turnaround:"7 days",hot:true,isnew:false,ig_followers:"12.4M",tt_followers:"3.2M"},
+  {id:2,name:"SKIMS",handle:"@skims",niche:"Fashion",sub:"D2C",followers:"5.8M",region:"US",flag:"🇺🇸",budget:"$300–$1K",cashOnly:false,score:8,color:"#c48b6e",initials:"SK",tags:["Fashion","Bodycon","Lifestyle"],platforms:["TikTok","Instagram","Reels"],email:"creator@skims.com (verify on site)",ig:"instagram.com/skims",tt:"tiktok.com/@skims",portal:"skims.com/pages/partnership",window:"Tue–Thu 10am–12pm PST",deliverables:"1× Reel, 2× TikTok",rights:"60-day usage",turnaround:"10 days",hot:false,isnew:true,ig_followers:"5.8M",tt_followers:"2.1M"},
+  {id:3,name:"PATTERN BEAUTY",handle:"@patternbeauty",niche:"Beauty",sub:"D2C",followers:"820K",region:"US",flag:"🇺🇸",budget:"$200–$600",cashOnly:true,score:10,color:"#4a7c59",initials:"PB",tags:["Beauty","Haircare","Black-Owned"],platforms:["TikTok","Instagram","YouTube"],email:"partnerships@patternbeauty.com (verify on site)",ig:"instagram.com/patternbeauty",tt:"tiktok.com/@patternbeauty",portal:"patternbeauty.com",window:"Mon–Fri 9am–3pm EST",deliverables:"2× TikTok, 1× YouTube Review",rights:"90-day usage",turnaround:"7 days",hot:true,isnew:false,ig_followers:"820K",tt_followers:"450K"},
+  {id:4,name:"GYMSHARK",handle:"@gymshark",niche:"Fashion",sub:"D2C",followers:"7.2M",region:"UK",flag:"🇬🇧",budget:"$300–$800",cashOnly:true,score:9,color:"#3a3a6c",initials:"GS",tags:["Fashion","Fitness","Activewear"],platforms:["TikTok","Instagram","YouTube"],email:"athletes@gymshark.com (verify on site)",ig:"instagram.com/gymshark",tt:"tiktok.com/@gymshark",portal:"gymshark.com/pages/ambassador-program",window:"Mon–Wed 8–10am GMT",deliverables:"3× TikTok, 2× Reels",rights:"30-day usage",turnaround:"14 days",hot:false,isnew:false,ig_followers:"7.2M",tt_followers:"4.5M"},
+  {id:5,name:"AESOP",handle:"@aesop",niche:"Skincare",sub:"Luxury",followers:"1.1M",region:"AU",flag:"🇦🇺",budget:"$500–$2K",cashOnly:true,score:9,color:"#5c4a3a",initials:"AE",tags:["Skincare","Luxury","Botanical"],platforms:["Instagram","Reels"],email:"press@aesop.com (verify on site)",ig:"instagram.com/aesop",tt:"tiktok.com/@aesop",portal:"aesop.com/us/en/page/contact-us",window:"Tue–Thu 9am–12pm AEST",deliverables:"2× Editorial Reels, 1× Carousel",rights:"Usage TBD",turnaround:"14 days",hot:false,isnew:false,ig_followers:"1.1M",tt_followers:"180K"},
+  {id:6,name:"RARE BEAUTY",handle:"@rarebeauty",niche:"Beauty",sub:"D2C",followers:"5.1M",region:"US",flag:"🇺🇸",budget:"$300–$900",cashOnly:true,score:10,color:"#c4748c",initials:"RB",tags:["Beauty","Mental Health","Inclusive"],platforms:["TikTok","Instagram","Reels"],email:"creator@rarebeauty.com (verify on site)",ig:"instagram.com/rarebeauty",tt:"tiktok.com/@rarebeauty",portal:"rarebeauty.com/pages/creator-program",window:"Mon–Fri 10am–2pm PST",deliverables:"2× TikTok, 1× Reel, Story series",rights:"60-day paid usage",turnaround:"7 days",hot:true,isnew:false,ig_followers:"5.1M",tt_followers:"2.8M"},
+  {id:7,name:"TATCHA",handle:"@tatcha",niche:"Skincare",sub:"Luxury",followers:"440K",region:"US",flag:"🇺🇸",budget:"$200–$700",cashOnly:false,score:8,color:"#8c6d46",initials:"TA",tags:["Skincare","Luxury","Japanese"],platforms:["Instagram","TikTok"],email:"influencer@tatcha.com (verify on site)",ig:"instagram.com/tatcha",tt:"tiktok.com/@tatcha",portal:"tatcha.com/pages/contact",window:"Wed–Fri 10am–1pm PST",deliverables:"1× Reel, 2× TikTok, Story",rights:"30-day usage",turnaround:"10 days",hot:false,isnew:true,ig_followers:"440K",tt_followers:"220K"},
+  {id:8,name:"CARAWAY HOME",handle:"@carawayhome",niche:"Home",sub:"D2C",followers:"380K",region:"US",flag:"🇺🇸",budget:"$150–$500",cashOnly:true,score:9,color:"#5c7a5e",initials:"CA",tags:["Home","Kitchen","Aesthetic"],platforms:["TikTok","Instagram","YouTube"],email:"collab@carawayhome.com (verify on site)",ig:"instagram.com/carawayhome",tt:"tiktok.com/@carawayhome",portal:"carawayhome.com/pages/ambassador",window:"Tue–Thu 9am–12pm EST",deliverables:"2× TikTok, 1× YouTube Short",rights:"60-day usage",turnaround:"7 days",hot:false,isnew:false,ig_followers:"380K",tt_followers:"290K"},
+  {id:9,name:"OLIPOP",handle:"@drinkolipop",niche:"Food",sub:"D2C",followers:"610K",region:"US",flag:"🇺🇸",budget:"$100–$350",cashOnly:false,score:8,color:"#e88c44",initials:"OL",tags:["Food","Wellness","Beverage"],platforms:["TikTok","Instagram","Reels"],email:"partnerships@drinkolipop.com (verify on site)",ig:"instagram.com/drinkolipop",tt:"tiktok.com/@drinkolipop",portal:"drinkolipop.com/pages/creators",window:"Mon–Wed 11am–2pm PST",deliverables:"2× TikTok, Story series",rights:"30-day usage",turnaround:"5 days",hot:false,isnew:false,ig_followers:"610K",tt_followers:"440K"},
+  {id:10,name:"MAISON MARGIELA",handle:"@maisonmargiela",niche:"Fashion",sub:"Luxury",followers:"3.2M",region:"EU",flag:"🇫🇷",budget:"$1K–$5K",cashOnly:true,score:10,color:"#c8c4bc",initials:"MM",tags:["Fashion","Luxury","Avantgarde"],platforms:["Instagram","Reels"],email:"pr@maisonmargiela.com (verify on site)",ig:"instagram.com/maisonmargiela",tt:"tiktok.com/@maisonmargiela",portal:"maisonmargiela.com/pages/press",window:"Tue–Thu 9am–5pm CET",deliverables:"2× Editorial Reels, Campaign visual",rights:"90-day usage",turnaround:"21 days",hot:false,isnew:false,ig_followers:"3.2M",tt_followers:"890K"},
+  {id:11,name:"GLOSSIER",handle:"@glossier",niche:"Beauty",sub:"D2C",followers:"2.8M",region:"US",flag:"🇺🇸",budget:"$100–$500",cashOnly:false,score:9,color:"#f0c8d8",initials:"GL",tags:["Beauty","Minimal","Skin"],platforms:["Instagram","TikTok","Reels"],email:"press@glossier.com (verify on site)",ig:"instagram.com/glossier",tt:"tiktok.com/@glossier",portal:"glossier.com/pages/rep-program",window:"Tue–Thu 10am–2pm EST",deliverables:"2× Reels, 3× Stories, 1× TikTok",rights:"30-day usage",turnaround:"10 days",hot:false,isnew:false,ig_followers:"2.8M",tt_followers:"1.2M"},
+  {id:12,name:"LIQUID IV",handle:"@liquidiv",niche:"Wellness",sub:"D2C",followers:"1.4M",region:"Global",flag:"🌐",budget:"$200–$600",cashOnly:false,score:9,color:"#3a7bc8",initials:"LI",tags:["Wellness","Hydration","Sport"],platforms:["TikTok","Instagram","YouTube"],email:"ugc@liquidiv.com (verify on site)",ig:"instagram.com/liquid_iv",tt:"tiktok.com/@liquidiv",portal:"liquidiv.com/pages/ambassador",window:"Mon–Fri 8am–5pm PST",deliverables:"2× TikTok, 1× YouTube Short",rights:"60-day global usage",turnaround:"7 days",hot:true,isnew:false,ig_followers:"1.4M",tt_followers:"780K"},
+  {id:13,name:"NÉCESSAIRE",handle:"@necessaire",niche:"Wellness",sub:"D2C",followers:"320K",region:"US",flag:"🇺🇸",budget:"$150–$450",cashOnly:false,score:8,color:"#c4b898",initials:"NE",tags:["Wellness","Skincare","Clean"],platforms:["Instagram","Reels","TikTok"],email:"hello@necessaire.com (verify on site)",ig:"instagram.com/necessaire",tt:"tiktok.com/@necessaire",portal:"necessaire.com/pages/contact",window:"Mon–Thu 10am–3pm EST",deliverables:"1× Reel, 2× Stories, 1× TikTok",rights:"30-day usage",turnaround:"10 days",hot:false,isnew:false,ig_followers:"320K",tt_followers:"190K"},
+  {id:14,name:"DJERF AVENUE",handle:"@djerfavenue",niche:"Fashion",sub:"D2C",followers:"920K",region:"EU",flag:"🇸🇪",budget:"$200–$600",cashOnly:true,score:9,color:"#c4a882",initials:"DA",tags:["Fashion","Editorial","Aesthetic"],platforms:["Instagram","Reels","TikTok"],email:"collab@djerfavenue.com (verify on site)",ig:"instagram.com/djerfavenue",tt:"tiktok.com/@djerfavenue",portal:"djerfavenue.com/pages/press",window:"Mon–Fri 9am–5pm CET",deliverables:"2× Reels, 1× TikTok",rights:"30-day usage",turnaround:"14 days",hot:false,isnew:true,ig_followers:"920K",tt_followers:"350K"},
+  {id:15,name:"LIQUID DEATH",handle:"@liquiddeath",niche:"Food",sub:"D2C",followers:"2.1M",region:"US",flag:"🇺🇸",budget:"$200–$800",cashOnly:true,score:9,color:"#4a4a5c",initials:"LD",tags:["Food","Beverage","Culture"],platforms:["TikTok","Instagram","YouTube"],email:"brand@liquiddeath.com (verify on site)",ig:"instagram.com/liquiddeath",tt:"tiktok.com/@liquiddeath",portal:"liquiddeath.com/pages/creators",window:"Tue–Thu 10am–3pm PST",deliverables:"2× TikTok, 1× YouTube Short",rights:"60-day usage",turnaround:"7 days",hot:true,isnew:true,ig_followers:"2.1M",tt_followers:"3.4M"},
+  {id:16,name:"AMAZON",handle:"@amazon",niche:"Tech",sub:"Enterprise",followers:"4.5M",region:"Global",flag:"🌐",budget:"$500–$3K",cashOnly:true,score:9,color:"#ff9900",initials:"AM",tags:["Tech","Lifestyle","Everything"],platforms:["TikTok","YouTube","Instagram"],email:"influencer@amazon.com (verify on site)",ig:"instagram.com/amazon",tt:"tiktok.com/@amazon",portal:"affiliate-program.amazon.com",window:"Mon–Fri 9am–5pm PST",deliverables:"1× Product review video, Story",rights:"90-day usage",turnaround:"7 days",hot:true,isnew:false,ig_followers:"4.5M",tt_followers:"2.9M"},
+  {id:17,name:"PARADE",handle:"@yourparade",niche:"Fashion",sub:"D2C",followers:"520K",region:"US",flag:"🇺🇸",budget:"$100–$350",cashOnly:true,score:8,color:"#e84c4c",initials:"PA",tags:["Fashion","Inclusive","Intimates"],platforms:["Instagram","TikTok","Reels"],email:"hi@yourparade.com (verify on site)",ig:"instagram.com/yourparade",tt:"tiktok.com/@yourparade",portal:"yourparade.com/pages/creators",window:"Mon–Fri 9am–5pm EST",deliverables:"2× TikTok, 1× Reel",rights:"30-day usage",turnaround:"7 days",hot:false,isnew:false,ig_followers:"520K",tt_followers:"280K"},
+  {id:18,name:"CUROLOGY",handle:"@curology",niche:"Skincare",sub:"D2C",followers:"340K",region:"US",flag:"🇺🇸",budget:"$100–$400",cashOnly:true,score:8,color:"#7ab4d4",initials:"CU",tags:["Skincare","Acne","Personalized"],platforms:["TikTok","YouTube","Instagram"],email:"creators@curology.com (verify on site)",ig:"instagram.com/curology",tt:"tiktok.com/@curology",portal:"curology.com/ugc",window:"Tue–Thu 9am–3pm PST",deliverables:"1× YouTube review, 2× TikTok",rights:"60-day usage",turnaround:"14 days",hot:false,isnew:false,ig_followers:"340K",tt_followers:"520K"},
+  {id:19,name:"APPLE",handle:"@apple",niche:"Tech",sub:"Enterprise",followers:"32M",region:"Global",flag:"🌐",budget:"$1K–$5K",cashOnly:true,score:10,color:"#888",initials:"AP",tags:["Tech","Lifestyle","Creators"],platforms:["Instagram","YouTube","TikTok"],email:"creator-partnerships@apple.com (verify on site)",ig:"instagram.com/apple",tt:"tiktok.com/@apple",portal:"apple.com/contact",window:"Mon–Fri 9am–6pm PST",deliverables:"Creative campaign TBD",rights:"Negotiated per project",turnaround:"21 days",hot:false,isnew:false,ig_followers:"32M",tt_followers:"8.4M"},
+  {id:20,name:"KOSAS",handle:"@kosas",niche:"Beauty",sub:"D2C",followers:"710K",region:"US",flag:"🇺🇸",budget:"$100–$400",cashOnly:false,score:8,color:"#d4748c",initials:"KO",tags:["Beauty","Clean","Skincare"],platforms:["TikTok","Instagram","YouTube"],email:"creators@kosas.com (verify on site)",ig:"instagram.com/kosas",tt:"tiktok.com/@kosas",portal:"kosas.com/pages/creator-program",window:"Mon–Fri 9am–4pm PST",deliverables:"2× TikTok tutorials, 1× Reel",rights:"30-day usage",turnaround:"7 days",hot:false,isnew:true,ig_followers:"710K",tt_followers:"390K"},
+];
+let aN='All',aS='score';
+let f1=false,f2=true,f3=true,f4=false;
+let cur=null;
+let ptype='ugc',ptone='confident',pch='dm',fuDay=3;
+let saved=new Set(),apps=[];
+function sv(v,el){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  el.classList.add('active');
+  if(v==='finder')doF();
+  if(v==='tracker')renderTr();
+}
+function setN(n,el){aN=n;document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));el.classList.add('active');doF();}
+function setSort(s,el){aS=s;document.querySelectorAll('.sbtn').forEach(x=>x.classList.remove('active'));el.classList.add('active');doF();}
+function togF(n){
+  if(n===1){f1=!f1;document.getElementById('t1').classList.toggle('on',f1);}
+  if(n===2){f2=!f2;document.getElementById('t2').classList.toggle('on',f2);}
+  if(n===3){f3=!f3;document.getElementById('t3').classList.toggle('on',f3);}
+  if(n===4){f4=!f4;document.getElementById('t4').classList.toggle('on',f4);}
+  doF();
+}
+function doF(){
+  const q=document.getElementById('sinp').value.toLowerCase();
+  const reg=document.getElementById('rsel').value;
+  let list=BRANDS.filter(b=>{
+    const mn=aN==='All'||b.niche===aN;
+    const ms=!q||b.name.toLowerCase().includes(q)||b.handle.includes(q)||b.tags.some(t=>t.toLowerCase().includes(q))||b.niche.toLowerCase().includes(q)||b.region.toLowerCase().includes(q);
+    const mc=!f1||b.cashOnly;
+    const mr=reg==='All'||b.region===reg;
+    const msc=!f4||b.score>=8;
+    return mn&&ms&&mc&&mr&&msc;
+  });
+  if(aS==='score')list.sort((a,b)=>b.score-a.score);
+  if(aS==='budget')list.sort((a,b)=>parseInt(b.budget.replace(/[^0-9]/g,''))-parseInt(a.budget.replace(/[^0-9]/g,'')));
+  if(aS==='new')list.sort((a,b)=>(b.isnew?1:0)-(a.isnew?1:0)||b.id-a.id);
+  document.getElementById('rnum').textContent=list.length;
+  renderCards(list);
+}
+function renderCards(list){
+  const g=document.getElementById('bgrid');
+  if(!list.length){g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:80px;color:var(--muted);font-family:Space Mono;font-size:11px">NO BRANDS MATCH YOUR FILTERS</div>';return;}
+  g.innerHTML=list.map(b=>`
+  <div class="bc ${b.hot?'hot':(b.isnew?'isnew':'')}">
+    <div class="bc-top">
+      <div class="bc-logo" style="background:${b.color}18;color:${b.color};border:1px solid ${b.color}26">${b.initials}</div>
+      <div class="bc-meta"><h3>${b.name}</h3><p>${b.handle} · ${b.followers}</p><p class="bc-reg">${b.flag} ${b.region} · ${b.sub}</p></div>
+    </div>
+    <div class="bctags">
+      <span class="bct ni">${b.niche}</span>
+      ${b.platforms.slice(0,2).map(p=>`<span class="bct pl">${p}</span>`).join('')}
+      <span class="bct">${b.tags[2]||''}</span>
+    </div>
+    <div class="bcrows">
+      <div class="bcr"><span class="bck">Collabs</span><span class="bcv g">Open</span></div>
+      <div class="bcr"><span class="bck">Budget</span><span class="bcv y">${b.budget}</span></div>
+      <div class="bcr"><span class="bck">Pay</span><span class="bcv ${b.cashOnly?'g':''}">${b.cashOnly?'💵 Cash':'Product + Cash'}</span></div>
+      <div class="bcr"><span class="bck">Contact</span><span class="bcv b">✓ Methods Listed</span></div>
+    </div>
+    <div class="bc-sh"><span>UGC SCORE</span><span>${b.score}/10</span></div>
+    <div class="bc-bar"><div class="bc-bfill" style="width:${b.score*10}%"></div></div>
+    <div class="bcacts">
+      <button class="btn-ap" onclick="openB(${b.id})">⚡ APPLY NOW</button>
+      <button class="btn-w ${saved.has(b.id)?'saved':''}" id="w${b.id}" onclick="togSave(${b.id})">♥</button>
+    </div>
+  </div>`).join('');
+}
+function togSave(id){
+  if(saved.has(id))saved.delete(id);else saved.add(id);
+  const btn=document.getElementById('w'+id);
+  if(btn)btn.classList.toggle('saved',saved.has(id));
+}
+function openB(id){
+  cur=BRANDS.find(b=>b.id===id);
+  const b=cur;
+  document.getElementById('mlog').style.cssText=`background:${b.color}18;color:${b.color};border:1px solid ${b.color}26`;
+  document.getElementById('mlog').textContent=b.initials;
+  document.getElementById('mname').textContent=b.name;
+  document.getElementById('msub').textContent=b.handle+' · '+b.niche+' · '+b.flag+' '+b.region;
+  document.getElementById('c-em').textContent=b.email;
+  document.getElementById('c-ig').textContent=b.ig;document.getElementById('c-ig').href='https://'+b.ig;
+  document.getElementById('c-tt').textContent=b.tt;document.getElementById('c-tt').href='https://'+b.tt;
+  document.getElementById('c-po').textContent=b.portal;document.getElementById('c-po').href='https://'+b.portal;
+  document.getElementById('c-wn').textContent=b.window;
+  const platHTML=b.platforms.map(p=>{
+    const info={
+      TikTok:{icon:'🎵',handle:b.tt,followers:b.tt_followers,tip:`Go to ${b.name}'s TikTok profile → tap the message icon (if enabled).`},
+      Instagram:{icon:'📸',handle:b.ig,followers:b.ig_followers,tip:`Follow first, engage with 2–3 posts, then DM. Use Instagram's "Partnership Messages" label if available.`},
+      Reels:{icon:'🎬',handle:b.ig,followers:b.ig_followers,tip:`Comment on a recent Reel genuinely, then DM with your pitch within 48hrs.`},
+      YouTube:{icon:'▶️',handle:'youtube.com/@'+b.handle.replace('@',''),followers:'—',tip:`Leave a thoughtful comment, then reach out via their About page contact link.`},
+    };
+    const i=info[p]||{icon:'🔗',handle:'—',followers:'—',tip:'Search for their official page and engage before pitching.'};
+    return `<div class="pg-row"><div class="pg-icon">${i.icon}</div><div class="pg-info"><div class="pg-name">${p} — ${i.followers} followers</div><div class="pg-desc">${i.tip}</div><div class="pg-link"><a href="https://${i.handle}" target="_blank">→ Open ${p} Profile</a></div></div></div>`;
+  }).join('');
+  document.getElementById('plat-list').innerHTML=platHTML;
+  document.getElementById('bb1').textContent=b.name;
+  document.getElementById('bb2').textContent=b.niche;
+  document.getElementById('bb3').textContent=b.budget;
+  document.getElementById('bb4').textContent=b.cashOnly?'Cash':'Product + Cash';
+  document.getElementById('bb5').textContent=b.deliverables;
+  document.getElementById('bb6').textContent=b.platforms.join(', ');
+  document.getElementById('bb7').textContent=b.rights;
+  document.getElementById('bb8').textContent=b.turnaround;
+  document.getElementById('bb9').textContent=b.flag+' '+b.region;
+  document.getElementById('aiout').innerHTML='<div class="ail"><div class="dots"><span></span><span></span><span></span></div>Hit Generate to write your pitch</div>';
+  document.getElementById('fuout').innerHTML='<div class="ail"><div class="dots"><span></span><span></span><span></span></div>Hit Generate to write your follow-up</div>';
+  document.getElementById('genBtn').textContent='⚡ GENERATE OUTREACH';
+  document.getElementById('genBtn').disabled=false;
+  document.getElementById('fuBtn').textContent='🔁 GENERATE FOLLOW-UP';
+  document.getElementById('fuBtn').disabled=false;
+  setMT('contact',document.querySelector('.mt'));
+  document.getElementById('moverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeM(){document.getElementById('moverlay').classList.remove('open');document.body.style.overflow='';}
+function handleOv(e){if(e.target===document.getElementById('moverlay'))closeM();}
+function setMT(t,el){
+  document.querySelectorAll('.mt').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  ['contact','platforms','outreach','followup','brief'].forEach(tab=>{
+    document.getElementById('tab-'+tab).style.display=t===tab?'block':'none';
+  });
+}
+function copyC(id){
+  const el=document.getElementById(id);
+  const text=el.textContent||el.href||'';
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=el.closest('.cc').querySelector('.cc-cp');
+    btn.textContent='✓';setTimeout(()=>btn.textContent='COPY',1500);
+  });
+}
+function setPT(t,el){ptype=t;document.querySelectorAll('.ptb').forEach(x=>x.classList.remove('active'));el.classList.add('active');}
+function setTone(t,el){ptone=t;document.querySelectorAll('.tb').forEach(x=>x.classList.remove('active'));el.classList.add('active');}
+function setCH(c,el){pch=c;document.querySelectorAll('.chb').forEach(x=>x.classList.remove('active'));el.classList.add('active');}
+async function genOut(){
+  if(!cur)return;
+  const b=cur;
+  const btn=document.getElementById('genBtn'),out=document.getElementById('aiout');
+  btn.disabled=true;btn.textContent='GENERATING...';
+  out.innerHTML='<div class="ail"><div class="dots"><span></span><span></span><span></span></div>Writing your AI-powered outreach...</div>';
+  const ptL={ugc:'UGC video content creation',ai_visual:'cinematic AI-generated visual campaigns (Midjourney + Sora 2)',campaign:'a full brand content campaign',longterm:'a long-term brand ambassador partnership'};
+  const tL={confident:'confident and professional',casual:'casual and friendly',bold:'bold, punchy, and direct',story:'narrative-driven and personal storytelling'};
+  const chL={dm:'Instagram or TikTok DM — max 130 words, conversational, no subject line',email:'cold email — write "Subject: [subject]" on the first line, then skip a line, then the email body — max 200 words',portal:'brand collab portal application — professional, detailed, max 260 words'};
+  const prompt=`You are writing outreach for NANDYVISUALS — a US-based AI visual content creator and UGC creator. Specialties: cinematic AI-generated visuals using Midjourney + Sora 2, Afrofuturism, editorial storytelling, diverse Black woman protagonists. Platforms: @theeaivisualz (TikTok/Instagram).\n\nWrite ${chL[pch]} to ${b.name} (${b.handle}) — a ${b.niche} brand in ${b.region}.\nPitch type: ${ptL[ptype]}\nTone: ${tL[ptone]}\nTheir budget: ${b.budget}\n\nRules:\n- Sound like a real human creator — NOT a template\n- Reference something specific about ${b.name}'s brand identity or values\n- Include a concrete value prop about AI-generated visuals\n- For email: Subject line on line 1, blank line, then body\n- End with ONE clear CTA\n- Zero hashtags. Zero filler phrases.\n- Every sentence must earn its place.`;
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
+    const data=await res.json();
+    out.textContent=data.content?.map(i=>i.text||'').join('')||'Error. Try again.';
+  }catch(e){out.textContent='Error connecting. Check your internet and try again.';}
+  btn.disabled=false;btn.textContent='⚡ REGENERATE';
+}
+function setFU(day,el){
+  fuDay=day;
+  document.querySelectorAll('.fday').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+}
+async function genFU(){
+  if(!cur)return;
+  const b=cur;
+  const btn=document.getElementById('fuBtn'),out=document.getElementById('fuout');
+  btn.disabled=true;btn.textContent='GENERATING...';
+  out.innerHTML='<div class="ail"><div class="dots"><span></span><span></span><span></span></div>Writing your follow-up sequence...</div>';
+  const dayDesc={
+    3:`Day 3 follow-up — no reply yet. Short, warm, value-add. Reference original message. Max 80 words. Don't apologize.`,
+    7:`Day 7 follow-up — second follow-up. Add a new hook or stat. Max 80 words. Confident, not desperate.`,
+    14:`Day 14 final touch — graceful last message. Under 60 words. Leave door open. Memorable, not bitter.`
+  };
+  const prompt=`You are writing a follow-up for NANDYVISUALS (@theeaivisualz) who pitched to ${b.name} (${b.handle}) for a UGC/AI visual collab.\n\nWrite a ${dayDesc[fuDay]}\n\nBrand: ${b.name} | Niche: ${b.niche} | Budget: ${b.budget}\n\nRules: confident real human, reference prior outreach, fresh hook, one CTA, no hashtags, no apologies.`;
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:prompt}]})});
+    const data=await res.json();
+    out.textContent=data.content?.map(i=>i.text||'').join('')||'Error. Try again.';
+  }catch(e){out.textContent='Error connecting. Try again.';}
+  btn.disabled=false;btn.textContent='🔁 REGENERATE FOLLOW-UP';
+}
+function cpOut(id){
+  const text=document.getElementById(id).textContent;
+  if(text.includes('Hit Generate')||text.includes('Writing your')||text.includes('Error'))return;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btns=document.querySelectorAll('.btn-cp2');
+    btns.forEach(b=>{b.textContent='✓ COPIED';});
+    setTimeout(()=>btns.forEach(b=>b.textContent='COPY'),2000);
+  });
+}
+function addTrack(){
+  if(!cur)return;
+  if(!apps.find(a=>a.id===cur.id))apps.push({...cur,status:'draft',date:new Date().toLocaleDateString()});
+  closeM();
+  sv('tracker',document.querySelectorAll('.ntab')[2]);
+}
+function renderTr(){
+  document.getElementById('tt').textContent=apps.length;
+  document.getElementById('ts').textContent=apps.filter(a=>a.status==='sent').length;
+  document.getElementById('tr').textContent=apps.filter(a=>a.status==='replied').length;
+  document.getElementById('tsv').textContent=saved.size;
+  const rCol=(items,col)=>{
+    const el=document.getElementById('col-'+col);
+    if(!items.length){el.innerHTML='<div style="text-align:center;padding:18px;color:var(--muted);font-size:10px;font-family:Space Mono">EMPTY</div>';return;}
+    el.innerHTML=items.map(b=>`<div class="pitem"><div class="pi-br">${b.name}</div><div class="pi-bu">${b.budget}</div><div class="pi-btns">${col==='draft'?`<button class="pi-mv" onclick="mvA(${b.id},'sent')">→ SENT</button>`:''}${col==='sent'?`<button class="pi-rp" onclick="mvA(${b.id},'replied')">REPLIED ✓</button>`:''}<button class="pi-dl" onclick="rmA(${b.id})">✕</button></div><div class="pi-da">${b.date}</div></div>`).join('');
+  };
+  const d=apps.filter(a=>a.status==='draft'),s=apps.filter(a=>a.status==='sent'),r=apps.filter(a=>a.status==='replied');
+  document.getElementById('dc').textContent=d.length;
+  document.getElementById('sc').textContent=s.length;
+  document.getElementById('rc').textContent=r.length;
+  rCol(d,'draft');rCol(s,'sent');rCol(r,'replied');
+  const sEl=document.getElementById('savedList');
+  if(!saved.size){sEl.innerHTML='<div style="color:var(--muted);font-size:11px;font-family:Space Mono">No saved brands yet. Click ♥ on any brand card.</div>';return;}
+  sEl.innerHTML=[...saved].map(id=>{
+    const b=BRANDS.find(x=>x.id===id);if(!b)return '';
+    return `<div class="si"><div class="si-logo" style="background:${b.color}18;color:${b.color};border:1px solid ${b.color}26">${b.initials}</div><div class="si-info"><h4>${b.name}</h4><p>${b.handle} · ${b.budget} · ${b.flag}</p></div><button class="btn-sap" onclick="openB(${b.id});sv('finder',document.querySelectorAll('.ntab')[1])">APPLY</button></div>`;
+  }).join('');
+}
+function mvA(id,s){const a=apps.find(x=>x.id===id);if(a)a.status=s;renderTr();}
+function rmA(id){apps=apps.filter(x=>x.id!==id);renderTr();}
+function countUp(id,target){
+  let c=0;const step=Math.ceil(target/36);
+  const el=document.getElementById(id);
+  const t=setInterval(()=>{c=Math.min(c+step,target);el.textContent=c;if(c>=target)clearInterval(t);},26);
+}
+setTimeout(()=>{
+  countUp('cu1',BRANDS.length);
+  countUp('cu2',BRANDS.length);
+  countUp('cu3',BRANDS.filter(b=>b.cashOnly).length);
+  countUp('cu4',8);
+},300);
+</script>
+</body>
+</html>
