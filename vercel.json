@@ -11,6 +11,10 @@
     {
       "source": "/bde-access",
       "destination": "/bde-access.html"
+    },
+    {
+      "source": "/video-studio",
+      "destination": "/nandyvisuals-video-studio.html"
     }
   ],
   "headers": [
