@@ -15,6 +15,10 @@
     {
       "source": "/video-studio",
       "destination": "/nandyvisuals-video-studio.html"
+    },
+    {
+      "source": "/ad-studio",
+      "destination": "/nandyvisuals-ad-studio.html"
     }
   ],
   "headers": [
