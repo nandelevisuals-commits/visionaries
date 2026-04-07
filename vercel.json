@@ -19,6 +19,18 @@
     {
       "source": "/ad-studio",
       "destination": "/nandyvisuals-ad-studio.html"
+    },
+    {
+      "source": "/elevated-vision",
+      "destination": "/elevated-vision-landing.html"
+    },
+    {
+      "source": "/elevated-vision/access",
+      "destination": "/elevated-vision.html"
+    },
+    {
+      "source": "/story-engine",
+      "destination": "/story-engine.html"
     }
   ],
   "headers": [
