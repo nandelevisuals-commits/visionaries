@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Story Engine — NANDYVISUALS</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Italiana&family=Jost:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:      #060911;
+  --dark:       #0c1018;
+  --card:       #101420;
+  --card2:      #141926;
+  --teal:       #00d4c8;
+  --teal-dim:   rgba(0,212,200,0.14);
+  --teal-glow:  rgba(0,212,200,0.3);
+  --pink:       #ff4d8d;
+  --pink-dim:   rgba(255,77,141,0.12);
+  --pink-glow:  rgba(255,77,141,0.28);
+  --gold:       #f0c060;
+  --gold-dim:   rgba(240,192,96,0.12);
+  --white:      #eef2f7;
+  --dim:        rgba(238,242,247,0.58);
+  --muted:      rgba(238,242,247,0.3);
+  --border:     rgba(238,242,247,0.07);
+  --border-t:   rgba(0,212,200,0.15);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--black);
+  font-family:'Jost',sans-serif;
+  color:var(--white);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── AMBIENT ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 5% 15%, rgba(0,212,200,0.04) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 60% at 95% 85%, rgba(255,77,141,0.04) 0%, transparent 65%);
+  pointer-events:none;z-index:0;
+}
+
+body::after{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,200,0.007) 2px,rgba(0,212,200,0.007) 4px);
+  pointer-events:none;z-index:0;
+}
+
+/* ── ACCESS GATE ── */
+#gate{
+  position:fixed;inset:0;
+  background:var(--black);
+  z-index:100;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:2rem;
+  animation:fadeIn 0.8s ease forwards;
+}
+#gate.hidden{animation:fadeOut 0.6s ease forwards;pointer-events:none;}
+
+#gate::before,#gate::after{
+  content:'';position:absolute;
+  width:70px;height:70px;
+  border-color:var(--teal);border-style:solid;opacity:0.35;
+}
+#gate::before{top:2rem;left:2rem;border-width:1px 0 0 1px;}
+#gate::after{bottom:2rem;right:2rem;border-width:0 1px 1px 0;}
+
+.gate-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2rem,7vw,3rem);
+  letter-spacing:0.14em;
+  background:linear-gradient(135deg,var(--teal),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:0.2rem;
+}
+.gate-sub{font-size:0.58rem;letter-spacing:0.3em;color:var(--muted);text-transform:uppercase;margin-bottom:3rem;}
+.gate-divider{width:40px;height:1px;background:linear-gradient(90deg,var(--teal),var(--pink));margin:0 auto 3rem;}
+.gate-title{font-family:'Italiana',serif;font-size:clamp(1.8rem,5vw,2.8rem);text-align:center;line-height:1.2;margin-bottom:0.6rem;color:var(--white);}
+.gate-desc{font-size:0.88rem;font-weight:300;color:var(--muted);text-align:center;margin-bottom:2.5rem;max-width:340px;line-height:1.7;}
+
+.gate-input-wrap{width:100%;max-width:360px;margin-bottom:0.8rem;}
+.gate-input{
+  width:100%;background:rgba(0,212,200,0.05);
+  border:1px solid var(--border-t);border-radius:3px;
+  padding:1rem 1.2rem;font-family:'Jost',sans-serif;
+  font-size:0.88rem;color:var(--teal);
+  letter-spacing:0.2em;text-align:center;text-transform:uppercase;outline:none;
+  transition:all 0.3s;
+}
+.gate-input:focus{border-color:var(--teal);background:rgba(0,212,200,0.08);box-shadow:0 0 20px var(--teal-glow);}
+.gate-input::placeholder{color:rgba(0,212,200,0.25);}
+
+.gate-btn{
+  width:100%;max-width:360px;
+  background:linear-gradient(135deg,var(--teal),#00b8ae);
+  color:var(--black);border:none;border-radius:3px;padding:1rem;
+  font-family:'Jost',sans-serif;font-size:0.75rem;font-weight:500;
+  letter-spacing:0.25em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;
+}
+.gate-btn:hover{box-shadow:0 0 28px var(--teal-glow);transform:translateY(-1px);}
+.gate-error{font-size:0.75rem;color:var(--pink);text-align:center;margin-top:0.8rem;min-height:1.1em;letter-spacing:0.06em;}
+.gate-footer{position:absolute;bottom:2rem;font-size:0.58rem;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;}
+
+/* ── MAIN APP ── */
+#app{display:none;min-height:100vh;position:relative;z-index:1;}
+#app.visible{display:block;}
+
+/* ── HEADER ── */
+.header{text-align:center;padding:3rem 2rem 2rem;position:relative;}
+.header-bar{width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--teal),var(--pink),transparent);margin-bottom:2.5rem;opacity:0.5;}
+.brand-name{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(1.6rem,5vw,2.2rem);
+  letter-spacing:0.15em;
+  background:linear-gradient(135deg,var(--teal),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:0.2rem;
+}
+.brand-sub{font-size:0.58rem;letter-spacing:0.28em;color:var(--muted);text-transform:uppercase;margin-bottom:2rem;}
+.page-title{
+  font-family:'Italiana',serif;
+  font-size:clamp(2.4rem,7vw,4.2rem);
+  font-weight:400;line-height:1.05;color:var(--white);margin-bottom:0.5rem;
+}
+.page-title em{
+  font-style:italic;
+  background:linear-gradient(135deg,var(--teal),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.page-subtitle{
+  font-size:clamp(0.82rem,2vw,0.95rem);font-weight:300;
+  color:var(--muted);max-width:520px;margin:0 auto 2rem;line-height:1.8;
+}
+
+/* ── CONTAINER ── */
+.container{max-width:760px;margin:0 auto;padding:0 1.5rem 5rem;}
+
+/* ── CARDS ── */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:8px;padding:1.8rem;margin-bottom:1rem;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--teal),var(--pink));opacity:0.45;
+}
+.card-label{font-size:0.58rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--teal);margin-bottom:1.2rem;opacity:0.8;}
+
+/* ── INPUTS ── */
+label{display:block;font-size:0.64rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;}
+textarea,select,input[type="text"]{
+  width:100%;background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);border-radius:4px;
+  padding:0.85rem 1rem;font-family:'Jost',sans-serif;
+  font-size:0.86rem;font-weight:300;color:var(--white);
+  outline:none;transition:all 0.25s;resize:vertical;line-height:1.6;
+}
+textarea{min-height:80px;}
+textarea:focus,select:focus,input[type="text"]:focus{
+  border-color:rgba(0,212,200,0.4);background:rgba(0,212,200,0.04);
+  box-shadow:0 0 16px rgba(0,212,200,0.08);
+}
+textarea::placeholder,input::placeholder{color:rgba(238,242,247,0.2);font-style:italic;}
+select{
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300d4c8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 1rem center;cursor:pointer;
+}
+select option{background:var(--dark);}
+.field{margin-bottom:1.1rem;}
+.field:last-child{margin-bottom:0;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:480px){.field-row{grid-template-columns:1fr;}}
+
+/* ── IMAGE UPLOAD ── */
+.upload-zone{
+  border:1.5px dashed rgba(0,212,200,0.28);border-radius:6px;
+  padding:2rem 1rem;text-align:center;cursor:pointer;
+  transition:all 0.3s;background:rgba(0,212,200,0.025);position:relative;overflow:hidden;
+}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--teal);background:rgba(0,212,200,0.06);box-shadow:0 0 20px rgba(0,212,200,0.08);}
+.upload-zone.has-image{border-color:var(--pink);border-style:solid;padding:0;cursor:default;}
+.upload-icon{font-size:2rem;margin-bottom:0.5rem;display:block;}
+.upload-label-text{font-size:0.82rem;color:var(--teal);display:block;margin-bottom:0.25rem;}
+.upload-hint{font-size:0.62rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
+#image-file{display:none;}
+.image-preview-wrap{position:relative;display:none;}
+.image-preview-wrap.visible{display:block;}
+.image-preview{width:100%;max-height:260px;object-fit:cover;border-radius:5px;display:block;}
+.preview-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(6,9,17,0.88) 0%,transparent 55%);
+  border-radius:5px;display:flex;align-items:flex-end;
+  padding:1rem;justify-content:space-between;
+}
+.preview-info{font-size:0.7rem;color:var(--white);opacity:0.85;}
+.preview-info span{display:block;color:var(--teal);font-size:0.6rem;margin-top:0.12rem;text-transform:uppercase;}
+.remove-img-btn{
+  background:rgba(255,77,141,0.2);border:1px solid var(--pink);color:var(--pink);
+  border-radius:3px;padding:0.28rem 0.6rem;font-size:0.6rem;
+  letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;font-family:'Jost',sans-serif;transition:all 0.2s;
+}
+.remove-img-btn:hover{background:rgba(255,77,141,0.32);}
+.upload-replace{
+  position:absolute;top:0.6rem;left:50%;transform:translateX(-50%);
+  background:rgba(6,9,17,0.75);border:1px solid rgba(0,212,200,0.28);
+  color:var(--teal);border-radius:3px;padding:0.22rem 0.65rem;
+  font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;
+  cursor:pointer;font-family:'Jost',sans-serif;transition:all 0.2s;white-space:nowrap;
+}
+
+/* ── EPISODE COUNT PILLS ── */
+.ep-pills{display:flex;gap:0.5rem;flex-wrap:wrap;}
+.ep-pill{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:2px;padding:0.42rem 1.1rem;
+  font-size:0.72rem;letter-spacing:0.1em;color:var(--dim);
+  cursor:pointer;transition:all 0.2s;font-family:'Jost',sans-serif;text-transform:uppercase;
+}
+.ep-pill:hover{border-color:var(--teal);color:var(--teal);}
+.ep-pill.active{
+  background:linear-gradient(135deg,var(--teal),#00b8ae);
+  border-color:var(--teal);color:var(--black);font-weight:500;
+  box-shadow:0 0 14px var(--teal-glow);
+}
+
+/* ── GENRE CHIPS ── */
+.genre-chips{display:flex;gap:0.5rem;flex-wrap:wrap;}
+.genre-chip{
+  background:rgba(255,77,141,0.06);border:1px solid rgba(255,77,141,0.2);
+  border-radius:20px;padding:0.36rem 0.9rem;
+  font-size:0.7rem;color:var(--dim);cursor:pointer;
+  transition:all 0.2s;font-family:'Jost',sans-serif;
+}
+.genre-chip:hover{border-color:var(--pink);color:var(--pink);}
+.genre-chip.active{background:linear-gradient(135deg,var(--pink),#cc3070);border-color:var(--pink);color:var(--white);}
+
+/* ── GENERATE BUTTON ── */
+.generate-btn{
+  width:100%;
+  background:linear-gradient(135deg,var(--pink),#cc3070);
+  color:var(--white);border:none;border-radius:4px;padding:1.15rem;
+  font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;
+  letter-spacing:0.22em;text-transform:uppercase;
+  cursor:pointer;transition:all 0.3s;margin-top:0.8rem;
+  position:relative;overflow:hidden;
+}
+.generate-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.generate-btn:hover{box-shadow:0 0 32px var(--pink-glow);transform:translateY(-2px);}
+.generate-btn:hover::before{opacity:1;}
+.generate-btn:active{transform:translateY(0);}
+.generate-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
+
+.loading-ring{
+  display:inline-block;width:14px;height:14px;
+  border:2px solid rgba(255,255,255,0.3);border-top-color:var(--white);
+  border-radius:50%;animation:spin 0.7s linear infinite;
+  vertical-align:middle;margin-right:0.5rem;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── OUTPUT ── */
+#output-section{display:none;margin-top:1.8rem;}
+#output-section.visible{display:block;animation:slideUp 0.5s ease forwards;}
+
+/* ── SERIES HEADER ── */
+.series-header{
+  background:var(--card);border:1px solid var(--border-t);
+  border-radius:8px;padding:2rem;margin-bottom:1.5rem;
+  position:relative;overflow:hidden;
+}
+.series-header::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--teal),var(--pink));
+}
+.series-title-label{font-size:0.58rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--teal);opacity:0.7;margin-bottom:0.6rem;}
+.series-name{
+  font-family:'Italiana',serif;font-size:clamp(1.6rem,4vw,2.4rem);
+  color:var(--white);margin-bottom:0.6rem;line-height:1.15;
+}
+.series-logline{font-size:0.9rem;font-weight:300;color:var(--dim);line-height:1.7;margin-bottom:1rem;font-style:italic;}
+.series-meta-row{display:flex;gap:0.6rem;flex-wrap:wrap;}
+.series-tag{
+  background:rgba(0,212,200,0.07);border:1px solid rgba(0,212,200,0.18);
+  border-radius:2px;padding:0.22rem 0.65rem;
+  font-size:0.6rem;letter-spacing:0.12em;color:var(--teal);text-transform:uppercase;
+}
+.series-actions{display:flex;gap:0.6rem;margin-top:1.2rem;flex-wrap:wrap;}
+.series-action-btn{
+  background:transparent;border:1px solid rgba(0,212,200,0.28);
+  border-radius:3px;padding:0.5rem 1rem;font-family:'Jost',sans-serif;
+  font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--teal);cursor:pointer;transition:all 0.2s;
+}
+.series-action-btn:hover{background:var(--teal-dim);}
+.series-action-btn.pdf-btn{border-color:rgba(255,77,141,0.28);color:var(--pink);}
+.series-action-btn.pdf-btn:hover{background:var(--pink-dim);}
+
+/* ── EPISODE TABS ── */
+.ep-tabs{display:flex;gap:0.4rem;margin-bottom:1rem;overflow-x:auto;padding-bottom:0.2rem;}
+.ep-tab{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:3px;padding:0.5rem 1rem;
+  font-family:'Jost',sans-serif;font-size:0.7rem;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--muted);cursor:pointer;
+  transition:all 0.2s;white-space:nowrap;
+}
+.ep-tab:hover{border-color:var(--teal);color:var(--teal);}
+.ep-tab.active{background:var(--teal-dim);border-color:var(--teal);color:var(--teal);}
+
+/* ── EPISODE PANEL ── */
+.episode-panel{display:none;}
+.episode-panel.active{display:block;animation:slideUp 0.35s ease forwards;}
+
+/* ── EPISODE HEADER ── */
+.ep-header{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:6px;padding:1.4rem;margin-bottom:1rem;
+  display:flex;gap:1rem;align-items:flex-start;
+}
+.ep-num-badge{
+  background:linear-gradient(135deg,var(--pink),#cc3070);
+  color:var(--white);font-family:'Bebas Neue',sans-serif;
+  font-size:1.4rem;letter-spacing:0.1em;
+  padding:0.4rem 0.8rem;border-radius:3px;
+  flex-shrink:0;line-height:1;
+}
+.ep-info{}
+.ep-title{
+  font-family:'Italiana',serif;font-style:italic;
+  font-size:1.15rem;color:var(--white);margin-bottom:0.3rem;
+}
+.ep-synopsis{font-size:0.8rem;font-weight:300;color:var(--dim);line-height:1.65;}
+.ep-arc{
+  display:inline-block;margin-top:0.5rem;
+  font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--gold);background:var(--gold-dim);
+  border:1px solid rgba(240,192,96,0.2);
+  border-radius:2px;padding:0.18rem 0.55rem;
+}
+
+/* ── SCENE CARD ── */
+.scene-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:6px;padding:1.4rem;margin-bottom:0.9rem;
+  position:relative;overflow:hidden;
+  animation:slideUp 0.4s ease forwards;opacity:0;
+}
+.scene-card:nth-child(1){animation-delay:0.05s;}
+.scene-card:nth-child(2){animation-delay:0.1s;}
+.scene-card:nth-child(3){animation-delay:0.15s;}
+.scene-card:nth-child(4){animation-delay:0.2s;}
+.scene-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--teal),transparent);opacity:0.2;
+}
+
+.scene-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;}
+.scene-badge{display:flex;align-items:center;gap:0.6rem;}
+.scene-num{
+  background:rgba(0,212,200,0.12);border:1px solid rgba(0,212,200,0.25);
+  color:var(--teal);font-size:0.6rem;font-weight:500;
+  letter-spacing:0.1em;padding:0.2rem 0.6rem;border-radius:2px;text-transform:uppercase;
+}
+.scene-title-text{
+  font-family:'Italiana',serif;font-style:italic;
+  font-size:0.95rem;color:var(--white);
+}
+
+.copy-btn{
+  background:none;border:1px solid var(--border);border-radius:3px;
+  padding:0.3rem 0.72rem;font-size:0.6rem;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--muted);cursor:pointer;
+  transition:all 0.2s;font-family:'Jost',sans-serif;
+}
+.copy-btn:hover{border-color:var(--teal);color:var(--teal);}
+.copy-btn.copied{color:var(--teal);border-color:var(--teal);box-shadow:0 0 8px var(--teal-glow);}
+
+/* ── SCENE NARRATIVE ── */
+.scene-narrative{
+  background:rgba(255,255,255,0.025);border-radius:4px;
+  padding:0.9rem 1rem;margin-bottom:0.85rem;
+  border-left:2px solid rgba(240,192,96,0.4);
+}
+.scene-narrative-label{
+  font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--gold);opacity:0.7;margin-bottom:0.4rem;display:block;
+}
+.scene-narrative-text{
+  font-size:0.82rem;font-weight:300;color:var(--dim);
+  line-height:1.65;font-style:italic;
+}
+
+/* ── SCENE PROMPT ── */
+.scene-prompt-label{
+  font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--teal);opacity:0.7;margin-bottom:0.4rem;display:block;
+}
+.scene-prompt{
+  font-family:'Jost',sans-serif;font-weight:300;font-size:0.82rem;
+  line-height:1.72;color:var(--dim);
+  white-space:pre-wrap;border-left:2px solid rgba(0,212,200,0.28);
+  padding-left:1rem;margin:0;
+}
+
+/* ── SCENE DETAILS ── */
+.scene-details{
+  display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;
+  margin-top:0.9rem;padding-top:0.9rem;border-top:1px solid var(--border);
+}
+@media(max-width:480px){.scene-details{grid-template-columns:1fr;}}
+.detail-label{font-size:0.54rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.15rem;}
+.detail-val{font-size:0.76rem;font-weight:300;color:var(--dim);line-height:1.4;}
+.detail-val.teal{color:var(--teal);}
+.detail-val.pink{color:var(--pink);}
+.detail-val.gold{color:var(--gold);font-style:italic;}
+
+/* ── HOW IT WORKS ── */
+.how-section{margin-top:3.5rem;padding:2.5rem 0;border-top:1px solid var(--border);}
+.how-title{font-family:'Italiana',serif;font-size:1.6rem;color:var(--white);margin-bottom:1.5rem;text-align:center;}
+.how-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:0.8rem;}
+.how-step{text-align:center;padding:1.3rem 0.8rem;background:var(--card);border:1px solid var(--border);border-radius:6px;transition:border-color 0.2s;}
+.how-step:hover{border-color:var(--border-t);}
+.step-icon{font-size:1.5rem;margin-bottom:0.55rem;}
+.step-label{font-family:'Italiana',serif;font-style:italic;font-size:0.98rem;color:var(--pink);display:block;margin-bottom:0.3rem;}
+.step-desc{font-size:0.68rem;font-weight:300;color:var(--muted);line-height:1.55;}
+
+/* ── FOOTER ── */
+.footer{text-align:center;padding:2rem;border-top:1px solid var(--border);font-size:0.58rem;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;}
+.footer span{background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes fadeOut{from{opacity:1;}to{opacity:0;}}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--black);}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--teal),var(--pink));border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- ════════ GATE ════════ -->
+<div id="gate">
+  <div class="gate-logo">NANDYVISUALS</div>
+  <div class="gate-sub">Story Engine</div>
+  <div class="gate-divider"></div>
+  <h1 class="gate-title">Enter your<br>access code</h1>
+  <p class="gate-desc">From one image or raw idea — a full cinematic mini series.</p>
+  <div class="gate-input-wrap">
+    <input class="gate-input" id="access-input" type="text" placeholder="ACCESS CODE" autocomplete="off" autocapitalize="characters">
+  </div>
+  <button class="gate-btn" onclick="checkAccess()">Unlock Access</button>
+  <p class="gate-error" id="gate-error"></p>
+  <div class="gate-footer">NANDYVISUALS · Story Engine</div>
+</div>
+
+<!-- ════════ APP ════════ -->
+<div id="app">
+
+  <div class="header">
+    <div class="header-bar"></div>
+    <div class="brand-name">NANDYVISUALS</div>
+    <div class="brand-sub">Story Engine · Kling 3.0 Pro</div>
+    <h1 class="page-title">Your image.<br>Your idea.<br><em>A whole series.</em></h1>
+    <p class="page-subtitle">Drop a photo and a raw concept — the engine builds a full cinematic mini series with episode arcs, scene narratives, and production-ready Kling 3.0 Pro prompts for every scene.</p>
+  </div>
+
+  <div class="container">
+
+    <!-- STEP 1: STORY SEED -->
+    <div class="card">
+      <div class="card-label">Step 01 — Story Seed</div>
+
+      <!-- Image Upload -->
+      <div class="field">
+        <label>Reference image <span style="color:var(--muted);font-size:0.58rem;text-transform:none;letter-spacing:0;">(optional — AI reads your photo as visual character reference)</span></label>
+        <div class="upload-zone" id="upload-zone"
+          onclick="document.getElementById('image-file').click()"
+          ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+          <div id="upload-placeholder">
+            <span class="upload-icon">🖼️</span>
+            <span class="upload-label-text">Tap to upload your reference photo</span>
+            <span class="upload-hint">JPG · PNG · WEBP · up to 10MB</span>
+          </div>
+          <div class="image-preview-wrap" id="preview-wrap">
+            <img class="image-preview" id="image-preview" src="" alt="Reference">
+            <div class="preview-overlay">
+              <div class="preview-info">Reference loaded<span id="img-filename">—</span></div>
+              <button class="remove-img-btn" onclick="removeImage(event)">✕ Remove</button>
+            </div>
+            <button class="upload-replace" onclick="document.getElementById('image-file').click();event.stopPropagation();">↺ Replace</button>
+          </div>
+        </div>
+        <input type="file" id="image-file" accept="image/jpeg,image/png,image/webp" onchange="handleImageUpload(event)">
+      </div>
+
+      <!-- Raw Idea -->
+      <div class="field">
+        <label>Your raw story idea</label>
+        <textarea id="raw-idea" placeholder="e.g. A girl discovers she has royal blood and has to navigate between her street world and a palace…&#10;&#10;Or: a Black woman astronaut finds a signal from Earth that changes everything…&#10;&#10;Or: she left her hometown to chase a dream, now she's back to face what she left behind…"></textarea>
+      </div>
+
+      <!-- Character Details -->
+      <div class="field">
+        <label>Main character <span style="color:var(--muted);font-size:0.58rem;text-transform:none;letter-spacing:0;">(name, personality, vibe — or leave blank to auto-generate)</span></label>
+        <input type="text" id="character" placeholder="e.g. Amara — bold, mysterious, grew up between two worlds…">
+      </div>
+    </div>
+
+    <!-- STEP 2: SERIES BRIEF -->
+    <div class="card">
+      <div class="card-label">Step 02 — Series Direction</div>
+
+      <!-- Genre chips -->
+      <div class="field">
+        <label>Story Genre</label>
+        <div class="genre-chips">
+          <div class="genre-chip active" onclick="selectGenre(this,'Afrofuturist Drama')">🌌 Afrofuturist</div>
+          <div class="genre-chip" onclick="selectGenre(this,'Fashion Editorial Narrative')">✦ Editorial</div>
+          <div class="genre-chip" onclick="selectGenre(this,'Urban Romance')">🌆 Urban Romance</div>
+          <div class="genre-chip" onclick="selectGenre(this,'Mystery Thriller')">🕯️ Thriller</div>
+          <div class="genre-chip" onclick="selectGenre(this,'Coming of Age')">🌱 Coming of Age</div>
+          <div class="genre-chip" onclick="selectGenre(this,'Revenge Arc')">🔥 Revenge Arc</div>
+          <div class="genre-chip" onclick="selectGenre(this,'Spiritual Journey')">✨ Spiritual</div>
+          <div class="genre-chip" onclick="selectGenre(this,'Luxury Lifestyle Cinematic')">💎 Luxury Life</div>
+          <div class="genre-chip" onclick="selectGenre(this,'UGC Brand Story')">🛍️ UGC</div>
+          <div class="genre-chip" onclick="selectGenre(this,'Relatable Everyday Narrative')">🙋🏾‍♀️ Relatable</div>
+          <div class="genre-chip" onclick="selectGenre(this,'Vlog Cinematic Journey')">📱 Vlog</div>
+          <div class="genre-chip" onclick="selectGenre(this,'AI Influencer Universe')">🤖 AI Influencer</div>
+          <div class="genre-chip" onclick="selectGenre(this,'custom')">＋ Custom</div>
+        </div>
+        <input type="text" id="genre-custom" placeholder="Describe your genre…" style="display:none;margin-top:0.5rem;">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Visual World / Aesthetic</label>
+          <select id="aesthetic">
+            <option value="cinematic dark luxury, deep shadows, rich textures">Dark Luxury Cinematic</option>
+            <option value="golden hour warmth, soft haze, sun-drenched">Golden Hour Warmth</option>
+            <option value="neon-lit, futuristic, otherworldly glow">Neon Futuristic</option>
+            <option value="raw documentary, natural light, gritty realism">Documentary Raw</option>
+            <option value="soft ethereal, dreamy pastel, hazy light">Soft Ethereal</option>
+            <option value="bold high contrast, editorial, graphic shadows">Bold Editorial</option>
+            <option value="supernatural, mystical, ancient meets modern">Mystical Ancient</option>
+            <option value="authentic UGC, handheld natural light, product-forward, relatable warmth">UGC Authentic</option>
+            <option value="candid everyday life, warm natural tones, unfiltered realness, cozy intimate">Relatable Everyday</option>
+            <option value="handheld vlog energy, golden hour street, dynamic movement, real moments">Vlog Cinematic</option>
+            <option value="hyper-stylised AI world, glowing skin, flawless surreal environments, editorial perfection">AI Influencer World</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Primary Location World</label>
+          <input type="text" id="world" placeholder="e.g. Lagos / London / deep space / coastal village…">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tone &amp; Emotional Energy</label>
+        <select id="tone">
+          <option value="tension-filled, slow burn, emotionally charged">Slow Burn · Tension</option>
+          <option value="empowering, triumphant, rising energy">Empowering · Triumphant</option>
+          <option value="melancholic, introspective, bittersweet">Melancholic · Introspective</option>
+          <option value="mysterious, suspenseful, edge-of-seat">Mysterious · Suspenseful</option>
+          <option value="romantic, intimate, sensual undertone">Romantic · Intimate</option>
+          <option value="raw, visceral, unfiltered emotion">Raw · Visceral</option>
+          <option value="cosmic, spiritual, transcendent">Cosmic · Transcendent</option>
+          <option value="fun, conversational, authentic, product-driven, trust-building">UGC · Authentic Trust</option>
+          <option value="warm, funny, self-aware, relatable, feels like your best friend talking">Relatable · BFF Energy</option>
+          <option value="high energy, curious, adventurous, candid, GRWM, day-in-the-life">Vlog · Day-in-the-Life</option>
+          <option value="aspirational, surreal confidence, otherworldly cool, flawless and untouchable">AI Influencer · Surreal Confidence</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- STEP 3: SERIES SETTINGS -->
+    <div class="card">
+      <div class="card-label">Step 03 — Series Settings</div>
+
+      <div class="field">
+        <label>Number of episodes</label>
+        <div class="ep-pills">
+          <div class="ep-pill" onclick="selectEp(this,3)">3 Episodes</div>
+          <div class="ep-pill active" onclick="selectEp(this,4)">4 Episodes</div>
+          <div class="ep-pill" onclick="selectEp(this,5)">5 Episodes</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Scenes per episode</label>
+          <select id="scenes-per-ep">
+            <option value="3">3 scenes</option>
+            <option value="4" selected>4 scenes</option>
+            <option value="5">5 scenes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Clip duration</label>
+          <select id="duration">
+            <option value="8 seconds">8 seconds</option>
+            <option value="10 seconds" selected>10 seconds</option>
+            <option value="15 seconds">15 seconds</option>
+            <option value="30 seconds">30 seconds</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- GENERATE -->
+    <button class="generate-btn" id="gen-btn" onclick="generateSeries()">
+      ✦ Build My Cinematic Series
+    </button>
+
+    <!-- OUTPUT -->
+    <div id="output-section">
+
+      <!-- Series Overview -->
+      <div class="series-header" id="series-header"></div>
+
+      <!-- Episode Tabs -->
+      <div class="ep-tabs" id="ep-tabs"></div>
+
+      <!-- Episode Panels -->
+      <div id="ep-panels"></div>
+
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="how-section">
+      <div class="how-title">How It Works</div>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-icon">🌱</div>
+          <span class="step-label">Plant the Seed</span>
+          <p class="step-desc">Drop a photo, a raw idea, or both. The AI builds everything around your vision.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-icon">📖</div>
+          <span class="step-label">Story Arc Built</span>
+          <p class="step-desc">A full series title, logline, episode arcs, and character journey — mapped from start to finish.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-icon">🎬</div>
+          <span class="step-label">Scenes Written</span>
+          <p class="step-desc">Every scene has a narrative beat, emotional purpose, and a complete Kling 3.0 Pro prompt.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-icon">🔥</div>
+          <span class="step-label">Go Create</span>
+          <p class="step-desc">Copy prompts, export the PDF, paste into Kling. Your story comes to life — one scene at a time.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <div class="footer"><span>NANDYVISUALS</span> · Story Engine · Kling 3.0 Pro</div>
+
+</div><!-- /app -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+
+// ── ACCESS ──
+const ACCESS_CODES = ['NANDYSTORY','STORYVISION','NANDYVISUALS2025','ELEVATEDVISION','VISIONELEVE'];
+let selectedEpisodes = 4;
+let selectedGenre = 'Afrofuturist Drama';
+let seriesData = null;
+let uploadedImageBase64 = null;
+let uploadedImageType = 'image/jpeg';
+
+function checkAccess() {
+  const val = document.getElementById('access-input').value.trim().toUpperCase();
+  const err = document.getElementById('gate-error');
+  if (ACCESS_CODES.includes(val)) {
+    document.getElementById('gate').classList.add('hidden');
+    setTimeout(() => {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').classList.add('visible');
+    }, 600);
+  } else {
+    err.textContent = 'Invalid code. Check your Gumroad receipt.';
+    setTimeout(() => err.textContent = '', 3000);
+  }
+}
+document.getElementById('access-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkAccess(); });
+
+// ── EPISODE SELECT ──
+function selectEp(el, count) {
+  document.querySelectorAll('.ep-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  selectedEpisodes = count;
+}
+
+// ── GENRE SELECT ──
+function selectGenre(el, genre) {
+  document.querySelectorAll('.genre-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedGenre = genre;
+  const custom = document.getElementById('genre-custom');
+  if (genre === 'custom') { custom.style.display = 'block'; custom.focus(); }
+  else { custom.style.display = 'none'; custom.value = ''; }
+}
+
+// ── IMAGE UPLOAD ──
+function handleImageUpload(e) { const f = e.target.files[0]; if (f) loadImageFile(f); }
+function handleDragOver(e) { e.preventDefault(); document.getElementById('upload-zone').classList.add('drag-over'); }
+function handleDragLeave(e) { document.getElementById('upload-zone').classList.remove('drag-over'); }
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('upload-zone').classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) loadImageFile(f);
+}
+function loadImageFile(file) {
+  if (file.size > 10 * 1024 * 1024) { alert('Image must be under 10MB.'); return; }
+  uploadedImageType = file.type || 'image/jpeg';
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const url = ev.target.result;
+    uploadedImageBase64 = url.split(',')[1];
+    document.getElementById('image-preview').src = url;
+    document.getElementById('img-filename').textContent = file.name;
+    document.getElementById('upload-placeholder').style.display = 'none';
+    document.getElementById('preview-wrap').classList.add('visible');
+    document.getElementById('upload-zone').classList.add('has-image');
+  };
+  reader.readAsDataURL(file);
+}
+function removeImage(e) {
+  e.stopPropagation();
+  uploadedImageBase64 = null;
+  document.getElementById('image-file').value = '';
+  document.getElementById('image-preview').src = '';
+  document.getElementById('preview-wrap').classList.remove('visible');
+  document.getElementById('upload-placeholder').style.display = '';
+  document.getElementById('upload-zone').classList.remove('has-image');
+}
+
+// ── GENERATE ──
+async function generateSeries() {
+  const rawIdea = document.getElementById('raw-idea').value.trim();
+  const character = document.getElementById('character').value.trim();
+  const aesthetic = document.getElementById('aesthetic').value;
+  const world = document.getElementById('world').value.trim();
+  const tone = document.getElementById('tone').value;
+  const scenesPerEp = parseInt(document.getElementById('scenes-per-ep').value);
+  const duration = document.getElementById('duration').value;
+  const genreCustom = document.getElementById('genre-custom').value.trim();
+  const genre = selectedGenre === 'custom' ? (genreCustom || 'Cinematic Drama') : selectedGenre;
+
+  if (!rawIdea && !uploadedImageBase64) {
+    document.getElementById('raw-idea').focus();
+    document.getElementById('raw-idea').style.borderColor = 'var(--pink)';
+    setTimeout(() => document.getElementById('raw-idea').style.borderColor = '', 2000);
+    return;
+  }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-ring"></span> Building your story world…';
+
+  const systemPrompt = `You are an elite cinematic story director and AI video prompt engineer.
+You create full mini series narratives with complete story arcs, episode structures, and scene-by-scene Kling 3.0 Pro production prompts.
+
+When a reference image is provided, deeply analyse: the subject's physical appearance (skin tone, hair, face, outfit, energy, body language), environment, lighting mood, and color palette. Use ALL of these details to build a consistent, visually grounded world.
+
+Your output is a rich, emotionally layered cinematic series where:
+- The STORY PROGRESSES across episodes — there is a clear beginning, rising tension, turning point, climax, and resolution
+- Each EPISODE has its own arc, title, synopsis, and emotional purpose
+- Each SCENE within an episode has: a narrative beat, emotional moment, AND a detailed Kling 3.0 Pro production prompt
+- Kling prompts are LONG (min 80 words), using: [Camera: movement + lens] | [Subject: action + emotion + micro-expression] | [Environment: specific setting detail] | [Story Beat: what narrative moment this is] | [Light: quality + direction] | [Color Grade: specific look] | [Motion Quality + Duration]
+- Character consistency is maintained across ALL scenes — same physical appearance, same energy
+
+Output ONLY valid JSON. No markdown, no extra text:
+{
+  "seriesTitle": "...",
+  "logline": "One sentence that sells the whole story.",
+  "genre": "...",
+  "world": "...",
+  "characterName": "...",
+  "characterDescription": "Physical appearance + personality + internal conflict",
+  "storyArc": "Full arc summary — what changes from ep 1 to final ep",
+  "episodes": [
+    {
+      "episode": 1,
+      "title": "Episode title",
+      "synopsis": "2-3 sentences: what happens this episode",
+      "emotionalArc": "What the character feels and goes through",
+      "cliffhanger": "How this episode ends / what makes viewer want more",
+      "scenes": [
+        {
+          "scene": 1,
+          "sceneTitle": "Name of the scene moment",
+          "narrative": "2-3 sentences: what is happening in this scene, what it means to the story",
+          "emotion": "The dominant emotional note of this scene",
+          "prompt": "Full rich Kling 3.0 Pro prompt (min 80 words)",
+          "cameraMovement": "Specific movement name",
+          "location": "Specific scene location",
+          "colorGrade": "Color grade direction",
+          "directorNote": "One sentence creative direction"
+        }
+      ]
+    }
+  ]
+}`;
+
+  const textPrompt = `Create a ${selectedEpisodes}-episode cinematic mini series with ${scenesPerEp} scenes per episode.
+
+${rawIdea ? `STORY SEED / RAW IDEA: ${rawIdea}` : ''}
+${character ? `MAIN CHARACTER: ${character}` : ''}
+${uploadedImageBase64 ? 'VISUAL REFERENCE: Use the uploaded image as the character and world reference. Extract all visual details.' : ''}
+GENRE: ${genre}
+VISUAL AESTHETIC: ${aesthetic}
+WORLD / PRIMARY SETTING: ${world || 'build a compelling world from the story seed'}
+EMOTIONAL TONE: ${tone}
+CLIP DURATION: ${duration}
+
+Director requirements:
+- Build a COMPLETE story arc — something must fundamentally change by the final episode
+- Each episode must push the story forward — no filler, no repetition
+- Each scene must have narrative PURPOSE — it advances plot or character
+- Scenes should VARY in energy: tension, release, revelation, confrontation, quiet moment, climax
+- Kling prompts must capture the EMOTION of the scene, not just describe the camera
+- The world should feel REAL and specific — not generic
+- Character arc must be emotionally satisfying
+- Make it cinematic. Make it BLACK GIRL MAGIC if the character is a Black woman.
+
+Output the JSON only.`;
+
+  const userContent = uploadedImageBase64
+    ? [
+        { type: 'image', source: { type: 'base64', media_type: uploadedImageType, data: uploadedImageBase64 } },
+        { type: 'text', text: textPrompt }
+      ]
+    : textPrompt;
+
+  try {
+    // ── PASS 1: Generate series overview + episode outlines ──
+    const overviewSystem = `You are a cinematic story director. Output ONLY valid JSON, no markdown, no backticks, no extra text before or after. Start your response with { and end with }.`;
+
+    const overviewPrompt = `Create a ${selectedEpisodes}-episode cinematic mini series outline.
+
+${rawIdea ? `STORY SEED: ${rawIdea}` : ''}
+${character ? `MAIN CHARACTER: ${character}` : ''}
+GENRE: ${genre}
+AESTHETIC: ${aesthetic}
+WORLD: ${world || 'build from the story seed'}
+TONE: ${tone}
+
+Output ONLY this JSON (no preamble, no explanation, start directly with {):
+{
+  "seriesTitle": "Series title",
+  "logline": "One sentence logline",
+  "genre": "${genre}",
+  "world": "World description",
+  "characterName": "Character name",
+  "characterDescription": "Physical appearance and personality",
+  "storyArc": "Complete arc from ep 1 to final ep in 2 sentences",
+  "episodes": [
+    {
+      "episode": 1,
+      "title": "Episode title",
+      "synopsis": "What happens this episode in 2 sentences",
+      "emotionalArc": "Character emotional journey",
+      "cliffhanger": "How it ends / hook for next episode"
+    }
+  ]
+}`;
+
+    const overviewContent = uploadedImageBase64
+      ? [
+          { type: 'image', source: { type: 'base64', media_type: uploadedImageType, data: uploadedImageBase64 } },
+          { type: 'text', text: overviewPrompt }
+        ]
+      : overviewPrompt;
+
+    // Use Vercel proxy on deployed site, direct API otherwise
+    const API_URL = window.location.hostname.includes('vercel.app') || 
+                    window.location.hostname.includes('visionaries')
+      ? '/api/proxy'
+      : 'https://api.anthropic.com/v1/messages';
+
+    let overviewRes, overviewData;
+    try {
+      overviewRes = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 2000,
+          system: overviewSystem,
+          messages: [{ role: 'user', content: overviewContent }]
+        })
+      });
+      overviewData = await overviewRes.json();
+    } catch (fetchErr) {
+      throw new Error('Network error — check your connection: ' + fetchErr.message);
+    }
+
+    if (overviewData.error) {
+      throw new Error('API error: ' + (overviewData.error.message || JSON.stringify(overviewData.error)));
+    }
+    if (!overviewData.content || !overviewData.content.length) {
+      throw new Error('Empty API response — check your Vercel proxy is set up correctly');
+    }
+
+    const overviewRaw = overviewData.content.map(b => b.text || '').join('').trim();
+    let overviewJSON;
+    try {
+      overviewJSON = extractJSON(overviewRaw);
+      seriesData = JSON.parse(overviewJSON);
+    } catch (parseErr) {
+      throw new Error('Could not parse series overview. Raw response: ' + overviewRaw.slice(0, 200));
+    }
+
+    // ── PASS 2: Generate scenes for each episode ──
+    const sceneSystem = `You are a Kling 3.0 Pro video director. Output ONLY a valid JSON array. No markdown, no backticks, no explanation. Start directly with [ and end with ].`;
+
+    for (let epIdx = 0; epIdx < seriesData.episodes.length; epIdx++) {
+      const ep = seriesData.episodes[epIdx];
+      btn.innerHTML = `<span class="loading-ring"></span> Writing Episode ${ep.episode} of ${seriesData.episodes.length}…`;
+
+      const scenePrompt = `Write ${scenesPerEp} scenes for Episode ${ep.episode} of "${seriesData.seriesTitle}".
+
+CHARACTER: ${seriesData.characterName} — ${seriesData.characterDescription}
+EPISODE: "${ep.title}" — ${ep.synopsis}
+AESTHETIC: ${aesthetic}
+TONE: ${tone}
+CLIP DURATION: ${duration}
+
+Output ONLY a JSON array (start with [, end with ]):
+[
+  {
+    "scene": 1,
+    "sceneTitle": "Scene name",
+    "narrative": "What happens and why it matters in 2 sentences",
+    "emotion": "Dominant emotion",
+    "prompt": "Kling 3.0 Pro prompt 60+ words: [Camera: movement] | [Subject: action + expression] | [Environment: detail] | [Light: quality] | [Color Grade: look] | [Motion: ${duration}]",
+    "cameraMovement": "Camera movement",
+    "location": "Scene location",
+    "colorGrade": "Color grade",
+    "directorNote": "One sentence direction"
+  }
+]`;
+
+      const sceneContent = uploadedImageBase64
+        ? [
+            { type: 'image', source: { type: 'base64', media_type: uploadedImageType, data: uploadedImageBase64 } },
+            { type: 'text', text: scenePrompt }
+          ]
+        : scenePrompt;
+
+      let sceneRes, sceneData;
+      try {
+        sceneRes = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 2000,
+            system: sceneSystem,
+            messages: [{ role: 'user', content: sceneContent }]
+          })
+        });
+        sceneData = await sceneRes.json();
+      } catch (fetchErr) {
+        throw new Error(`Network error on Episode ${ep.episode}: ` + fetchErr.message);
+      }
+
+      if (sceneData.error) {
+        throw new Error(`API error on Episode ${ep.episode}: ` + (sceneData.error.message || JSON.stringify(sceneData.error)));
+      }
+      if (!sceneData.content || !sceneData.content.length) {
+        throw new Error(`Empty response for Episode ${ep.episode}`);
+      }
+
+      const sceneRaw = sceneData.content.map(b => b.text || '').join('').trim();
+      try {
+        const sceneJSON = extractJSON(sceneRaw);
+        seriesData.episodes[epIdx].scenes = JSON.parse(sceneJSON);
+      } catch (parseErr) {
+        throw new Error(`Could not parse scenes for Episode ${ep.episode}. Raw: ` + sceneRaw.slice(0, 200));
+      }
+
+      // Render progressively
+      if (epIdx === 0) {
+        renderSeries(seriesData);
+      } else {
+        renderEpisodeTabs(seriesData.episodes);
+        renderEpisodePanels(seriesData.episodes);
+      }
+    }
+
+  } catch (err) {
+    console.error('Story Engine Error:', err);
+    btn.disabled = false;
+    btn.innerHTML = '✦ Build My Cinematic Series';
+    showError('⚠ ' + (err.message || 'Unknown error — please try again.'));
+    return;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '✦ Regenerate Series';
+}
+
+// ── ROBUST JSON EXTRACTOR ──
+function extractJSON(raw) {
+  // Remove any markdown fences
+  let clean = raw.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
+  // Find first { or [ and last } or ]
+  const firstBrace = clean.indexOf('{');
+  const firstBracket = clean.indexOf('[');
+  if (firstBrace === -1 && firstBracket === -1) throw new Error('No JSON found in response');
+  let start, endChar;
+  if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+    start = firstBrace; endChar = '}';
+  } else {
+    start = firstBracket; endChar = ']';
+  }
+  const end = clean.lastIndexOf(endChar);
+  if (end === -1) throw new Error('Malformed JSON response');
+  return clean.slice(start, end + 1);
+}
+
+// ── ERROR DISPLAY ──
+function showError(msg) {
+  let errEl = document.getElementById('gen-error');
+  if (!errEl) {
+    errEl = document.createElement('div');
+    errEl.id = 'gen-error';
+    errEl.style.cssText = 'background:rgba(255,77,141,0.1);border:1px solid rgba(255,77,141,0.3);border-radius:6px;padding:1rem 1.2rem;margin-top:1rem;font-size:0.82rem;font-weight:300;color:var(--pink);line-height:1.6;';
+    document.getElementById('gen-btn').insertAdjacentElement('afterend', errEl);
+  }
+  errEl.textContent = msg;
+  setTimeout(() => errEl.textContent = '', 8000);
+}
+
+// ── RENDER SERIES ──
+function renderSeries(data) {
+  renderSeriesHeader(data);
+  renderEpisodeTabs(data.episodes);
+  renderEpisodePanels(data.episodes);
+  const out = document.getElementById('output-section');
+  out.classList.add('visible');
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderSeriesHeader(data) {
+  const el = document.getElementById('series-header');
+  el.innerHTML = `
+    <div class="series-title-label">Your Cinematic Mini Series</div>
+    <div class="series-name">${data.seriesTitle}</div>
+    <div class="series-logline">"${data.logline}"</div>
+    <div class="series-meta-row">
+      <span class="series-tag">${data.genre}</span>
+      <span class="series-tag">${data.episodes.length} Episodes</span>
+      <span class="series-tag">${data.world || 'Original World'}</span>
+      <span class="series-tag">${data.characterName}</span>
+    </div>
+    ${data.storyArc ? `<div style="margin-top:1rem;font-size:0.8rem;font-weight:300;color:var(--muted);line-height:1.7;border-top:1px solid var(--border);padding-top:1rem;">${data.storyArc}</div>` : ''}
+    <div class="series-actions">
+      <button class="series-action-btn" onclick="copyAllPrompts()">Copy All Prompts</button>
+      <button class="series-action-btn pdf-btn" onclick="exportSeriesPDF()">↓ Download Series PDF</button>
+    </div>
+  `;
+}
+
+function renderEpisodeTabs(episodes) {
+  const tabs = document.getElementById('ep-tabs');
+  tabs.innerHTML = '';
+  episodes.forEach((ep, i) => {
+    const tab = document.createElement('div');
+    tab.className = 'ep-tab' + (i === 0 ? ' active' : '');
+    tab.textContent = `Ep ${ep.episode}: ${ep.title}`;
+    tab.onclick = () => switchEpisode(i);
+    tabs.appendChild(tab);
+  });
+}
+
+function renderEpisodePanels(episodes) {
+  const panels = document.getElementById('ep-panels');
+  panels.innerHTML = '';
+  episodes.forEach((ep, epIdx) => {
+    const panel = document.createElement('div');
+    panel.className = 'episode-panel' + (epIdx === 0 ? ' active' : '');
+    panel.id = `ep-panel-${epIdx}`;
+
+    let scenesHTML = '';
+
+    // Guard: scenes may not be loaded yet for this episode
+    if (!ep.scenes || ep.scenes.length === 0) {
+      scenesHTML = `
+        <div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.82rem;font-weight:300;">
+          <span class="loading-ring"></span> Writing scenes for this episode…
+        </div>`;
+    } else {
+      ep.scenes.forEach((scene, scIdx) => {
+      scenesHTML += `
+        <div class="scene-card">
+          <div class="scene-top">
+            <div class="scene-badge">
+              <span class="scene-num">Scene ${scene.scene}</span>
+              <span class="scene-title-text">${scene.sceneTitle || ''}</span>
+            </div>
+            <button class="copy-btn" onclick="copyScene(this, ${epIdx}, ${scIdx})">Copy Prompt</button>
+          </div>
+          ${scene.narrative ? `
+          <div class="scene-narrative">
+            <span class="scene-narrative-label">Story Beat</span>
+            <div class="scene-narrative-text">${scene.narrative}</div>
+          </div>` : ''}
+          <span class="scene-prompt-label">Kling 3.0 Pro Prompt</span>
+          <pre class="scene-prompt">${scene.prompt}</pre>
+          <div class="scene-details">
+            ${scene.cameraMovement ? `<div><span class="detail-label">Camera</span><span class="detail-val teal">${scene.cameraMovement}</span></div>` : ''}
+            ${scene.location ? `<div><span class="detail-label">Location</span><span class="detail-val">${scene.location}</span></div>` : ''}
+            ${scene.emotion ? `<div><span class="detail-label">Emotional Note</span><span class="detail-val pink">${scene.emotion}</span></div>` : ''}
+            ${scene.colorGrade ? `<div><span class="detail-label">Color Grade</span><span class="detail-val">${scene.colorGrade}</span></div>` : ''}
+            ${scene.directorNote ? `<div style="grid-column:span 2"><span class="detail-label">Director's Note</span><span class="detail-val gold">"${scene.directorNote}"</span></div>` : ''}
+          </div>
+        </div>
+      `;
+      }); // end ep.scenes.forEach
+    } // end if/else scenes check
+
+    panel.innerHTML = `
+      <div class="ep-header">
+        <div class="ep-num-badge">EP ${ep.episode}</div>
+        <div class="ep-info">
+          <div class="ep-title">${ep.title}</div>
+          <div class="ep-synopsis">${ep.synopsis || ''}</div>
+          ${ep.emotionalArc ? `<span class="ep-arc">${ep.emotionalArc}</span>` : ''}
+          ${ep.cliffhanger ? `<div style="margin-top:0.6rem;font-size:0.75rem;color:var(--pink);font-style:italic;font-weight:300;">↳ ${ep.cliffhanger}</div>` : ''}
+        </div>
+      </div>
+      ${scenesHTML}
+    `;
+    panels.appendChild(panel);
+  });
+}
+
+function switchEpisode(idx) {
+  document.querySelectorAll('.ep-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.episode-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+}
+
+// ── COPY ──
+function copyScene(btn, epIdx, scIdx) {
+  const prompt = seriesData.episodes[epIdx].scenes[scIdx].prompt;
+  navigator.clipboard.writeText(prompt);
+  btn.textContent = '✓ Copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'Copy Prompt'; btn.classList.remove('copied'); }, 2000);
+}
+
+function copyAllPrompts() {
+  const lines = [];
+  seriesData.episodes.forEach(ep => {
+    lines.push(`\n═══ ${ep.title.toUpperCase()} ═══`);
+    lines.push(ep.synopsis || '');
+    if (ep.scenes && ep.scenes.length) {
+      ep.scenes.forEach(sc => {
+        lines.push(`\n── Scene ${sc.scene}: ${sc.sceneTitle || ''} ──`);
+        if (sc.narrative) lines.push(`Story Beat: ${sc.narrative}`);
+        lines.push(sc.prompt);
+      });
+    }
+    if (ep.cliffhanger) lines.push(`↳ Cliffhanger: ${ep.cliffhanger}`);
+  });
+  navigator.clipboard.writeText(lines.join('\n'));
+  const btn = document.querySelector('.series-action-btn:not(.pdf-btn)');
+  btn.textContent = '✓ All Copied!';
+  setTimeout(() => btn.textContent = 'Copy All Prompts', 2500);
+}
+
+// ── PDF EXPORT ──
+async function exportSeriesPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const margin = 16;
+  const contentW = pageW - margin * 2;
+  let y = margin;
+
+  const addBg = () => { doc.setFillColor(6, 9, 17); doc.rect(0, 0, pageW, pageH, 'F'); };
+  addBg();
+
+  // Header bar
+  doc.setFillColor(0, 212, 200); doc.rect(0, 0, pageW / 2, 2, 'F');
+  doc.setFillColor(255, 77, 141); doc.rect(pageW / 2, 0, pageW / 2, 2, 'F');
+
+  y += 8;
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(0, 212, 200);
+  doc.text('NANDYVISUALS', margin, y);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(90, 100, 115);
+  doc.text('STORY ENGINE  ·  KLING 3.0 PRO SERIES SCRIPT', margin, y + 6);
+  doc.text(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), pageW - margin, y + 6, { align: 'right' });
+  doc.setDrawColor(255, 77, 141); doc.setLineWidth(0.3); doc.line(margin, y + 10, pageW - margin, y + 10);
+  y += 18;
+
+  // Series title
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(18); doc.setTextColor(238, 242, 247);
+  doc.text(seriesData.seriesTitle, margin, y); y += 7;
+  doc.setFont('helvetica', 'italic'); doc.setFontSize(9); doc.setTextColor(160, 170, 185);
+  const loglineLines = doc.splitTextToSize(`"${seriesData.logline}"`, contentW);
+  doc.text(loglineLines, margin, y); y += loglineLines.length * 4.5 + 4;
+
+  // Series meta
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(0, 190, 185);
+  doc.text(`${seriesData.genre}  ·  ${seriesData.episodes.length} Episodes  ·  ${seriesData.characterName}  ·  ${seriesData.world || ''}`, margin, y); y += 5;
+
+  // Story arc
+  if (seriesData.storyArc) {
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(130, 140, 155);
+    const arcLines = doc.splitTextToSize(seriesData.storyArc, contentW);
+    doc.text(arcLines, margin, y); y += arcLines.length * 4 + 6;
+  }
+
+  // Episodes
+  seriesData.episodes.forEach(ep => {
+    if (y > pageH - 50) { doc.addPage(); addBg(); y = margin; }
+
+    // Episode banner
+    doc.setFillColor(14, 22, 38);
+    doc.roundedRect(margin, y, contentW, 10, 1.5, 1.5, 'F');
+    doc.setFillColor(255, 77, 141);
+    doc.roundedRect(margin, y, 20, 10, 1.5, 1.5, 'F');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(255, 255, 255);
+    doc.text(`EP ${ep.episode}`, margin + 10, y + 6.2, { align: 'center' });
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(238, 242, 247);
+    doc.text(ep.title.toUpperCase(), margin + 24, y + 6.2);
+    y += 14;
+
+    if (ep.synopsis) {
+      doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(150, 160, 175);
+      const synLines = doc.splitTextToSize(ep.synopsis, contentW); doc.text(synLines, margin, y); y += synLines.length * 4.2 + 2;
+    }
+    if (ep.cliffhanger) {
+      doc.setFont('helvetica', 'italic'); doc.setFontSize(7); doc.setTextColor(255, 77, 141);
+      const cliffLines = doc.splitTextToSize(`↳ ${ep.cliffhanger}`, contentW); doc.text(cliffLines, margin, y); y += cliffLines.length * 3.8 + 3;
+      doc.setFont('helvetica', 'normal');
+    }
+
+    ep.scenes.forEach(scene => {
+      if (y > pageH - 45) { doc.addPage(); addBg(); y = margin; }
+
+      // Scene label
+      doc.setFillColor(10, 16, 28);
+      doc.roundedRect(margin, y, contentW, 7.5, 1, 1, 'F');
+      doc.setFillColor(0, 160, 155);
+      doc.roundedRect(margin, y, 18, 7.5, 1, 1, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(238, 242, 247);
+      doc.text(`SC ${scene.scene}`, margin + 9, y + 4.8, { align: 'center' });
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(0, 212, 200);
+      if (scene.sceneTitle) doc.text(scene.sceneTitle, margin + 22, y + 4.8);
+      if (scene.emotion) { doc.setFontSize(6.5); doc.setTextColor(255, 77, 141); doc.text(scene.emotion, pageW - margin, y + 4.8, { align: 'right' }); }
+      y += 11;
+
+      if (scene.narrative) {
+        doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); doc.setTextColor(180, 170, 120);
+        const nLines = doc.splitTextToSize(scene.narrative, contentW - 2); doc.text(nLines, margin + 1, y); y += nLines.length * 3.8 + 2;
+        doc.setFont('helvetica', 'normal');
+      }
+
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(200, 208, 218);
+      const pLines = doc.splitTextToSize(scene.prompt, contentW - 2); doc.text(pLines, margin + 1, y); y += pLines.length * 4 + 3;
+
+      if (scene.directorNote) {
+        doc.setFont('helvetica', 'italic'); doc.setFontSize(7); doc.setTextColor(255, 100, 150);
+        const dLines = doc.splitTextToSize(`"${scene.directorNote}"`, contentW); doc.text(dLines, margin, y); y += dLines.length * 3.8 + 2;
+        doc.setFont('helvetica', 'normal');
+      }
+
+      doc.setDrawColor(20, 30, 50); doc.setLineWidth(0.2); doc.line(margin, y + 1, pageW - margin, y + 1); y += 6;
+    });
+
+    y += 4;
+  });
+
+  // Footer
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(40, 50, 65);
+  doc.text('NANDYVISUALS · Story Engine · Kling 3.0 Pro', pageW / 2, pageH - 7, { align: 'center' });
+  doc.setFillColor(0, 212, 200); doc.rect(0, pageH - 2, pageW / 2, 2, 'F');
+  doc.setFillColor(255, 77, 141); doc.rect(pageW / 2, pageH - 2, pageW / 2, 2, 'F');
+
+  doc.save(`NANDYVISUALS-${seriesData.seriesTitle.replace(/\s+/g, '-')}-Series.pdf`);
+}
+
+</script>
+</body>
+</html>
