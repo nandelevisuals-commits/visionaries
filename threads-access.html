@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Threads Growth Agent — NANDYVISUALS</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#080808;--surf:#101010;--surf2:#181818;--bdr:#242424;--acc:#e8ff47;--txt:#f0f0f0;--mute:#666;--r:10px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--txt);font-family:'Syne',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.wrap{max-width:480px;width:100%;text-align:center;}
+.logo{width:56px;height:56px;background:var(--acc);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 24px;}
+h1{font-size:2rem;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;}
+h1 span{color:var(--acc);}
+.sub{font-size:.9rem;color:var(--mute);line-height:1.6;margin-bottom:36px;font-family:'DM Mono',monospace;}
+
+.gate-box{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:32px 28px;margin-bottom:20px;}
+.gate-label{font-size:.6rem;font-family:'DM Mono',monospace;letter-spacing:2.5px;color:var(--acc);text-transform:uppercase;margin-bottom:16px;}
+.gate-input{width:100%;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:14px 16px;font-family:'DM Mono',monospace;font-size:.9rem;color:var(--txt);outline:none;transition:border .2s;margin-bottom:12px;}
+.gate-input:focus{border-color:var(--acc);}
+.gate-btn{width:100%;background:var(--acc);color:#000;border:none;border-radius:8px;padding:14px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:opacity .15s;}
+.gate-btn:hover{opacity:.88;}
+.gate-err{font-size:.75rem;color:#ff4f4f;font-family:'DM Mono',monospace;margin-top:8px;display:none;}
+
+.divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:var(--mute);font-size:.75rem;font-family:'DM Mono',monospace;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--bdr);}
+
+.buy-box{background:var(--surf);border:1px solid rgba(232,255,71,0.2);border-radius:var(--r);padding:28px;}
+.buy-price{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--acc);margin-bottom:4px;}
+.buy-desc{font-size:.8rem;color:var(--mute);font-family:'DM Mono',monospace;margin-bottom:20px;line-height:1.6;}
+.buy-list{text-align:left;margin-bottom:20px;}
+.buy-item{display:flex;gap:10px;align-items:flex-start;font-size:.82rem;color:var(--txt);padding:6px 0;border-bottom:1px solid var(--bdr);font-family:'DM Mono',monospace;}
+.buy-item:last-child{border-bottom:none;}
+.buy-item::before{content:'✓';color:var(--acc);flex-shrink:0;margin-top:1px;}
+.buy-btn{display:block;width:100%;background:var(--acc);color:#000;border:none;border-radius:8px;padding:16px;font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;letter-spacing:.5px;text-decoration:none;text-align:center;transition:opacity .15s;}
+.buy-btn:hover{opacity:.88;}
+.buy-note{font-size:.7rem;color:var(--mute);font-family:'DM Mono',monospace;margin-top:10px;}
+
+.footer{margin-top:32px;font-size:.7rem;color:var(--mute);font-family:'DM Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">🧵</div>
+  <h1>Threads Growth <span>Agent</span></h1>
+  <p class="sub">AI-powered post writing, hooks, strategy & bio audits<br>built for creators — by NANDYVISUALS</p>
+
+  <div class="gate-box">
+    <div class="gate-label">Already have access?</div>
+    <input class="gate-input" id="pw-input" type="password" placeholder="Enter your access password"/>
+    <button class="gate-btn" onclick="checkAccess()">UNLOCK ACCESS →</button>
+    <div class="gate-err" id="gate-err">Incorrect password. Check your Gumroad receipt.</div>
+  </div>
+
+  <div class="divider">or get access below</div>
+
+  <div class="buy-box">
+    <div class="buy-price">$52</div>
+    <div class="buy-desc">One-time payment · Instant access · No subscription</div>
+    <div class="buy-list">
+      <div class="buy-item">AI post writer — 5 styles, any niche</div>
+      <div class="buy-item">Hook generator — 10 hooks per topic</div>
+      <div class="buy-item">30-day growth strategy builder</div>
+      <div class="buy-item">Bio auditor with rewrite suggestions</div>
+      <div class="buy-item">Reply generator for engagement growth</div>
+      <div class="buy-item">Works on iPhone, iPad & desktop</div>
+    </div>
+    <a href="https://wandiko.gumroad.com/l/dimvho" target="_blank" class="buy-btn">GET INSTANT ACCESS — $52 →</a>
+    <div class="buy-note">🔒 Delivered via Gumroad · Password in receipt · DM @theeaivisualz for help</div>
+  </div>
+
+  <div class="footer">© 2025 NANDYVISUALS · @theeaivisualz · @nandyvisuals</div>
+</div>
+
+<script>
+function checkAccess() {
+  const val = document.getElementById('pw-input').value.trim().toLowerCase();
+  const valid = ['threads2025','nandythreads','tga2025','growthagent'];
+  if (valid.includes(val)) {
+    sessionStorage.setItem('tga_access','true');
+    window.location.replace('/threads-growth-agent');
+  } else {
+    document.getElementById('gate-err').style.display = 'block';
+  }
+}
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkAccess();
+});
+</script>
+</body>
+</html>
