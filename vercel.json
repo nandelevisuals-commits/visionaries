@@ -1,47 +1,25 @@
 {
   "rewrites": [
-    {
-      "source": "/bde-index",
-      "destination": "/bde-index.html"
-    },
-    {
-      "source": "/bde-engine",
-      "destination": "/bde-engine.html"
-    },
-    {
-      "source": "/bde-access",
-      "destination": "/bde-access.html"
-    },
-    {
-      "source": "/video-studio",
-      "destination": "/nandyvisuals-video-studio.html"
-    },
-    {
-      "source": "/ad-studio",
-      "destination": "/nandyvisuals-ad-studio.html"
-    },
-    {
-      "source": "/elevated-vision",
-      "destination": "/elevated-vision-landing.html"
-    },
-    {
-      "source": "/elevated-vision/access",
-      "destination": "/elevated-vision.html"
-    },
-    {
-      "source": "/story-engine",
-      "destination": "/story-engine.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*).html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        }
-      ]
-    }
+    { "source": "/", "destination": "/linkinbio.html" },
+    { "source": "/mediakit", "destination": "/mediakit.html" },
+    { "source": "/mediakit/", "destination": "/mediakit.html" },
+    { "source": "/ad-studio", "destination": "/nandyvisuals-ad-studio.html" },
+    { "source": "/ad-studio/", "destination": "/nandyvisuals-ad-studio.html" },
+    { "source": "/tanzania-atlas", "destination": "/tanzania-atlas.html" },
+    { "source": "/tanzania-atlas/", "destination": "/tanzania-atlas.html" },
+    { "source": "/tanzania-landing", "destination": "/real-tanzania-landing.html" },
+    { "source": "/threads-growth-agent", "destination": "/threads-growth-agent.html" },
+    { "source": "/threads-growth-agent/", "destination": "/threads-growth-agent.html" },
+    { "source": "/threads-access", "destination": "/threads-access.html" },
+    { "source": "/brand-deal-engine", "destination": "/bde-index.html" },
+    { "source": "/brand-deal-engine/access", "destination": "/bde-access.html" },
+    { "source": "/brand-deal-engine/engine", "destination": "/bde-engine.html" },
+    { "source": "/elevated-vision", "destination": "/elevated-vision-landing.html" },
+    { "source": "/elevated-vision/", "destination": "/elevated-vision-landing.html" },
+    { "source": "/elevated-vision/access", "destination": "/elevated-vision.html" },
+    { "source": "/avatar-engine", "destination": "/avatar-engine-v2.html" },
+    { "source": "/video-studio", "destination": "/nandyvisuals-video-studio.html" },
+    { "source": "/linkinbio", "destination": "/linkinbio.html" },
+    { "source": "/visionaire-studio", "destination": "/visionaire-studio.html" }
   ]
 }
