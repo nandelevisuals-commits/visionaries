@@ -20,6 +20,8 @@
     { "source": "/avatar-engine", "destination": "/avatar-engine-v2.html" },
     { "source": "/video-studio", "destination": "/nandyvisuals-video-studio.html" },
     { "source": "/linkinbio", "destination": "/linkinbio.html" },
-    { "source": "/visionaire-studio", "destination": "/visionaire-studio.html" }
+    { "source": "/visionaire-studio", "destination": "/visionaire-studio.html" },
+    { "source": "/content-studio", "destination": "/content-studio.html" },
+    { "source": "/content-studio/", "destination": "/content-studio.html" }
   ]
 }
