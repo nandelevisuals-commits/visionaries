@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Content Studio — NANDYVISUALS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --g:#1D9E75;--gd:#0F6E56;--gp:#E1F5EE;--gm:#9FE1CB;
+  --pu:#534AB7;--pp:#EEEDFE;
+  --am:#EF9F27;--ap:#FAEEDA;
+  --ink:#111;--ink2:#444;--ink3:#888;
+  --bg:#FAFAF8;--wh:#fff;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.15);
+  --r:14px;--rs:8px;--rp:100px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;font-weight:400;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.92);backdrop-filter:blur(14px);border-bottom:.5px solid var(--bd);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-family:'Playfair Display',serif;font-size:18px;color:var(--ink);text-decoration:none}
+.nav-brand span{color:var(--g)}
+.nav-right{display:flex;align-items:center;gap:.75rem}
+.nav-tag{font-size:11px;font-weight:500;background:var(--gp);color:var(--gd);padding:3px 9px;border-radius:var(--rp)}
+.nav-back{font-size:13px;color:var(--ink3);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--g)}
+
+.hero{padding:3.5rem 2rem 2.5rem;max-width:700px;margin:0 auto;text-align:center}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--g);margin-bottom:.9rem;display:flex;align-items:center;justify-content:center;gap:8px}
+.eyebrow::before,.eyebrow::after{content:'';width:28px;height:.5px;background:var(--gm)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,5vw,2.9rem);font-weight:400;line-height:1.15;margin-bottom:.7rem}
+.hero h1 em{font-style:italic;color:var(--g)}
+.hero p{font-size:15px;color:var(--ink2);line-height:1.6;max-width:500px;margin:0 auto 1.25rem}
+.badges{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
+.badge{padding:4px 11px;border-radius:var(--rp);font-size:11px;font-weight:500;background:var(--gp);color:var(--gd)}
+.badge.pu{background:var(--pp);color:var(--pu)}
+.badge.am{background:var(--ap);color:#633806}
+
+.sw{max-width:700px;margin:0 auto;padding:0 1.5rem 5rem}
+
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
+.pl{font-size:12px;color:var(--ink3)}
+.pn{font-size:12px;font-weight:500;color:var(--g)}
+.pt{height:2px;background:var(--bd);border-radius:2px;margin-bottom:1.75rem;overflow:hidden}
+.pf{height:100%;background:var(--g);border-radius:2px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+.card{background:var(--wh);border:.5px solid var(--bd);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;animation:fu .28s ease both}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.cl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:.9rem}
+
+.ng{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.nc{padding:12px;border-radius:var(--rs);border:.5px solid var(--bd2);font-size:13px;font-weight:500;cursor:pointer;background:var(--wh);color:var(--ink);text-align:center;transition:all .15s;font-family:'DM Sans',sans-serif}
+.nc:hover{border-color:var(--g);color:var(--g);background:var(--gp)}
+.nc.sel{background:var(--g);color:#fff;border-color:var(--g)}
+.nc-sub{font-size:10px;opacity:.65;margin-top:2px;font-weight:400}
+.nc.sel .nc-sub{opacity:.8}
+
+.cg{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 15px;border-radius:var(--rp);border:.5px solid var(--bd2);font-size:13px;color:var(--ink);cursor:pointer;background:var(--wh);transition:all .15s;user-select:none;font-family:'DM Sans',sans-serif}
+.chip:hover{border-color:var(--g);color:var(--g);background:var(--gp)}
+.chip.sel{background:var(--g);color:#fff;border-color:var(--g)}
+.chip.fc{display:flex;flex-direction:column;align-items:flex-start;border-radius:var(--rs);padding:12px 14px;gap:3px}
+.chip.fc .ft{font-weight:500;font-size:13px}
+.chip.fc .fd{font-size:11px;opacity:.6}
+.chip.fc.sel .fd{opacity:.8}
+
+.seg{display:flex;background:var(--bg);border:.5px solid var(--bd);border-radius:var(--rs);padding:3px;gap:2px;flex-wrap:wrap}
+.sb{flex:1;min-width:0;padding:7px 6px;border-radius:6px;border:none;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--ink3);transition:all .15s;font-family:'DM Sans',sans-serif;text-align:center;white-space:nowrap}
+.sb:hover{color:var(--ink)}
+.sb.sel{background:var(--wh);color:var(--g);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+.pc{padding:6px 13px;border-radius:var(--rp);border:.5px solid var(--bd2);font-size:12px;cursor:pointer;background:var(--wh);color:var(--ink);transition:all .15s;font-family:'DM Sans',sans-serif}
+.pc:hover{border-color:var(--pu);color:var(--pu)}
+.pc.sel{background:var(--pu);color:#fff;border-color:var(--pu)}
+
+.tr{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.9rem}
+.sp{padding:4px 10px;border-radius:var(--rp);font-size:11px;background:var(--pp);color:var(--pu)}
+.gp2{padding:4px 10px;border-radius:var(--rp);font-size:11px;background:var(--gp);color:var(--gd)}
+
+textarea{width:100%;padding:11px 13px;border-radius:var(--rs);border:.5px solid var(--bd2);background:var(--bg);color:var(--ink);font-size:14px;font-family:'DM Sans',sans-serif;resize:vertical;min-height:80px;line-height:1.6;outline:none;transition:border-color .15s}
+textarea:focus{border-color:var(--g);background:var(--wh)}
+.ph-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:.65rem}
+.phc{padding:5px 10px;border-radius:var(--rp);font-size:11px;color:var(--ink3);background:var(--bg);border:.5px solid var(--bd);cursor:pointer;transition:all .15s}
+.phc:hover{border-color:var(--g);color:var(--g)}
+
+.br{display:flex;gap:8px}
+.btn{flex:1;padding:12px;border-radius:var(--rs);border:.5px solid var(--bd2);font-size:14px;font-weight:500;cursor:pointer;background:var(--wh);color:var(--ink);font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn:hover{background:var(--bg)}
+.btn.p{background:var(--g);color:#fff;border-color:var(--g)}
+.btn.p:hover{background:var(--gd)}
+.btn:disabled{opacity:.35;cursor:default;pointer-events:none}
+.btn.sm{flex:none;padding:7px 13px;font-size:12px}
+
+.dv{height:.5px;background:var(--bd);margin:.9rem 0}
+
+.ls{text-align:center;padding:3rem 2rem}
+.spinner{width:34px;height:34px;border:2px solid var(--gp);border-top-color:var(--g);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lt{font-size:14px;color:var(--ink2)}
+.lsub{font-size:12px;color:var(--ink3);margin-top:4px}
+
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+.scard{background:var(--bg);border-radius:var(--rs);padding:1rem;text-align:center;border:.5px solid var(--bd)}
+.sv{font-family:'Playfair Display',serif;font-size:22px;color:var(--g)}
+.slb{font-size:11px;color:var(--ink3);margin-top:3px}
+
+.hi{padding:12px 14px;border:.5px solid var(--bd);border-radius:var(--rs);margin-bottom:8px;background:var(--bg);position:relative}
+.ht{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--g);margin-bottom:4px}
+.htxt{font-size:14px;color:var(--ink);line-height:1.5}
+.rbtn{position:absolute;top:10px;right:10px;padding:4px 9px;font-size:11px;font-weight:500;border-radius:var(--rp);border:.5px solid var(--bd2);background:var(--wh);color:var(--ink3);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.rbtn:hover{border-color:var(--g);color:var(--g)}
+.rbtn.off{opacity:.45;pointer-events:none}
+
+.ob{background:var(--bg);border:.5px solid var(--bd);border-radius:var(--rs);padding:1rem 1.25rem;font-size:13px;line-height:1.75;white-space:pre-wrap;font-family:'DM Mono','Courier New',monospace;color:var(--ink2);word-break:break-word}
+.oact{display:flex;gap:8px;margin-top:10px}
+.cbtn{flex:1;padding:9px;border-radius:var(--rs);border:.5px solid var(--g);background:transparent;color:var(--g);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.cbtn:hover{background:var(--gp)}
+.dbtn{padding:9px 13px;border-radius:var(--rs);border:.5px solid var(--bd2);background:var(--wh);color:var(--ink3);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.dbtn:hover{border-color:var(--g);color:var(--g)}
+
+.tnote{font-size:11px;color:var(--pu);background:var(--pp);padding:4px 10px;border-radius:var(--rp);display:inline-block;margin-bottom:.75rem}
+
+.upsell{background:var(--gd);border-radius:var(--r);padding:1.5rem;color:#fff;margin-top:1.25rem;overflow:hidden;position:relative}
+.upsell::before{content:'';position:absolute;top:-50px;right:-50px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05)}
+.upsell-eye{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:.5rem}
+.upsell-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;line-height:1.2;margin-bottom:.35rem}
+.upsell-sub{font-size:13px;opacity:.8;line-height:1.5;margin-bottom:.85rem}
+.uprods{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem;position:relative;z-index:1}
+.uprod{padding:4px 10px;border-radius:var(--rp);font-size:11px;font-weight:500;background:rgba(255,255,255,.15);color:#fff}
+.uctas{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:1}
+.ucta{padding:9px 18px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .15s;display:inline-block}
+.ucta.s{background:#fff;color:var(--gd)}
+.ucta.s:hover{background:var(--gp)}
+.ucta.o{background:transparent;color:#fff;border:.5px solid rgba(255,255,255,.4)}
+.ucta.o:hover{background:rgba(255,255,255,.12)}
+
+.err-card{background:#FCEBEB;border:.5px solid #F09595;border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;text-align:center}
+.err-title{font-size:15px;font-weight:500;color:#A32D2D;margin-bottom:.4rem}
+.err-sub{font-size:13px;color:#791F1F;line-height:1.5;margin-bottom:1rem}
+
+.hist-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:.5px solid var(--bd);border-radius:var(--rs);margin-bottom:7px;cursor:pointer;transition:all .15s}
+.hist-row:hover{border-color:var(--g);background:var(--gp)}
+.hist-main{font-size:13px;font-weight:500}
+.hist-sub{font-size:11px;color:var(--ink3);margin-top:2px}
+.hist-load{font-size:12px;color:var(--g)}
+
+footer{border-top:.5px solid var(--bd);padding:2rem;text-align:center;font-size:12px;color:var(--ink3)}
+footer a{color:var(--g);text-decoration:none}
+
+@media(max-width:500px){
+  nav{padding:0 1.25rem}
+  .hero{padding:2.5rem 1.25rem 2rem}
+  .sw{padding:0 1.25rem 4rem}
+  .sgrid{gap:6px}
+  .ng{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}
+  .seg{gap:1px}
+  .sb{padding:6px 4px;font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="/linkinbio">NANDY<span>VISUALS</span></a>
+  <div class="nav-right">
+    <span class="nav-tag">Apr 2026 trends</span>
+    <a class="nav-back" href="/linkinbio">&#8592; Back</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">AI Content Studio</div>
+  <h1>Trends in. <em>Content out.</em><br/>Under 60 seconds.</h1>
+  <p>Pick your niche, choose a trending format, and get a Seedance 2.0 prompt, scroll-stopping hooks, and a ready-to-post caption — all tuned to April 2026 trend data.</p>
+  <div class="badges">
+    <span class="badge">7 niches</span>
+    <span class="badge">Apr 2026 trends</span>
+    <span class="badge pu">Seedance 2.0</span>
+    <span class="badge">Hook generator</span>
+    <span class="badge pu">Series planner</span>
+    <span class="badge am">Regen any section</span>
+    <span class="badge">Download all</span>
+  </div>
+</div>
+
+<div class="sw">
+  <div class="ph">
+    <span class="pl" id="stepLabel">Step 1 of 4</span>
+    <span class="pn" id="stepName">Pick your niche</span>
+  </div>
+  <div class="pt"><div class="pf" id="pf" style="width:25%"></div></div>
+  <div id="sc"></div>
+</div>
+
+<footer>
+  Built by <a href="/linkinbio">NANDYVISUALS</a> &nbsp;·&nbsp;
+  Powered by Seedance 2.0 &nbsp;·&nbsp;
+  <a href="https://wandiko.gumroad.com" target="_blank">Get more tools →</a>
+</footer>
+
+<script>
+const NICHES=[
+  {id:'lifestyle',label:'Lifestyle',sub:'vlogs · routines',
+   placeholders:['Morning coffee ritual on my balcony','Realistic work-from-home day','5-to-9 evening wind-down routine'],
+   trends:['Realistic Day in My Life','GRWM – morning edition','5-to-9 after work routine','Loving Life Again glow-up','Camera Roll Dump montage'],
+   sounds:['Loving Life Again – Ella Langley','Aperture – Harry Styles','Self Aware – Temper City'],
+   aesthetics:['Warm ambient natural light','Walnut retro tones','Handheld organic motion']},
+  {id:'fashion',label:'Fashion',sub:'fits · styling',
+   placeholders:['Coachella festival outfit reveal','Three ways to style one blazer','Thrift flip transformation'],
+   trends:['Coachella fit check reveal','212 Box Step outfit drop','Pantone color matching fit','Office Siren look','Indie Sleaze throwback'],
+   sounds:['212 – Azealia Banks instrumental','Aperture – Harry Styles','E85 – Don Toliver'],
+   aesthetics:['Undone editorial styling','Saturated color blocking','Stomp transition reveal']},
+  {id:'products',label:'Products',sub:'reviews · unboxing',
+   placeholders:['Silent ASMR unboxing of my skincare haul','Honest review of viral Stanley cup dupe','Three products I am returning this month'],
+   trends:['Silent ASMR unboxing review','De-influencing 2.0 honest take','POV: You found the glitch deal','Companion content – living with it','Screenshot-this comparison'],
+   sounds:['Self Aware – Temper City','Lo-fi ambient background','ASMR no-voice format'],
+   aesthetics:['Clean macro product close-ups','Expressive face reactions','Sensory no-talk format']},
+  {id:'wellness',label:'Wellness',sub:'routines · rituals',
+   placeholders:['My Morning Shed – what I remove first thing','Cycle syncing meals for follicular phase','Wellness stack I do every Sunday'],
+   trends:['The Morning Shed routine','Wellness stacking video','Cycle syncing what I eat','Heart or Hype? series','Fibermaxxing realistic meals'],
+   sounds:['Loving Life Again – Ella Langley','Self Aware – Temper City','Calm ambient tone'],
+   aesthetics:['Golden hour natural light','Soft neutral linen palette','Slow intentional movement']},
+  {id:'home',label:'Home',sub:'decor · makeovers',
+   placeholders:['$200 bedroom makeover transformation','CabbageCore table styling for spring','Living room ClutterCore glow-up'],
+   trends:['Broken Floor Plan reveal','CabbageCore decor styling','ClutterCore maximalism tour','Room makeover transformation','HostingCore tablescaping'],
+   sounds:['Aperture – Harry Styles','Calm lo-fi instrumental','ASMR cleaning sounds'],
+   aesthetics:['Warm maximalist staging','Texture-forward close-ups','Before/after reveal']},
+  {id:'sports',label:'Sports',sub:'fitness · training',
+   placeholders:['My hybrid training split this week','Zone 2 cardio – why I stopped running fast','LockedIn 30-day challenge – day one'],
+   trends:['LockedIn accountability check-in','Hybrid training showcase','Zone 2 cardio reframe','Shy Girl Workout','Treadmill Strut – walking pad'],
+   sounds:['E85 – Don Toliver','High BPM motivational track','Call Back – Don Toliver'],
+   aesthetics:['Dynamic explosive movement','Wearable data overlays','Sunrise outdoor training light']},
+  {id:'beauty',label:'Beauty',sub:'makeup · skincare',
+   placeholders:['Euphoria S3 makeup look tutorial','Morning Shed skincare in real time','Silent ASMR foundation routine'],
+   trends:['Coachella festival GRWM','Euphoria S3 character makeup','Morning Shed skincare reveal','Silent ASMR product demo','Skin texture macro close-up'],
+   sounds:['212 – Azealia Banks','Aperture – Harry Styles','Loving Life Again – Ella Langley'],
+   aesthetics:['Macro skin texture shots','Cinematic product application','Dewy natural finish lighting']}
+];
+
+const FORMATS=[
+  {id:'video_prompt',label:'AI video prompt',desc:'Shot-by-shot Seedance 2.0'},
+  {id:'hook',label:'Hook generator',desc:'3 scroll-stopping openers'},
+  {id:'series',label:'Series concept',desc:'3-episode series plan'},
+  {id:'full',label:'Full content drop',desc:'Prompt + hooks + caption'}
+];
+const PLATFORMS=['TikTok','Instagram Reels','Threads'];
+const DURATIONS=['5s','10s','15s','30s'];
+const MOODS=['Calm & cinematic','Fast-paced & punchy','Soft & aesthetic','Raw & unfiltered','Dramatic & editorial'];
+
+let ST={
+  step:0,niche:null,nd:null,trend:null,aesthetic:null,
+  format:null,platforms:['TikTok'],concept:'',
+  duration:'15s',mood:'Calm & cinematic',
+  output:null,history:[],error:null
+};
+
+const STEPS=[
+  {label:'Step 1 of 4',name:'Pick your niche',pct:'25%'},
+  {label:'Step 2 of 4',name:'Choose your trend',pct:'50%'},
+  {label:'Step 3 of 4',name:'Configure output',pct:'75%'},
+  {label:'Generating…',name:'One moment',pct:'90%'},
+  {label:'Done',name:'Your content is ready',pct:'100%'}
+];
+
+const LOAD_MSGS=[
+  'Applying April 2026 trend intelligence…',
+  'Calibrating for your niche and platform…',
+  'Crafting your Seedance 2.0 prompt…',
+  'Writing hooks that stop the scroll…',
+  'Formatting your platform caption…',
+  'Almost ready…'
+];
+
+function upProg(){
+  const s=STEPS[Math.min(ST.step,4)];
+  document.getElementById('stepLabel').textContent=s.label;
+  document.getElementById('stepName').textContent=s.name;
+  document.getElementById('pf').style.width=s.pct;
+}
+
+function render(){
+  upProg();
+  const sc=document.getElementById('sc');
+  if(ST.step===0) sc.innerHTML=s0();
+  else if(ST.step===1) sc.innerHTML=s1();
+  else if(ST.step===2) sc.innerHTML=s2();
+  else if(ST.step===3) sc.innerHTML=s3();
+  else sc.innerHTML=ST.error?sErr():s4();
+}
+
+function s0(){
+  let h=`<div class="card">
+  <div class="cl">What niche are you creating for?</div>
+  <div class="ng">${NICHES.map(n=>`<div class="nc${ST.niche===n.id?' sel':''}" onclick="pickNiche('${n.id}')">
+    ${n.label}<div class="nc-sub">${n.sub}</div></div>`).join('')}</div></div>`;
+  if(ST.history.length){
+    h+=`<div class="card"><div class="cl">Recent generations</div>
+    ${ST.history.slice(0,4).map((h2,i)=>`<div class="hist-row" onclick="loadHist(${i})">
+      <div><div class="hist-main">${h2.niche} &middot; ${h2.trend}</div>
+      <div class="hist-sub">${h2.format} &middot; ${h2.plat} &middot; ${h2.ts}</div></div>
+      <span class="hist-load">Load ↗</span></div>`).join('')}</div>`;
+  }
+  h+=`<div class="br"><button class="btn p" onclick="next()" ${!ST.niche?'disabled':''}>Continue</button></div>`;
+  return h;
+}
+
+function s1(){
+  const nd=ST.nd;
+  return `<div class="card">
+  <div class="cl">Trending formats in ${nd.label} — April 2026</div>
+  <div class="cg" style="margin-bottom:1rem">${nd.trends.map(t=>`<div class="chip${ST.trend===t?' sel':''}" onclick="pickTrend('${esc(t)}')">${t}</div>`).join('')}</div>
+  <div class="dv"></div>
+  <div class="cl">Trending sounds</div>
+  <div class="tr">${nd.sounds.map(s=>`<span class="sp">${s}</span>`).join('')}</div>
+  <div class="cl">Visual aesthetic</div>
+  <div class="cg">${nd.aesthetics.map(a=>`<div class="chip${ST.aesthetic===a?' sel':''}" onclick="pickAes('${esc(a)}')">${a}</div>`).join('')}</div>
+  </div>
+  <div class="br">
+    <button class="btn" onclick="back()">Back</button>
+    <button class="btn p" onclick="next()" ${!ST.trend?'disabled':''}>Continue</button>
+  </div>`;
+}
+
+function s2(){
+  const nd=ST.nd;
+  const phs=nd?nd.placeholders:[];
+  return `<div class="card">
+  <div class="cl">What do you want to generate?</div>
+  <div class="cg" style="margin-bottom:1rem">${FORMATS.map(f=>`<div class="chip fc${ST.format===f.id?' sel':''}" onclick="pick('format','${f.id}')">
+    <span class="ft">${f.label}</span><span class="fd">${f.desc}</span></div>`).join('')}</div>
+  <div class="dv"></div>
+  <div class="cl">Video duration</div>
+  <div class="seg" style="margin-bottom:1rem">${DURATIONS.map(d=>`<button class="sb${ST.duration===d?' sel':''}" onclick="pick('duration','${d}')">${d}</button>`).join('')}</div>
+  <div class="cl">Content energy</div>
+  <div class="seg">${MOODS.map(m=>`<button class="sb${ST.mood===m?' sel':''}" onclick="pick('mood','${esc(m)}')">${m}</button>`).join('')}</div>
+  </div>
+  <div class="card">
+  <div class="cl">Target platform</div>
+  <div class="tr" style="margin-bottom:1rem">${PLATFORMS.map(p=>`<div class="pc${ST.platforms.includes(p)?' sel':''}" onclick="toggleP('${p}')">${p}</div>`).join('')}</div>
+  <div class="cl">Your concept <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">(optional — improves results)</span></div>
+  <textarea id="cin" placeholder="Describe your specific idea, product, or setting…" onchange="ST.concept=this.value">${ST.concept}</textarea>
+  <div class="ph-chips">${phs.map(p=>`<div class="phc" onclick="fillPH('${esc(p)}')">${p}</div>`).join('')}</div>
+  </div>
+  <div class="br">
+    <button class="btn" onclick="back()">Back</button>
+    <button class="btn p" onclick="generate()" ${!ST.format?'disabled':''}>Generate content</button>
+  </div>`;
+}
+
+function s3(){
+  return `<div class="card"><div class="ls">
+  <div class="spinner"></div>
+  <div class="lt">Building your content…</div>
+  <div class="lsub" id="lsub">Applying April 2026 trend intelligence…</div>
+  </div></div>`;
+}
+
+function sErr(){
+  return `<div class="err-card">
+  <div class="err-title">Something went wrong</div>
+  <div class="err-sub">${ST.error||'The generator hit an error. Please try again.'}</div>
+  <div class="br"><button class="btn p" onclick="generate()">Retry</button><button class="btn" onclick="back()">Edit inputs</button></div>
+  </div>`;
+}
+
+function s4(){
+  const o=ST.output||{};
+  const threadsOnly=ST.platforms.includes('Threads')&&ST.platforms.length===1;
+  let h='';
+
+  if(o.stats&&o.stats.length){
+    h+=`<div class="sgrid">${o.stats.map(s=>`<div class="scard"><div class="sv">${s.val}</div><div class="slb">${s.lbl}</div></div>`).join('')}</div>`;
+  }
+
+  if(o.hooks&&o.hooks.length){
+    h+=`<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem">
+      <div class="cl" style="margin:0">Scroll-stopping hooks</div>
+      <button class="btn sm" onclick="regenSec('hooks')">↻ Regenerate all</button>
+    </div>
+    ${o.hooks.map((k,i)=>`<div class="hi">
+      <div class="ht">${k.type}</div>
+      <div class="htxt">${k.text}</div>
+      <button class="rbtn" onclick="regenHook(${i},this)">↻</button>
+    </div>`).join('')}
+    <div class="oact"><button class="cbtn" onclick="cpAll()">Copy all hooks</button></div>
+    </div>`;
+  }
+
+  if(o.prompt){
+    h+=`<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem">
+      <div class="cl" style="margin:0">Seedance 2.0 prompt — paste directly</div>
+      <button class="btn sm" onclick="regenSec('prompt')">↻ Regenerate</button>
+    </div>
+    <div class="ob" id="promptOut">${o.prompt}</div>
+    <div class="oact">
+      <button class="cbtn" onclick="cp('promptOut',this)">Copy prompt</button>
+      <button class="dbtn" onclick="dlTxt('promptOut','seedance-prompt')">Download .txt</button>
+    </div></div>`;
+  }
+
+  if(o.series){
+    h+=`<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem">
+      <div class="cl" style="margin:0">Series concept</div>
+      <button class="btn sm" onclick="regenSec('series')">↻ Regenerate</button>
+    </div>
+    <div class="ob" id="seriesOut">${o.series}</div>
+    <div class="oact">
+      <button class="cbtn" onclick="cp('seriesOut',this)">Copy series plan</button>
+      <button class="dbtn" onclick="dlTxt('seriesOut','series-plan')">Download .txt</button>
+    </div></div>`;
+  }
+
+  if(o.caption){
+    h+=`<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem">
+      <div class="cl" style="margin:0">Caption — ready to post</div>
+      <button class="btn sm" onclick="regenSec('caption')">↻ Regenerate</button>
+    </div>
+    ${threadsOnly?'<div class="tnote">Threads format — conversational, minimal hashtags</div>':''}
+    <div class="ob" id="captionOut">${o.caption}</div>
+    <div class="oact">
+      <button class="cbtn" onclick="cp('captionOut',this)">Copy caption</button>
+    </div></div>`;
+  }
+
+  h+=`<div class="card" style="background:var(--bg)">
+  <div class="cl">Download everything</div>
+  <div class="br">
+    <button class="btn" onclick="dlAll()">Download full drop .txt</button>
+    <button class="btn p" onclick="reset()">Start new ↺</button>
+  </div></div>`;
+
+  h+=`<div class="upsell">
+  <div class="upsell-eye">Loved this tool?</div>
+  <div class="upsell-title">Get the full NANDYVISUALS suite</div>
+  <div class="upsell-sub">Brand Deal Engine, Threads Growth Agent, Real Tanzania Realism System — all built to help AI creators move faster and earn more.</div>
+  <div class="uprods">
+    <span class="uprod">Brand Deal Engine $47</span>
+    <span class="uprod">Threads Growth Agent $52</span>
+    <span class="uprod">Tanzania Realism $37</span>
+    <span class="uprod">Complete Bundle $97</span>
+  </div>
+  <div class="uctas">
+    <a class="ucta s" href="https://wandiko.gumroad.com/l/vuaax" target="_blank">Get the bundle $97 →</a>
+    <a class="ucta o" href="/linkinbio">Browse all tools</a>
+  </div></div>`;
+
+  h+=`<div style="margin-top:1rem" class="br"><button class="btn" onclick="back()">Edit inputs</button></div>`;
+  return h;
+}
+
+/* ── STATE ACTIONS ── */
+function pickNiche(id){ST.niche=id;ST.nd=NICHES.find(n=>n.id===id);ST.trend=null;ST.aesthetic=null;render()}
+function pickTrend(t){ST.trend=t;render()}
+function pickAes(a){ST.aesthetic=a;render()}
+function pick(k,v){ST[k]=v;render()}
+function toggleP(p){
+  if(ST.platforms.includes(p)) ST.platforms=ST.platforms.filter(x=>x!==p);
+  else ST.platforms.push(p);
+  if(!ST.platforms.length) ST.platforms=[p];
+  render();
+}
+function next(){ST.step++;render()}
+function back(){if(ST.step>0){ST.step--;render()}}
+function reset(){ST={...ST,step:0,niche:null,nd:null,trend:null,aesthetic:null,format:null,platforms:['TikTok'],concept:'',duration:'15s',mood:'Calm & cinematic',output:null,error:null};render()}
+function fillPH(t){ST.concept=t;const el=document.getElementById('cin');if(el)el.value=t}
+function esc(s){return s.replace(/'/g,"\\'")}
+function loadHist(i){const h=ST.history[i];if(!h)return;ST.output=h.output;ST.step=4;render()}
+
+/* ── COPY / DOWNLOAD ── */
+function cp(id,btn){
+  const el=document.getElementById(id);
+  if(el){navigator.clipboard.writeText(el.textContent);const orig=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=orig,2000)}
+}
+function cpAll(){
+  const o=ST.output;
+  if(!o||!o.hooks)return;
+  const txt=o.hooks.map(h=>`[${h.type}]\n${h.text}`).join('\n\n');
+  navigator.clipboard.writeText(txt);
+}
+function dlTxt(id,name){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(el.textContent);
+  a.download=name+'.txt';a.click();
+}
+function dlAll(){
+  const o=ST.output;if(!o)return;
+  let txt=`NANDYVISUALS AI Content Studio\nGenerated: ${new Date().toLocaleDateString()}\n`;
+  txt+=`Niche: ${ST.nd?.label}  Trend: ${ST.trend}\nFormat: ${ST.format}  Duration: ${ST.duration}  Energy: ${ST.mood}\nPlatform: ${ST.platforms.join(', ')}\n${'─'.repeat(50)}\n\n`;
+  if(o.hooks) txt+=`HOOKS\n${'─'.repeat(20)}\n${o.hooks.map(h=>`[${h.type}]\n${h.text}`).join('\n\n')}\n\n`;
+  if(o.prompt) txt+=`SEEDANCE 2.0 PROMPT\n${'─'.repeat(20)}\n${o.prompt}\n\n`;
+  if(o.series) txt+=`SERIES CONCEPT\n${'─'.repeat(20)}\n${o.series}\n\n`;
+  if(o.caption) txt+=`CAPTION\n${'─'.repeat(20)}\n${o.caption}\n\n`;
+  txt+=`Get more tools: wandiko.gumroad.com`;
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);
+  a.download='nandyvisuals-content-drop.txt';a.click();
+}
+
+/* ── REGEN ── */
+async function regenSec(section){
+  const btn=event.currentTarget;
+  const orig=btn.textContent;
+  btn.textContent='Working…';btn.disabled=true;
+  const inst={
+    hooks:'Rewrite only the hooks array with completely fresh angles. Keep type labels. Keep all other fields identical.',
+    prompt:'Rewrite only the prompt field. Different protagonist look, different shot sequence, same niche/trend. Keep all other fields identical.',
+    series:'Rewrite only the series field with entirely new episode concepts. Keep all other fields identical.',
+    caption:`Rewrite only the caption field with a different angle.${ST.platforms.includes('Threads')&&ST.platforms.length===1?' Threads format: conversational, max 3 hashtags, multi-line punchline.':''} Keep all other fields identical.`
+  }[section]||'';
+  try{
+    const res=await callAPI(inst);
+    if(res[section]!==undefined) ST.output[section]=res[section];
+    render();
+  }catch(e){btn.textContent=orig;btn.disabled=false}
+}
+
+async function regenHook(idx,btn){
+  const orig=btn.textContent;
+  btn.className='rbtn off';btn.textContent='…';
+  try{
+    const res=await callAPI(`Rewrite only hooks[${idx}] with a completely different angle and wording. Keep the same type label. Keep all other fields identical.`);
+    if(res.hooks&&res.hooks[idx]) ST.output.hooks[idx]=res.hooks[idx];
+    render();
+  }catch(e){btn.textContent=orig;btn.className='rbtn'}
+}
+
+/* ── GENERATE ── */
+async function generate(){
+  ST.concept=document.getElementById('cin')?.value||ST.concept;
+  ST.step=3;ST.error=null;render();
+  let li=0;
+  const lt=setInterval(()=>{
+    const el=document.getElementById('lsub');
+    if(el){el.textContent=LOAD_MSGS[li%LOAD_MSGS.length];li++}
+  },1700);
+  try{
+    const o=await callAPI('');
+    clearInterval(lt);
+    ST.output=o;
+    ST.history.unshift({
+      niche:ST.nd.label,trend:ST.trend,format:ST.format,
+      plat:ST.platforms.join('+'),
+      ts:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+      output:o
+    });
+    if(ST.history.length>5) ST.history=ST.history.slice(0,5);
+    ST.step=4;render();
+  }catch(e){
+    clearInterval(lt);
+    ST.error='Could not connect to the generator. Check your connection and try again.';
+    ST.step=4;render();
+  }
+}
+
+async function callAPI(extraInst){
+  const nd=ST.nd;
+  const aesthetic=ST.aesthetic||nd.aesthetics[0];
+  const sound=nd.sounds[0];
+  const platStr=ST.platforms.join(' + ');
+  const threadsOnly=ST.platforms.includes('Threads')&&ST.platforms.length===1;
+
+  const sys=`You are an elite AI content strategist for NANDYVISUALS — a cinematic AI creator brand. Generate trend-informed social media content assets.
+
+BRAND RULES — NON-NEGOTIABLE:
+- Protagonist: diverse Black woman. NEVER teal hair. Rotate looks: locs, braids, natural coils, TWA, sleek pressed, updo, bantu knots, color-treated ends, 4C wash-n-go, finger waves, box braids, senegalese twists.
+- Aesthetic: cinematic realism or editorial drama. NOT Afrofuturist. NOT generic AI polish.
+- Movement: explosive, dynamic, never static or posed. Hair, fabric, body all in motion.
+- Camera: crash zooms, orbital moves, drone dives, handheld presence. Never static.
+- Video duration target: ${ST.duration}. Scale shots accordingly.
+- Energy mood: ${ST.mood}. Let this define pacing, cut speed, and atmosphere throughout.
+
+PLATFORM RULES:
+${threadsOnly?'- Threads ONLY: Caption must be conversational, short punchy paragraphs, max 2-3 hashtags, multi-line punchline. NO hashtag dumps. NO formal tone.':''}
+${ST.platforms.includes('TikTok')?'- TikTok: Hook lands in 1.7 seconds. Caption uses TikTok SEO keywords. 5-8 niche hashtags.':''}
+${ST.platforms.includes('Instagram Reels')?'- Instagram Reels: Optimized for saves. Avoid pure AI aesthetic. Visual hook within first 2s.':''}
+
+OUTPUT: Return ONLY valid JSON. Zero markdown, zero backticks, zero preamble. Exact structure:
+{"stats":[{"val":"X","lbl":"label"},{"val":"X","lbl":"label"},{"val":"X","lbl":"label"}],"hooks":[{"type":"Curiosity gap","text":"..."},{"type":"Warning hook","text":"..."},{"type":"Results-first","text":"..."}],"prompt":"full prompt here","series":"series plan or empty string","caption":"caption or empty string"}
+
+PROMPT FORMAT (for ${ST.duration}):
+SEEDANCE 2.0 — [NICHE] · [TREND]
+━━━━━━━━━━━━━━━━━━━━━━━
+SCENE: [1-2 sentence visual setup]
+SUBJECT: [Specific look — hair texture + style + outfit + details]
+AESTHETIC: [Color grade + lighting direction]
+MOOD: ${ST.mood}
+DURATION: ${ST.duration}
+
+SHOT 1 (0:00–0:Xs): [name]
+• Camera: [specific move with direction]
+• Action: [what happens on screen]
+• Effect: [speed/texture/light/atmosphere]
+• Transition: [how shot exits]
+
+[5s=3 shots · 10s=4 shots · 15s=5 shots · 30s=7 shots]
+
+TONE: [1 line — mood and pacing]
+PLATFORM: ${platStr}
+PASTE INTO: Seedance 2.0 image-to-video`;
+
+  const usr=`Generate ${ST.format} content for:
+Niche: ${nd.label}
+Trending format: ${ST.trend}
+Aesthetic: ${aesthetic}
+Trending sound: ${sound}
+Platform: ${platStr}
+Duration: ${ST.duration}
+Energy: ${ST.mood}
+Concept: ${ST.concept||'Use trend creatively — no extra guidance given'}
+
+HOOKS: 3 hooks for ${platStr}. Curiosity gap = specific never vague. Warning = loss aversion trigger. Results-first = lead with the outcome upfront. Each must be immediately usable as a video opening line.
+
+PROMPT: Full shot-by-shot Seedance 2.0 for ${ST.duration}. Directorial, cinematic, specific. Protagonist has a DISTINCT described look — never generic.
+
+${(ST.format==='series'||ST.format==='full')?'SERIES: 3-episode plan. Each gets: numbered title + 1-line concept + cliffhanger hook that pulls to next episode.':''}
+${ST.format==='full'?`CAPTION: ${threadsOnly?'Threads format — conversational opener, 2-3 short punchy paragraphs, punchline ending, max 3 hashtags.':'Strong hook opener line, 2-3 body lines, clear CTA, 6-8 hashtags.'}`:''} 
+
+STATS: 3 performance benchmarks specific to this niche and format. Precise, real-feeling numbers — avg views, engagement rate, algorithm weight stat.
+
+${extraInst}`;
+
+  const r=await fetch('/api/proxy',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1800,
+      system:sys,
+      messages:[{role:'user',content:usr}]
+    })
+  });
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const d=await r.json();
+  const raw=(d.content?.[0]?.text||'').trim();
+  const clean=raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/```\s*$/,'').trim();
+  return JSON.parse(clean);
+}
+
+/* ── PASSWORD GATE ── */
+const PASS='NANDYSTUDIO47';
+const STORE_KEY='nv_cs_auth';
+
+function checkAuth(){
+  if(sessionStorage.getItem(STORE_KEY)==='1') return true;
+  return false;
+}
+
+function showGate(){
+  document.body.style.overflow='hidden';
+  const overlay=document.createElement('div');
+  overlay.id='gate';
+  overlay.style.cssText='position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem;font-family:"DM Sans",sans-serif';
+  overlay.innerHTML=`
+  <div style="max-width:420px;width:100%;text-align:center">
+    <div style="font-family:'Playfair Display',serif;font-size:11px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:var(--g);margin-bottom:1rem">NANDYVISUALS</div>
+    <h1 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:400;line-height:1.15;margin-bottom:.6rem">AI Content Studio</h1>
+    <p style="font-size:14px;color:var(--ink2);line-height:1.6;margin-bottom:2rem">Enter your access code to unlock the studio. Don't have one? Grab access on Gumroad below.</p>
+    <input id="gateInput" type="password" placeholder="Enter access code…" style="width:100%;padding:13px 16px;border-radius:var(--rs);border:.5px solid var(--bd2);background:var(--wh);color:var(--ink);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px;text-align:center;letter-spacing:.12em;text-transform:uppercase"/>
+    <div id="gateErr" style="font-size:12px;color:#A32D2D;min-height:18px;margin-bottom:10px"></div>
+    <button onclick="submitGate()" style="width:100%;padding:13px;border-radius:var(--rs);border:none;background:var(--g);color:#fff;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:1rem">Unlock studio</button>
+    <div style="height:.5px;background:var(--bd);margin-bottom:1rem"></div>
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:.75rem">Don't have access yet?</p>
+    <a href="https://wandiko.gumroad.com/l/contentsstudio" target="_blank" style="display:block;width:100%;padding:12px;border-radius:var(--rs);border:.5px solid var(--g);color:var(--g);font-size:14px;font-weight:500;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .15s">Get access on Gumroad — $47 →</a>
+  </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('gateInput').addEventListener('keydown',e=>{if(e.key==='Enter')submitGate()});
+  setTimeout(()=>document.getElementById('gateInput').focus(),100);
+}
+
+function submitGate(){
+  const val=document.getElementById('gateInput').value.trim().toUpperCase();
+  const err=document.getElementById('gateErr');
+  if(val===PASS){
+    sessionStorage.setItem(STORE_KEY,'1');
+    const gate=document.getElementById('gate');
+    gate.style.opacity='0';gate.style.transition='opacity .3s';
+    setTimeout(()=>{gate.remove();document.body.style.overflow='';},300);
+  } else {
+    err.textContent='Incorrect code — check your Gumroad receipt and try again.';
+    document.getElementById('gateInput').style.borderColor='#E24B4A';
+    setTimeout(()=>{err.textContent='';document.getElementById('gateInput').style.borderColor='';},3000);
+  }
+}
+
+if(!checkAuth()) showGate();
+render();
+</script>
+</body>
+</html>
