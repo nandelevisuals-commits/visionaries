@@ -22,6 +22,8 @@
     { "source": "/linkinbio", "destination": "/linkinbio.html" },
     { "source": "/visionaire-studio", "destination": "/visionaire-studio.html" },
     { "source": "/content-studio", "destination": "/content-studio.html" },
-    { "source": "/content-studio/", "destination": "/content-studio.html" }
+    { "source": "/content-studio/", "destination": "/content-studio.html" },
+    { "source": "/content-studio-access", "destination": "/cs-access.html" },
+    { "source": "/content-studio-access/", "destination": "/cs-access.html" }
   ]
 }
