@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NANDYVISUALS — Campaign Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:      #0A0A0A;
+    --black-soft: #141414;
+    --black-card: #1A1A1A;
+    --pink:       #FF3E9A;
+    --pink-light: #FF79BE;
+    --pink-dim:   rgba(255,62,154,0.15);
+    --teal:       #00C2B2;
+    --teal-light: #4DDED2;
+    --teal-dim:   rgba(0,194,178,0.12);
+    --white:      #FFFFFF;
+    --off-white:  #F0F0F0;
+    --text-body:  #E8E8E8;
+    --text-muted: #999999;
+    --border-soft: rgba(255,255,255,0.08);
+    --border-pink: rgba(255,62,154,0.4);
+    --border-teal: rgba(0,194,178,0.4);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--text-body);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── PASSWORD GATE ─────────────────────────────── */
+  #gate {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+  }
+
+  .gate-bar {
+    width: 60px;
+    height: 5px;
+    background: linear-gradient(90deg, var(--pink), var(--teal));
+    margin-bottom: 36px;
+    border-radius: 2px;
+  }
+
+  .gate-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 900;
+    color: var(--white);
+    text-align: center;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .gate-logo .pink { color: var(--pink); }
+
+  .gate-sub {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--teal);
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .gate-label {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    text-align: center;
+  }
+
+  .gate-row {
+    display: flex;
+    width: 100%;
+    max-width: 380px;
+    margin-bottom: 14px;
+  }
+
+  #pw-input {
+    flex: 1;
+    background: var(--black-card);
+    border: 2px solid var(--border-soft);
+    border-right: none;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 16px 20px;
+    outline: none;
+    letter-spacing: 3px;
+    transition: border-color 0.2s;
+    border-radius: 4px 0 0 4px;
+  }
+  #pw-input:focus { border-color: var(--teal); }
+
+  #pw-btn {
+    background: var(--pink);
+    border: none;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 16px 28px;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-transform: uppercase;
+    border-radius: 0 4px 4px 0;
+  }
+  #pw-btn:hover { background: var(--pink-light); }
+
+  #gate-error {
+    font-size: 15px;
+    color: var(--pink);
+    font-weight: 600;
+    text-align: center;
+    min-height: 22px;
+    margin-bottom: 8px;
+  }
+
+  .gate-note {
+    margin-top: 30px;
+    font-size: 14px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 2;
+  }
+  .gate-note a { color: var(--teal); text-decoration: none; }
+
+  /* ── APP ───────────────────────────────────────── */
+  #app { display: none; }
+
+  header {
+    background: var(--black-soft);
+    border-bottom: 3px solid var(--pink);
+    padding: 22px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--white);
+  }
+  .logo-text .pink { color: var(--pink); }
+  .logo-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-top: 3px;
+  }
+
+  .header-badge {
+    background: var(--teal-dim);
+    border: 1px solid var(--border-teal);
+    color: var(--teal);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 9px 18px;
+    border-radius: 4px;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--black-soft);
+    padding: 64px 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    background: var(--pink-dim);
+    border: 1px solid var(--border-pink);
+    color: var(--pink-light);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 9px 22px;
+    margin-bottom: 28px;
+    border-radius: 100px;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(38px, 6vw, 68px);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 22px;
+  }
+  .hero h1 .pink { color: var(--pink); }
+  .hero h1 .teal { color: var(--teal); }
+
+  .hero-desc {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 540px;
+    margin: 0 auto 36px;
+    line-height: 1.7;
+  }
+
+  .hero-pills {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .hero-pill {
+    background: var(--black-card);
+    border: 1px solid var(--border-soft);
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 9px 18px;
+    border-radius: 100px;
+  }
+
+  /* ENGINE */
+  .engine {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 24px 80px;
+  }
+
+  .section-block {
+    background: var(--black-card);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 26px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .section-num {
+    width: 38px;
+    height: 38px;
+    background: var(--pink);
+    color: var(--white);
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .section-num.teal { background: var(--teal); color: var(--black); }
+
+  .section-title-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .section-title-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .section-body { padding: 26px; }
+
+  /* FORM */
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 620px) {
+    .field-row { grid-template-columns: 1fr; }
+    header { padding: 18px 20px; }
+    .hero { padding: 44px 20px; }
+    .header-badge { display: none; }
+  }
+
+  .field { display: flex; flex-direction: column; gap: 9px; }
+  .field.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--off-white);
+  }
+
+  input[type="text"],
+  input[type="url"],
+  textarea,
+  select {
+    background: var(--black-soft);
+    border: 2px solid var(--border-soft);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    padding: 15px 18px;
+    width: 100%;
+    outline: none;
+    border-radius: 6px;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--teal); }
+  input::placeholder, textarea::placeholder { color: var(--text-muted); font-size: 15px; }
+  textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+  select option { background: #1A1A1A; }
+
+  /* UPLOAD */
+  .upload-zone {
+    border: 2px dashed rgba(255,255,255,0.15);
+    border-radius: 6px;
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    background: var(--black-soft);
+  }
+  .upload-zone:hover { border-color: var(--teal); background: var(--teal-dim); }
+  .upload-zone input { position: absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
+  .upload-icon { font-size: 30px; margin-bottom: 10px; }
+  .upload-text { font-size: 15px; color: var(--text-muted); font-weight: 500; }
+  .upload-filename { font-size: 14px; color: var(--teal); margin-top: 8px; font-weight: 600; }
+
+  /* TOGGLES */
+  .toggles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 12px;
+  }
+  .toggle-item { position: relative; cursor: pointer; }
+  .toggle-item input { display: none; }
+  .toggle-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    padding: 20px 14px;
+    border: 2px solid var(--border-soft);
+    border-radius: 8px;
+    background: var(--black-soft);
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .toggle-pill .t-icon { font-size: 24px; }
+  .toggle-pill .t-label { font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.3; }
+  .toggle-item input:checked + .toggle-pill { border-color: var(--pink); background: var(--pink-dim); }
+  .toggle-item input:checked + .toggle-pill .t-label { color: var(--pink-light); }
+
+  /* GENERATE BUTTON */
+  .gen-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--pink), #C2006E);
+    color: var(--white);
+    border: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    padding: 24px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+  .gen-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(255,62,154,0.4); }
+  .gen-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .loading-bar { position:absolute; left:0; top:0; bottom:0; background:rgba(0,0,0,0.2); width:0%; transition:width 0.15s linear; border-radius:8px; }
+  .gen-btn span { position: relative; z-index:1; }
+
+  /* STATUS */
+  #status { text-align:center; padding:28px; font-size:16px; color:var(--teal); font-weight:500; min-height:40px; }
+  .pulse { animation: pulse 1.4s ease infinite; }
+  @keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+  /* RESULTS */
+  #results { margin-top: 50px; }
+  .results-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 26px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-soft);
+  }
+  .results-title { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; color:var(--white); }
+  .results-title .teal { color: var(--teal); }
+
+  .copy-all-btn {
+    background: var(--teal-dim);
+    border: 1px solid var(--border-teal);
+    color: var(--teal);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 11px 22px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .copy-all-btn:hover { background: var(--teal); color: var(--black); }
+
+  /* OUTPUT CARDS */
+  .output-card {
+    background: var(--black-card);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 17px 24px;
+    background: var(--black-soft);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .card-label { display:flex; align-items:center; gap:12px; }
+  .card-dot { width:11px; height:11px; background:var(--pink); border-radius:50%; flex-shrink:0; }
+  .card-dot.teal { background: var(--teal); }
+  .card-name { font-size:16px; font-weight:700; color:var(--white); }
+
+  .copy-btn {
+    background: var(--black-card);
+    border: 1px solid var(--border-soft);
+    color: var(--text-muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 20px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { border-color:var(--pink); color:var(--pink); }
+  .copy-btn.copied { border-color:var(--teal); color:var(--teal); }
+
+  .card-content {
+    padding: 28px 26px;
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--text-body);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* CAROUSEL */
+  .carousel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+    gap: 14px;
+    padding: 22px 24px;
+  }
+  .slide-tile {
+    background: var(--black-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 20px 16px;
+    min-height: 155px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    transition: border-color 0.2s;
+  }
+  .slide-tile:hover { border-color: var(--pink); }
+  .slide-n { font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--pink); }
+  .slide-h { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--white); line-height:1.25; }
+  .slide-b { font-size:14px; color:var(--text-muted); line-height:1.6; flex:1; }
+
+  /* ERROR */
+  .error-box {
+    background: rgba(255,62,154,0.08);
+    border: 1px solid var(--border-pink);
+    border-radius: 8px;
+    padding: 18px 22px;
+    font-size: 15px;
+    color: var(--pink-light);
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div class="gate-bar"></div>
+  <div class="gate-logo">NANDY<span class="pink">VISUALS</span></div>
+  <div class="gate-sub">Campaign Engine</div>
+  <p class="gate-label">Enter your access code to continue</p>
+  <div class="gate-row">
+    <input type="password" id="pw-input" placeholder="Access code" autocomplete="off" />
+    <button id="pw-btn" onclick="checkPassword()">ENTER</button>
+  </div>
+  <div id="gate-error"></div>
+  <p class="gate-note">
+    Get access at<br>
+    <a href="https://wandiko.gumroad.com" target="_blank">wandiko.gumroad.com</a><br>
+    One-time purchase · Lifetime access
+  </p>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <header>
+    <div>
+      <div class="logo-text">NANDY<span class="pink">VISUALS</span></div>
+      <div class="logo-tag">Campaign Engine</div>
+    </div>
+    <div class="header-badge">AI Creative Studio</div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-eyebrow">✦ Your AI Creative Director ✦</div>
+    <h1>Drop a product.<br>Get a <span class="pink">full campaign</span><br>in <span class="teal">seconds.</span></h1>
+    <p class="hero-desc">Video prompts, image prompts, captions, carousel copy and a campaign brief — all generated from one product input.</p>
+    <div class="hero-pills">
+      <span class="hero-pill">🎬 Kling / Seedance prompts</span>
+      <span class="hero-pill">🖼 Midjourney / Flux prompts</span>
+      <span class="hero-pill">✍ TikTok captions</span>
+      <span class="hero-pill">📋 Carousel copy</span>
+      <span class="hero-pill">📄 Campaign brief</span>
+    </div>
+  </div>
+
+  <div class="engine">
+
+    <!-- STEP 1 -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div>
+          <div class="section-title-text">Product Details</div>
+          <div class="section-title-sub">Tell us about what you're promoting</div>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Product Name *</label>
+            <input type="text" id="product-name" placeholder="e.g. NYX Smushy Lip Balm" />
+          </div>
+          <div class="field">
+            <label>Product URL (optional)</label>
+            <input type="url" id="product-url" placeholder="https://..." />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field full">
+            <label>Product Description</label>
+            <textarea id="product-desc" placeholder="Describe the product — scent, texture, color, ingredients, price, who it's for, what makes it special..."></textarea>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Upload Product Image (optional)</label>
+            <div class="upload-zone">
+              <input type="file" id="image-upload" accept="image/*" onchange="handleImageUpload(this)" />
+              <div class="upload-icon">📷</div>
+              <div class="upload-text">Tap to upload product image</div>
+              <div class="upload-filename" id="file-name-display"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Campaign Mood</label>
+            <select id="campaign-mood">
+              <option value="cinematic surrealist">Cinematic Surrealist</option>
+              <option value="editorial luxury">Editorial Luxury</option>
+              <option value="dark glamour">Dark Glamour</option>
+              <option value="soft dreamcore">Soft Dreamcore</option>
+              <option value="street editorial">Street Editorial</option>
+              <option value="maximalist beauty">Maximalist Beauty</option>
+              <option value="clean minimalist">Clean Minimalist</option>
+              <option value="afro editorial">Afro Editorial</option>
+              <option value="90s nostalgia film">90s Nostalgia Film</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-num teal">2</div>
+        <div>
+          <div class="section-title-text">Choose Your Outputs</div>
+          <div class="section-title-sub">Select everything you want generated</div>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="toggles-grid">
+          <label class="toggle-item">
+            <input type="checkbox" name="output" value="video_prompt" checked />
+            <div class="toggle-pill"><span class="t-icon">🎬</span><span class="t-label">Video Prompt</span></div>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" name="output" value="image_prompt" checked />
+            <div class="toggle-pill"><span class="t-icon">🖼</span><span class="t-label">Image Prompt</span></div>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" name="output" value="caption" checked />
+            <div class="toggle-pill"><span class="t-icon">✍</span><span class="t-label">TikTok Caption</span></div>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" name="output" value="carousel" checked />
+            <div class="toggle-pill"><span class="t-icon">📋</span><span class="t-label">Carousel Slides</span></div>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" name="output" value="brief" checked />
+            <div class="toggle-pill"><span class="t-icon">📄</span><span class="t-label">Campaign Brief</span></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- GENERATE -->
+    <button class="gen-btn" id="gen-btn" onclick="generateCampaign()">
+      <div class="loading-bar" id="loading-bar"></div>
+      <span id="btn-text">✦ Generate My Campaign</span>
+    </button>
+
+    <div id="status"></div>
+
+    <!-- RESULTS -->
+    <div id="results" style="display:none">
+      <div class="results-top">
+        <div class="results-title">Your Campaign <span class="teal">Assets</span></div>
+        <button class="copy-all-btn" onclick="copyAll()">Copy All Text</button>
+      </div>
+      <div id="output-cards"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PASSWORD = 'NANDYCREATES';
+
+function checkPassword() {
+  const val = document.getElementById('pw-input').value.trim().toUpperCase();
+  if (val === PASSWORD) {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  } else {
+    const err = document.getElementById('gate-error');
+    err.textContent = 'Incorrect code — please try again';
+    document.getElementById('pw-input').value = '';
+    setTimeout(() => err.textContent = '', 2500);
+  }
+}
+document.getElementById('pw-input').addEventListener('keydown', e => { if(e.key==='Enter') checkPassword(); });
+
+let uploadedImageBase64 = null, uploadedImageType = null;
+function handleImageUpload(input) {
+  const file = input.files[0]; if(!file) return;
+  document.getElementById('file-name-display').textContent = '✓ ' + file.name;
+  const r = new FileReader();
+  r.onload = e => { uploadedImageType = file.type; uploadedImageBase64 = e.target.result.split(',')[1]; };
+  r.readAsDataURL(file);
+}
+
+let allGeneratedText = '';
+
+async function generateCampaign() {
+  const name = document.getElementById('product-name').value.trim();
+  const desc = document.getElementById('product-desc').value.trim();
+  const url  = document.getElementById('product-url').value.trim();
+  const mood = document.getElementById('campaign-mood').value;
+  const sel  = [...document.querySelectorAll('input[name="output"]:checked')].map(e=>e.value);
+
+  if (!name && !desc) { showStatus('Please enter a product name or description first.'); return; }
+  if (!sel.length)     { showStatus('Please select at least one output format.'); return; }
+
+  setLoading(true);
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('output-cards').innerHTML = '';
+  allGeneratedText = '';
+
+  const map = {
+    video_prompt: 'A cinematic AI video prompt for Kling/Seedance. Write 6-8 structured shots. Each shot covers: Camera → Subject → Action → Environment → Lighting → Texture → Audio. End with a 2-line energy arc.',
+    image_prompt: 'A Midjourney/Flux editorial still image prompt. Describe: Black woman protagonist with a SPECIFIC diverse hairstyle (e.g. long locs, box braids, natural coils — NEVER teal hair), outfit, setting, lighting, composition, color palette, mood, camera lens, aspect ratio. Make it cinematic surrealist and editorial.',
+    caption:      'A TikTok caption with a scroll-stopping hook on line 1, 3-4 sentences of body copy, a clear CTA, then 6-8 hashtags mixing niche and trending. Conversational tone.',
+    carousel:     'Carousel slide copy for 8 slides. Format exactly as: SLIDE 1: [HEADLINE] / [body]. SLIDE 2: ... etc. Slide 1=hook, Slide 2=problem/brief, Slides 3-6=process/results, Slide 7=what AI delivered, Slide 8=CTA.',
+    brief:        'A full campaign brief with sections: CAMPAIGN NAME, PRODUCT HERO, COLOR STORY, MOOD REFERENCE, PROTAGONIST DIRECTION, TOOLKIT, SHOT DIRECTION (3 key visuals), CONTENT FORMATS, CALL TO ACTION.'
+  };
+
+  const system = `You are the creative director for NANDYVISUALS — a cinematic AI visual content studio for beauty, fashion, and lifestyle brands. Outputs are used for TikTok Shop content and brand campaigns.
+
+RULES:
+- Protagonist: Black woman, specific diverse hairstyle — long locs, box braids, natural coils, sleek blowout, twisted updo, bantu knots, shaved sides etc. NEVER teal hair.
+- Aesthetic: cinematic surrealist — elevated, editorial, slightly dreamlike
+- Extract color language from the product palette
+- Every description should feel like a movie still or fashion editorial
+
+FORMAT: Start each section with its name in ALL CAPS on its own line. Separate sections with: ---`;
+
+  const userContent = [];
+  if (uploadedImageBase64) userContent.push({ type:'image', source:{ type:'base64', media_type:uploadedImageType, data:uploadedImageBase64 } });
+  userContent.push({ type:'text', text:`Generate campaign assets:\n\nPRODUCT: ${name||'Not specified'}\nURL: ${url||'N/A'}\nDESCRIPTION: ${desc||'Not provided'}\nMOOD: ${mood}\n\nOutputs needed:\n${sel.map((o,i)=>`${i+1}. ${map[o]}`).join('\n')}` });
+
+  try {
+    const res  = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system, messages:[{role:'user',content:userContent}] })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw = data.content.map(b=>b.text||'').join('');
+    allGeneratedText = raw;
+    parseAndRender(raw, sel);
+    setLoading(false);
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('status').innerHTML = '';
+    document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+  } catch(err) {
+    setLoading(false);
+    showStatus(`<div class="error-box">Something went wrong: ${err.message}</div>`);
+  }
+}
+
+const CFG = {
+  video_prompt: { name:'🎬 Cinematic Video Prompt',    key:'VIDEO PROMPT',    dot:'pink' },
+  image_prompt: { name:'🖼 Editorial Image Prompt',    key:'IMAGE PROMPT',    dot:'teal' },
+  caption:      { name:'✍ TikTok Caption + Hashtags', key:'TIKTOK CAPTION',  dot:'pink' },
+  carousel:     { name:'📋 Carousel Slide Copy',       key:'CAROUSEL SLIDES', dot:'teal' },
+  brief:        { name:'📄 Full Campaign Brief',       key:'CAMPAIGN BRIEF',  dot:'pink' },
+};
+
+function parseAndRender(text, sel) {
+  const container = document.getElementById('output-cards');
+  container.innerHTML = '';
+  const sections = text.split(/\n---+\n/);
+  sel.forEach((type, idx) => {
+    const cfg = CFG[type]; if(!cfg) return;
+    let content = '';
+    for (const s of sections) { if(s.toUpperCase().includes(cfg.key)) { content=s.replace(/^[A-Z\s]+\n/,'').trim(); break; } }
+    if (!content) content = idx===0 ? text.trim() : '(Try regenerating this section)';
+    const card = document.createElement('div');
+    card.className = 'output-card';
+    card.style.animationDelay = `${idx*0.1}s`;
+    const cid = `card-${type}`;
+    if (type==='carousel') {
+      card.innerHTML = `<div class="card-top"><div class="card-label"><div class="card-dot ${cfg.dot}"></div><span class="card-name">${cfg.name}</span></div><button class="copy-btn" onclick="copyCard('${cid}',this)">Copy</button></div><div class="carousel-grid" id="${cid}">${buildCarousel(content)}</div>`;
+    } else {
+      card.innerHTML = `<div class="card-top"><div class="card-label"><div class="card-dot ${cfg.dot}"></div><span class="card-name">${cfg.name}</span></div><button class="copy-btn" onclick="copyCard('${cid}',this)">Copy</button></div><div class="card-content" id="${cid}">${esc(content)}</div>`;
+    }
+    container.appendChild(card);
+  });
+}
+
+function buildCarousel(text) {
+  const slides=[], re=/SLIDE\s*(\d+):?\s*([\s\S]*?)(?=SLIDE\s*\d+:|$)/gi; let m;
+  while((m=re.exec(text))!==null) {
+    const lines=m[2].trim().split('\n').filter(l=>l.trim());
+    slides.push({num:m[1],headline:lines[0]||'',body:lines.slice(1).join(' ')||''});
+  }
+  if(!slides.length) return `<div class="card-content" style="grid-column:1/-1">${esc(text)}</div>`;
+  return slides.map(s=>`<div class="slide-tile"><div class="slide-n">Slide ${s.num}</div><div class="slide-h">${esc(s.headline)}</div><div class="slide-b">${esc(s.body)}</div></div>`).join('');
+}
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function copyCard(id,btn) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>{
+    btn.textContent='✓ Copied'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); },2000);
+  });
+}
+function copyAll() {
+  navigator.clipboard.writeText(allGeneratedText).then(()=>{
+    const btn=document.querySelector('.copy-all-btn'); btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='Copy All Text',2000);
+  });
+}
+function setLoading(on) {
+  const btn=document.getElementById('gen-btn');
+  document.getElementById('btn-text').textContent = on ? 'Generating your campaign...' : '✦ Generate My Campaign';
+  btn.disabled=on;
+  if(on){ showStatus('<span class="pulse">✦ Crafting your campaign assets — give it about 15 seconds...</span>'); animateBar(); }
+  else { document.getElementById('loading-bar').style.width='0%'; }
+}
+function animateBar() {
+  const bar=document.getElementById('loading-bar'); let w=0;
+  const iv=setInterval(()=>{
+    if(!document.getElementById('gen-btn').disabled){ clearInterval(iv); bar.style.width='0%'; return; }
+    w=Math.min(w+(95-w)*0.04,93); bar.style.width=w+'%';
+  },200);
+}
+function showStatus(msg){ document.getElementById('status').innerHTML=msg; }
+</script>
+</body>
+</html>
