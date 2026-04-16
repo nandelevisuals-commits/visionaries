@@ -1,8 +1,8 @@
 {
   "rewrites": [
     { "source": "/", "destination": "/linkinbio.html" },
-    { "source": "/mediakit", "destination": "/mediakit.html" },
-    { "source": "/mediakit/", "destination": "/mediakit.html" },
+    { "source": "/mediakit", "destination": "/nandyvisuals-mediakit.html" },
+    { "source": "/mediakit/", "destination": "/nandyvisuals-mediakit.html" },
     { "source": "/ad-studio", "destination": "/nandyvisuals-ad-studio.html" },
     { "source": "/ad-studio/", "destination": "/nandyvisuals-ad-studio.html" },
     { "source": "/tanzania-atlas", "destination": "/tanzania-atlas.html" },
