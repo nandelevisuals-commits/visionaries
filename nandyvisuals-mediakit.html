@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NANDYVISUALS — AI UGC Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080808;
+    --off-black: #0e0e0e;
+    --surface: #131313;
+    --border: #1e2e2e;
+    --gold: #e8459a;
+    --gold-light: #f07bb8;
+    --cream: #f0fafa;
+    --muted: #7ab8b8;
+    --white: #e8f8f8;
+    --teal: #1fbfbf;
+    --teal-dark: #0d8a8a;
+    --pink: #e8459a;
+    --pink-light: #f07bb8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 32px; height: 32px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s ease;
+    opacity: 0.6;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(8,8,8,0.97), transparent);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 4px;
+    color: var(--gold);
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0 40px;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 80% at 70% 50%, rgba(31,191,191,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(232,69,154,0.06) 0%, transparent 50%);
+  }
+  .hero-line-1 {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 55%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--border), transparent);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+  }
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -1px;
+    color: var(--cream);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 32px 0;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+  .hero-desc {
+    font-size: 12px;
+    line-height: 2;
+    color: var(--muted);
+    max-width: 420px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1s forwards;
+  }
+  .stat-item { text-align: left; }
+  .stat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .hero-cta {
+    margin-top: 48px;
+    display: flex;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.2s forwards;
+  }
+  .btn-primary {
+    padding: 14px 32px;
+    background: var(--gold);
+    color: var(--black);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+  }
+  .btn-outline {
+    padding: 14px 32px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .btn-outline:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.4s forwards;
+  }
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--border);
+  }
+  .scroll-text {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* SECTION BASE */
+  section {
+    padding: 120px 40px;
+    position: relative;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    margin-bottom: 80px;
+  }
+  .section-num {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: -0.5px;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 200px;
+  }
+
+  /* THE AI EDGE */
+  .edge-section { background: var(--off-black); }
+  .edge-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .edge-card {
+    background: var(--surface);
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+  }
+  .edge-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px;
+    height: 0;
+    background: var(--gold);
+    transition: height 0.4s;
+  }
+  .edge-card:hover::before { height: 100%; }
+  .edge-card:hover { background: #1a1a1a; }
+  .edge-card-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .edge-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--cream);
+    margin-bottom: 16px;
+  }
+  .edge-card-text {
+    font-size: 11px;
+    line-height: 2;
+    color: var(--muted);
+  }
+  .edge-card-tag {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* NICHES */
+  .niches-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .niche-card {
+    background: var(--surface);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+    cursor: default;
+  }
+  .niche-card:hover { background: #1c1c1c; }
+  .niche-icon {
+    font-size: 32px;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .niche-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 12px;
+  }
+  .niche-brands {
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    line-height: 2;
+  }
+  .niche-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .niche-bar-fill {
+    height: 100%;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s ease;
+  }
+  .niche-card:hover .niche-bar-fill { transform: scaleX(1); }
+
+  /* DELIVERABLES */
+  .deliverables-section { background: var(--off-black); }
+  .deliverables-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .deliverables-table th {
+    text-align: left;
+    padding: 16px 24px;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border-bottom: 1px solid var(--border);
+  }
+  .deliverables-table td {
+    padding: 20px 24px;
+    font-size: 11px;
+    color: var(--muted);
+    border-bottom: 1px solid rgba(42,42,42,0.5);
+    transition: color 0.3s;
+  }
+  .deliverables-table tr:hover td { color: var(--white); }
+  .deliverables-table td:first-child {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--cream);
+  }
+  .check {
+    color: var(--gold);
+    font-size: 14px;
+  }
+
+  /* PACKAGES */
+  .packages-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .package-card {
+    background: var(--surface);
+    padding: 48px 40px;
+    position: relative;
+    transition: all 0.4s;
+  }
+  .package-card.featured {
+    background: var(--pink);
+  }
+  .package-card.featured .package-name,
+  .package-card.featured .package-price,
+  .package-card.featured .package-item { color: var(--black) !important; }
+  .package-card.featured .package-divider { background: rgba(0,0,0,0.2); }
+  .package-badge {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--black);
+    padding: 6px 14px;
+    display: inline-block;
+    margin-bottom: 32px;
+    opacity: 0;
+  }
+  .package-card.featured .package-badge {
+    background: rgba(0,0,0,0.15);
+    color: var(--black);
+    opacity: 1;
+  }
+  .package-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+  .package-tagline {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    line-height: 1.8;
+  }
+  .package-card.featured .package-tagline { color: rgba(0,0,0,0.6); }
+  .package-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .package-price-note {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+  .package-card.featured .package-price-note { color: rgba(0,0,0,0.5); }
+  .package-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 24px;
+  }
+  .package-item {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    line-height: 1.6;
+  }
+  .package-item::before {
+    content: '—';
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .package-card.featured .package-item::before { color: rgba(0,0,0,0.4); }
+  .package-cta {
+    display: block;
+    margin-top: 32px;
+    padding: 14px 24px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .package-cta:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .package-card.featured .package-cta {
+    border-color: var(--black);
+    background: var(--black);
+    color: var(--gold);
+  }
+
+  /* TESTIMONIALS */
+  .testimonials-section { background: var(--off-black); }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .testimonial-card {
+    background: var(--surface);
+    padding: 40px;
+  }
+  .testimonial-stars {
+    color: var(--gold);
+    font-size: 12px;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+  }
+  .testimonial-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--cream);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  .testimonial-author {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .testimonial-brand {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* CONTACT */
+  .contact-section {
+    background: var(--black);
+    text-align: center;
+    padding: 140px 40px;
+  }
+  .contact-eyebrow {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .contact-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1;
+    margin-bottom: 48px;
+  }
+  .contact-title em { font-style: italic; color: var(--gold); }
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 64px;
+    flex-wrap: wrap;
+  }
+  .contact-link {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding-bottom: 4px;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s;
+  }
+  .contact-link:hover {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+  .contact-email {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    color: var(--cream);
+    text-decoration: none;
+    transition: color 0.3s;
+    display: inline-block;
+    margin-bottom: 64px;
+  }
+  .contact-email:hover { color: var(--gold); }
+
+  /* PORTFOLIO */
+  .portfolio-section { background: var(--off-black); }
+  .portfolio-filter {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 8px 20px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+  }
+  .portfolio-item {
+    position: relative;
+    aspect-ratio: 9/16;
+    overflow: hidden;
+    background: var(--surface);
+    cursor: pointer;
+  }
+  .portfolio-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+    display: block;
+  }
+  .portfolio-item:hover img { transform: scale(1.05); }
+  .portfolio-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(8,8,8,0.92) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px 20px;
+  }
+  .portfolio-item:hover .portfolio-overlay { opacity: 1; }
+  .portfolio-item-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--cream);
+  }
+  .portfolio-item-tag {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-top: 4px;
+  }
+  .portfolio-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px; height: 48px;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(4px);
+  }
+  .portfolio-item:hover .portfolio-play { opacity: 1; }
+  .portfolio-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--border);
+  }
+  .portfolio-placeholder-icon { font-size: 28px; }
+  .portfolio-placeholder-text {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--border);
+  }
+
+  /* PORTFOLIO TILES */
+  .ptile-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+    display: inline-block;
+    width: fit-content;
+    margin-bottom: 8px;
+  }
+  .ptile-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    line-height: 1.15;
+    margin: 0 0 4px 0;
+  }
+  .ptile-line {
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  /* BRIEF FORM */
+  .contact-section {
+    background: var(--black);
+    padding: 120px 40px;
+  }
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .contact-left { }
+  .contact-left .contact-eyebrow {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 24px;
+    display: block;
+  }
+  .contact-left .contact-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 4vw, 64px);
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.05;
+    margin-bottom: 32px;
+  }
+  .contact-left .contact-title em { font-style: italic; color: var(--pink); }
+  .contact-desc {
+    font-size: 11px;
+    line-height: 2;
+    color: var(--muted);
+    margin-bottom: 48px;
+  }
+  .dm-links { display: flex; flex-direction: column; gap: 16px; }
+  .dm-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+  .dm-link:hover {
+    border-color: var(--pink);
+    color: var(--pink);
+  }
+  .dm-link-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+  }
+  .dm-link-label { flex: 1; }
+  .dm-link-arrow { font-size: 12px; opacity: 0.4; }
+
+  /* FORM */
+  .brief-form { display: flex; flex-direction: column; gap: 20px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.3s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--teal); }
+  .form-group input::placeholder,
+  .form-group textarea::placeholder { color: var(--border); }
+  .form-group select option { background: var(--surface); color: var(--white); }
+  .form-group textarea { resize: vertical; min-height: 80px; line-height: 1.8; }
+  .checkbox-group { display: flex; flex-direction: column; gap: 10px; }
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--muted);
+    transition: color 0.3s;
+  }
+  .checkbox-label:hover { color: var(--white); }
+  .checkbox-label input[type="checkbox"] {
+    width: 16px; height: 16px;
+    padding: 0;
+    accent-color: var(--pink);
+    flex-shrink: 0;
+  }
+  .form-submit {
+    padding: 16px 40px;
+    background: var(--pink);
+    color: var(--black);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 8px;
+    align-self: flex-start;
+  }
+  .form-submit:hover {
+    background: var(--pink-light);
+    transform: translateY(-2px);
+  }
+  .form-success {
+    display: none;
+    padding: 20px;
+    border: 1px solid var(--teal);
+    color: var(--teal);
+    font-size: 11px;
+    letter-spacing: 1px;
+    line-height: 2;
+    margin-top: 8px;
+  }
+  @media (max-width: 768px) {
+    .contact-inner { grid-template-columns: 1fr; gap: 60px; }
+    .form-row { grid-template-columns: 1fr; }
+    .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 32px 40px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 4px;
+    color: var(--gold);
+  }
+  .footer-text {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* MARQUEE STRIP */
+  .marquee-strip {
+    background: var(--teal);
+    padding: 14px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .marquee-track {
+    display: flex;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: var(--black);
+    padding: 0 32px;
+    flex-shrink: 0;
+  }
+  .marquee-dot {
+    color: rgba(0,0,0,0.3);
+    padding: 0 8px;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    section { padding: 80px 20px; }
+    .hero { padding: 0 20px; }
+    .hero-stats { gap: 24px; flex-wrap: wrap; }
+    .edge-grid { grid-template-columns: 1fr; }
+    .niches-grid { grid-template-columns: 1fr; }
+    .packages-grid { grid-template-columns: 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .contact-links { gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">NANDYVISUALS</div>
+  <ul class="nav-links">
+    <li><a href="#edge">The AI Edge</a></li>
+    <li><a href="#niches">Niches</a></li>
+    <li><a href="#packages">Packages</a></li>
+    <li><a href="#contact">Let's Work</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line-1"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">AI UGC Creator · Visual Director · Brand Storyteller</p>
+    <h1 class="hero-name">NANDY<br><em>VISUALS</em></h1>
+    <div class="hero-divider"></div>
+    <p class="hero-desc">Cinematic AI-generated UGC content for beauty, skincare, fashion & lifestyle brands. Where editorial storytelling meets artificial intelligence — delivering scroll-stopping ads at scale.</p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-number">10×</div>
+        <div class="stat-label">Faster Delivery</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">Variations</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">AI</div>
+        <div class="stat-label">Powered Always</div>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <a href="#contact" class="btn-primary">Book a Collab</a>
+      <a href="#packages" class="btn-outline">View Packages</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll to explore</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <span class="marquee-item">Beauty</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Skincare</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Fashion</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Lifestyle</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Fragrance</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Haircare</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">AI-Generated</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Cinematic</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Direct Response</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Beauty</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Skincare</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Fashion</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Lifestyle</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Fragrance</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Haircare</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">AI-Generated</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Cinematic</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Direct Response</span><span class="marquee-dot">✦</span>
+  </div>
+</div>
+
+<!-- THE AI EDGE -->
+<section class="edge-section" id="edge">
+  <div class="section-header reveal">
+    <span class="section-num">01</span>
+    <h2 class="section-title">The <em>AI</em> Edge</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="edge-grid">
+    <div class="edge-card reveal">
+      <div class="edge-card-num">01</div>
+      <h3 class="edge-card-title">Speed at Scale</h3>
+      <p class="edge-card-text">While a traditional UGC creator delivers 2–3 videos a week, NANDYVISUALS delivers full AI-generated ad campaigns in 48–72 hours. Multiple hooks, characters, and formats — ready to test.</p>
+      <span class="edge-card-tag">48hr Turnaround</span>
+    </div>
+    <div class="edge-card reveal">
+      <div class="edge-card-num">02</div>
+      <h3 class="edge-card-title">Infinite Variation</h3>
+      <p class="edge-card-text">One product brief becomes 5 unique angles with different protagonists, aesthetics, and hooks. AI enables creative testing at a scale no single human creator can match.</p>
+      <span class="edge-card-tag">Unlimited Hooks</span>
+    </div>
+    <div class="edge-card reveal">
+      <div class="edge-card-num">03</div>
+      <h3 class="edge-card-title">Cinematic Quality</h3>
+      <p class="edge-card-text">Editorial-grade visuals, diverse protagonists, and brand-matched aesthetics. Every frame is art-directed — not random AI output. Cinematic surrealism meets performance marketing.</p>
+      <span class="edge-card-tag">Art-Directed</span>
+    </div>
+    <div class="edge-card reveal">
+      <div class="edge-card-num">04</div>
+      <h3 class="edge-card-title">Brand Consistency</h3>
+      <p class="edge-card-text">From color grading to character appearance, every deliverable is locked to your brand world. AI-powered Character Consistency Engine ensures your protagonist looks the same across all content.</p>
+      <span class="edge-card-tag">Character Engine</span>
+    </div>
+  </div>
+</section>
+
+<!-- NICHES -->
+<section id="niches">
+  <div class="section-header reveal">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Content <em>Niches</em></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="niches-grid">
+    <div class="niche-card reveal">
+      <span class="niche-icon">✦</span>
+      <h3 class="niche-name">Beauty</h3>
+      <p class="niche-brands">Lip gloss campaigns · Foundation launches<br>Mascara tutorials · Colour cosmetics<br>Editorial beauty editorials</p>
+      <div class="niche-bar"><div class="niche-bar-fill"></div></div>
+    </div>
+    <div class="niche-card reveal">
+      <span class="niche-icon">◈</span>
+      <h3 class="niche-name">Skincare</h3>
+      <p class="niche-brands">Serum storytelling · Glow campaigns<br>Before/after narratives · SPF lifestyle<br>Luxury skincare editorials</p>
+      <div class="niche-bar"><div class="niche-bar-fill"></div></div>
+    </div>
+    <div class="niche-card reveal">
+      <span class="niche-icon">◇</span>
+      <h3 class="niche-name">Fashion</h3>
+      <p class="niche-brands">Outfit showcase · Brand lookbooks<br>Seasonal campaigns · Accessories<br>Runway-to-street aesthetics</p>
+      <div class="niche-bar"><div class="niche-bar-fill"></div></div>
+    </div>
+    <div class="niche-card reveal">
+      <span class="niche-icon">○</span>
+      <h3 class="niche-name">Fragrance</h3>
+      <p class="niche-brands">Sensory storytelling · Mood films<br>Occasion-based campaigns · Luxury<br>Abstract visual narratives</p>
+      <div class="niche-bar"><div class="niche-bar-fill"></div></div>
+    </div>
+    <div class="niche-card reveal">
+      <span class="niche-icon">▽</span>
+      <h3 class="niche-name">Haircare</h3>
+      <p class="niche-brands">Texture celebrations · Product demos<br>Curl campaigns · Scalp health<br>Diverse hair story content</p>
+      <div class="niche-bar"><div class="niche-bar-fill"></div></div>
+    </div>
+    <div class="niche-card reveal">
+      <span class="niche-icon">□</span>
+      <h3 class="niche-name">Lifestyle</h3>
+      <p class="niche-brands">Wellness · Home aesthetic · Self-care<br>Ritual content · Daily luxury<br>Aspirational brand worlds</p>
+      <div class="niche-bar"><div class="niche-bar-fill"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DELIVERABLES -->
+<section class="deliverables-section">
+  <div class="section-header reveal">
+    <span class="section-num">03</span>
+    <h2 class="section-title">What You <em>Get</em></h2>
+    <div class="section-line"></div>
+  </div>
+  <table class="deliverables-table reveal">
+    <thead>
+      <tr>
+        <th>Deliverable</th>
+        <th>Format</th>
+        <th>Platform</th>
+        <th>Included</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Cinematic Hero Video</td>
+        <td>9:16 vertical, 15–30s</td>
+        <td>TikTok · Reels · Shorts</td>
+        <td><span class="check">✦</span></td>
+      </tr>
+      <tr>
+        <td>Hook Variations (3–5)</td>
+        <td>First 3 seconds, swappable</td>
+        <td>All platforms</td>
+        <td><span class="check">✦</span></td>
+      </tr>
+      <tr>
+        <td>Static Ad Images</td>
+        <td>1:1 + 4:5 + 9:16</td>
+        <td>Instagram · Pinterest · Meta Ads</td>
+        <td><span class="check">✦</span></td>
+      </tr>
+      <tr>
+        <td>Character Consistency Sheet</td>
+        <td>Reference PDF</td>
+        <td>For ongoing campaigns</td>
+        <td><span class="check">✦</span></td>
+      </tr>
+      <tr>
+        <td>B-Roll Cutdowns</td>
+        <td>3–6 second clips</td>
+        <td>Story ads · Paid social</td>
+        <td><span class="check">✦</span></td>
+      </tr>
+      <tr>
+        <td>Usage Rights</td>
+        <td>Full commercial license</td>
+        <td>Paid + organic</td>
+        <td><span class="check">✦</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- PACKAGES -->
+<section id="packages">
+  <div class="section-header reveal">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Creative <em>Packages</em></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="packages-grid">
+    <div class="package-card reveal">
+      <div class="package-badge">Starter</div>
+      <h3 class="package-name">The Test</h3>
+      <p class="package-tagline">Perfect for testing AI UGC for your brand for the first time.</p>
+      <div class="package-price">$297</div>
+      <div class="package-price-note">one-time</div>
+      <div class="package-divider"></div>
+      <div class="package-item">1 Hero Video (15–30s)</div>
+      <div class="package-item">3 Hook Variations</div>
+      <div class="package-item">3 Static Ad Images</div>
+      <div class="package-item">Full commercial usage</div>
+      <div class="package-item">48hr turnaround</div>
+      <a href="#contact" class="package-cta">Get Started</a>
+    </div>
+    <div class="package-card featured reveal">
+      <div class="package-badge">Most Popular</div>
+      <h3 class="package-name">The Campaign</h3>
+      <p class="package-tagline">A full creative campaign — multiple angles, hooks, and formats ready to run.</p>
+      <div class="package-price">$697</div>
+      <div class="package-price-note">one-time</div>
+      <div class="package-divider"></div>
+      <div class="package-item">3 Hero Videos</div>
+      <div class="package-item">5 Hook Variations each</div>
+      <div class="package-item">Full static ad set</div>
+      <div class="package-item">Character Consistency Sheet</div>
+      <div class="package-item">B-roll cutdowns</div>
+      <div class="package-item">Priority 48hr delivery</div>
+      <a href="#contact" class="package-cta">Book This</a>
+    </div>
+    <div class="package-card reveal">
+      <div class="package-badge">Ongoing</div>
+      <h3 class="package-name">The Retainer</h3>
+      <p class="package-tagline">Monthly AI content production. Your brand, always active, always fresh.</p>
+      <div class="package-price">$1,497</div>
+      <div class="package-price-note">per month</div>
+      <div class="package-divider"></div>
+      <div class="package-item">8 Videos per month</div>
+      <div class="package-item">Unlimited hook testing</div>
+      <div class="package-item">Monthly static ad set</div>
+      <div class="package-item">Dedicated brand world</div>
+      <div class="package-item">Weekly delivery drops</div>
+      <div class="package-item">Priority Slack access</div>
+      <a href="#contact" class="package-cta">Let's Talk</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="section-header reveal">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Brand <em>Love</em></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"The AI visuals NANDYVISUALS created for our launch were unlike anything we'd seen. Cinematic, on-brand, and delivered in 48 hours. Our ROAS doubled."</p>
+      <div class="testimonial-author">Creative Director</div>
+      <div class="testimonial-brand">VELOUR Beauty</div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"We needed 5 different ad angles fast. NANDYVISUALS came back with content that felt high-fashion but converted like direct response. Exceptional work."</p>
+      <div class="testimonial-author">Marketing Manager</div>
+      <div class="testimonial-brand">LUMÉ Skincare</div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"What impressed us most was the visual consistency. Every piece looked like it belonged to the same universe. Exactly what a luxury brand needs."</p>
+      <div class="testimonial-author">Brand Director</div>
+      <div class="testimonial-brand">MAISON Studio</div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio-section" id="portfolio">
+  <div class="section-header reveal">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Work <em>Portfolio</em></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="portfolio-filter reveal">
+    <button class="filter-btn active" data-filter="all">All Work</button>
+    <button class="filter-btn" data-filter="beauty">Beauty</button>
+    <button class="filter-btn" data-filter="skincare">Skincare</button>
+    <button class="filter-btn" data-filter="kbeauty">K-Beauty</button>
+    <button class="filter-btn" data-filter="fashion">Fashion</button>
+    <button class="filter-btn" data-filter="accessories">Accessories</button>
+    <button class="filter-btn" data-filter="wellness">Wellness</button>
+    <button class="filter-btn" data-filter="lifestyle">Lifestyle</button>
+  </div>
+  <div class="portfolio-grid" id="portfolioGrid">
+
+    <!-- 1. LUMÉ — Skincare — Light -->
+    <div class="portfolio-item reveal" data-category="skincare" style="background:#f5f0ea;">
+      <img src="IMG_9955.webp" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;" alt="LUMÉ Skincare campaign"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(245,240,234,0.85) 0%, rgba(245,240,234,0.1) 55%, transparent 100%);"></div>
+      <div class="ptile-body" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;">
+        <div style="height:0.5px;background:#1a1714;opacity:0.2;margin-bottom:12px;"></div>
+        <span class="ptile-tag" style="background:#c8e8d8;color:#1e5c3a;">Skincare</span>
+        <p class="ptile-brand" style="color:#1a1714;">LUMÉ</p>
+        <p class="ptile-line" style="color:#5a5550;">Glass skin, unfiltered</p>
+      </div>
+      <div class="portfolio-overlay"><div class="portfolio-item-brand">LUMÉ</div><div class="portfolio-item-tag">AI Campaign · Skincare</div></div>
+    </div>
+
+    <!-- 2. VELOUR — Fashion — Dark -->
+    <div class="portfolio-item reveal" data-category="fashion" style="background:#0e0e0e;">
+      <img src="IMG_8875.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;" alt="VELOUR Fashion campaign"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(14,14,14,0.88) 0%, rgba(14,14,14,0.1) 55%, transparent 100%);"></div>
+      <div class="ptile-body" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;">
+        <div style="height:0.5px;background:#f0ece4;opacity:0.2;margin-bottom:12px;"></div>
+        <span class="ptile-tag" style="background:#d8d0f0;color:#3c2878;">Fashion</span>
+        <p class="ptile-brand" style="color:#f0ece4;">VELOUR</p>
+        <p class="ptile-line" style="color:#c8c2b8;">Draped in intention</p>
+      </div>
+      <div class="portfolio-overlay"><div class="portfolio-item-brand">VELOUR</div><div class="portfolio-item-tag">AI Campaign · Fashion</div></div>
+    </div>
+
+    <!-- 3. RIVERICH TRENDS — Accessories — Cream -->
+    <div class="portfolio-item reveal" data-category="accessories" style="background:#ede8de;">
+      <img src="IMG_8880.webp" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;" alt="Riverich Trends Accessories campaign"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(237,232,222,0.88) 0%, rgba(237,232,222,0.1) 55%, transparent 100%);"></div>
+      <div class="ptile-body" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;">
+        <div style="height:0.5px;background:#1c1a17;opacity:0.2;margin-bottom:12px;"></div>
+        <span class="ptile-tag" style="background:#d8e8f4;color:#1a4870;">Accessories</span>
+        <p class="ptile-brand" style="color:#1c1a17;font-size:16px;">Riverich Trends</p>
+        <p class="ptile-line" style="color:#6b6560;">Find your bag, find your luck</p>
+      </div>
+      <div class="portfolio-overlay"><div class="portfolio-item-brand">Riverich Trends</div><div class="portfolio-item-tag">AI Campaign · Accessories</div></div>
+    </div>
+
+    <!-- 4. MEDICUBE — K-Beauty — Charcoal -->
+    <div class="portfolio-item reveal" data-category="kbeauty" style="background:#1e1c1a;">
+      <img src="IMG_9921.webp" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;" alt="Medicube K-Beauty campaign"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(30,28,26,0.88) 0%, rgba(30,28,26,0.1) 55%, transparent 100%);"></div>
+      <div class="ptile-body" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;">
+        <div style="height:0.5px;background:#ede9e2;opacity:0.2;margin-bottom:12px;"></div>
+        <span class="ptile-tag" style="background:#f0d0e8;color:#7c2060;">K-Beauty</span>
+        <p class="ptile-brand" style="color:#ede9e2;">Medicube</p>
+        <p class="ptile-line" style="color:#b0aa9f;">Korea's no.1 glass glow skin</p>
+      </div>
+      <div class="portfolio-overlay"><div class="portfolio-item-brand">Medicube</div><div class="portfolio-item-tag">AI Campaign · K-Beauty</div></div>
+    </div>
+
+    <!-- 5. CALM PETAL G HUB — Fashion — Light -->
+    <div class="portfolio-item reveal" data-category="fashion" style="background:#f5f0ea;">
+      <img src="IMG_9934.webp" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;" alt="Calm Petal G Hub Fashion campaign"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(245,240,234,0.88) 0%, rgba(245,240,234,0.1) 55%, transparent 100%);"></div>
+      <div class="ptile-body" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;">
+        <div style="height:0.5px;background:#1a1714;opacity:0.2;margin-bottom:12px;"></div>
+        <span class="ptile-tag" style="background:#d8d0f0;color:#3c2878;">Fashion</span>
+        <p class="ptile-brand" style="color:#1a1714;font-size:15px;">Calm Petal G Hub</p>
+        <p class="ptile-line" style="color:#5a5550;">Dressed in bloom</p>
+      </div>
+      <div class="portfolio-overlay"><div class="portfolio-item-brand">Calm Petal G Hub</div><div class="portfolio-item-tag">AI Campaign · Fashion</div></div>
+    </div>
+
+    <!-- 6. TERRA LOTUS — Wellness — Dark -->
+    <div class="portfolio-item reveal" data-category="wellness" style="background:#161412;">
+      <img src="IMG_8878.webp" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;" alt="Terra Lotus Wellness campaign"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(22,20,18,0.88) 0%, rgba(22,20,18,0.1) 55%, transparent 100%);"></div>
+      <div class="ptile-body" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;">
+        <div style="height:0.5px;background:#f2ede5;opacity:0.2;margin-bottom:12px;"></div>
+        <span class="ptile-tag" style="background:#d4e8c8;color:#2a5418;">Wellness</span>
+        <p class="ptile-brand" style="color:#f2ede5;">Terra Lotus</p>
+        <p class="ptile-line" style="color:#bab5ac;">Organic, handmade, honest</p>
+      </div>
+      <div class="portfolio-overlay"><div class="portfolio-item-brand">Terra Lotus</div><div class="portfolio-item-tag">AI Campaign · Wellness</div></div>
+    </div>
+
+    <!-- 7. SOLÈNE — Beauty — Cream -->
+    <div class="portfolio-item reveal" data-category="beauty" style="background:#ede8de;">
+      <img src="IMG_9927.webp" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;" alt="SOLÈNE Beauty campaign"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(237,232,222,0.88) 0%, rgba(237,232,222,0.1) 55%, transparent 100%);"></div>
+      <div class="ptile-body" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;">
+        <div style="height:0.5px;background:#1c1a17;opacity:0.2;margin-bottom:12px;"></div>
+        <span class="ptile-tag" style="background:#f5c8d0;color:#7c3042;">Beauty</span>
+        <p class="ptile-brand" style="color:#1c1a17;">SOLÈNE</p>
+        <p class="ptile-line" style="color:#6b6560;">Soft power, always</p>
+      </div>
+      <div class="portfolio-overlay"><div class="portfolio-item-brand">SOLÈNE</div><div class="portfolio-item-tag">AI Campaign · Beauty</div></div>
+    </div>
+
+    <!-- 8. HAVEN — Lifestyle — Dark -->
+    <div class="portfolio-item reveal" data-category="lifestyle" style="background:#0e0e0e;">
+      <img src="IMG_9961.webp" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;" alt="HAVEN Lifestyle campaign"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(14,14,14,0.88) 0%, rgba(14,14,14,0.1) 55%, transparent 100%);"></div>
+      <div class="ptile-body" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;">
+        <div style="height:0.5px;background:#f0ece4;opacity:0.2;margin-bottom:12px;"></div>
+        <span class="ptile-tag" style="background:#f5e4c0;color:#7c4e10;">Lifestyle</span>
+        <p class="ptile-brand" style="color:#f0ece4;">HAVEN</p>
+        <p class="ptile-line" style="color:#c8c2b8;">Rest as resistance</p>
+      </div>
+      <div class="portfolio-overlay"><div class="portfolio-item-brand">HAVEN</div><div class="portfolio-item-tag">AI Campaign · Lifestyle</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT / BRIEF FORM -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="contact-left reveal">
+      <span class="contact-eyebrow">Let's Create Together</span>
+      <h2 class="contact-title">Send your<br><em>brand brief</em></h2>
+      <p class="contact-desc">Tell me about your brand and campaign goals. I'll come back with a creative direction and quote within 24 hours.</p>
+      <div class="dm-links">
+        <a href="https://instagram.com/nandyvisuals" target="_blank" class="dm-link">
+          <span class="dm-link-icon">📸</span>
+          <span class="dm-link-label">DM on Instagram · @nandyvisuals</span>
+          <span class="dm-link-arrow">→</span>
+        </a>
+        <a href="https://tiktok.com/@theeaivisualz" target="_blank" class="dm-link">
+          <span class="dm-link-icon">🎵</span>
+          <span class="dm-link-label">DM on TikTok · @theeaivisualz</span>
+          <span class="dm-link-arrow">→</span>
+        </a>
+        <a href="https://tiktok.com/@nandyailab" target="_blank" class="dm-link">
+          <span class="dm-link-icon">🎵</span>
+          <span class="dm-link-label">DM on TikTok · @nandyailab</span>
+          <span class="dm-link-arrow">→</span>
+        </a>
+        <a href="/cdn-cgi/l/email-protection#2a444b444e535c43595f4b46596a4d474b434604494547" class="dm-link">
+          <span class="dm-link-icon">✉</span>
+          <span class="dm-link-label"><span class="__cf_email__" data-cfemail="2f414e414b5659465c5a4e435c6f48424e4643014c4042">[email&#160;protected]</span></span>
+          <span class="dm-link-arrow">→</span>
+        </a>
+      </div>
+    </div>
+    <div class="contact-right reveal">
+      <div class="brief-form" id="briefForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Brand Name</label>
+            <input type="text" id="brandName" placeholder="e.g. Fenty Beauty">
+          </div>
+          <div class="form-group">
+            <label>Brand Website</label>
+            <input type="url" id="brandWebsite" placeholder="https://yourbrand.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Campaign Niche</label>
+          <select id="campaignNiche">
+            <option value="" disabled selected>Select a niche</option>
+            <option>Beauty</option>
+            <option>Skincare</option>
+            <option>Fashion</option>
+            <option>Fragrance</option>
+            <option>Haircare</option>
+            <option>Lifestyle</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Budget Range</label>
+          <select id="budget">
+            <option value="" disabled selected>Select budget</option>
+            <option>Under $500</option>
+            <option>$500 – $1,000</option>
+            <option>$1,000 – $2,500</option>
+            <option>$2,500 – $5,000</option>
+            <option>$5,000+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Platforms Needed</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label"><input type="checkbox" value="TikTok"> TikTok</label>
+            <label class="checkbox-label"><input type="checkbox" value="Instagram Reels"> Instagram Reels</label>
+            <label class="checkbox-label"><input type="checkbox" value="Meta Ads"> Meta Ads</label>
+            <label class="checkbox-label"><input type="checkbox" value="YouTube Shorts"> YouTube Shorts</label>
+            <label class="checkbox-label"><input type="checkbox" value="Pinterest"> Pinterest</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Campaign Deadline</label>
+          <input type="date" id="deadline">
+        </div>
+        <div class="form-group">
+          <label>Tell Me More (optional)</label>
+          <textarea id="message" placeholder="Campaign goals, references, vibe, anything else..."></textarea>
+        </div>
+        <button class="form-submit" onclick="submitBrief()">Submit Brief →</button>
+        <div class="form-success" id="formSuccess">
+          ✦ Brief received! I'll be in touch within 24 hours.<br>
+          In the meantime, follow along on TikTok &amp; Instagram for daily AI visuals.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">NANDYVISUALS</div>
+  <div class="footer-text">© 2026 NANDYVISUALS · AI UGC Creator · All Rights Reserved</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX - 4 + 'px';
+    cursor.style.top = mouseY - 4 + 'px';
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX - 16 + 'px';
+    ring.style.top = ringY - 16 + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Stagger grid children
+  document.querySelectorAll('.edge-grid, .niches-grid, .packages-grid, .testimonials-grid, .portfolio-grid').forEach(grid => {
+    grid.querySelectorAll('.reveal').forEach((card, i) => {
+      card.style.transitionDelay = (i * 0.1) + 's';
+    });
+  });
+
+  // Portfolio filter
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      document.querySelectorAll('.portfolio-item').forEach(item => {
+        if (filter === 'all' || item.dataset.category === filter) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Brief form submit
+  function submitBrief() {
+    const brand = document.getElementById('brandName').value.trim();
+    const website = document.getElementById('brandWebsite').value.trim();
+    const niche = document.getElementById('campaignNiche').value;
+    const budget = document.getElementById('budget').value;
+    const deadline = document.getElementById('deadline').value;
+    const message = document.getElementById('message').value.trim();
+    const platforms = [...document.querySelectorAll('.checkbox-label input:checked')].map(c => c.value).join(', ');
+
+    if (!brand || !niche || !budget) {
+      alert('Please fill in Brand Name, Niche, and Budget at minimum.');
+      return;
+    }
+
+    const subject = encodeURIComponent(`Brand Brief: ${brand} — ${niche} Campaign`);
+    const body = encodeURIComponent(
+      `Brand Name: ${brand}\nWebsite: ${website}\nNiche: ${niche}\nBudget: ${budget}\nPlatforms: ${platforms
