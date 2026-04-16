@@ -24,6 +24,8 @@
     { "source": "/content-studio", "destination": "/content-studio.html" },
     { "source": "/content-studio/", "destination": "/content-studio.html" },
     { "source": "/content-studio-access", "destination": "/cs-access.html" },
-    { "source": "/content-studio-access/", "destination": "/cs-access.html" }
+    { "source": "/content-studio-access/", "destination": "/cs-access.html" },
+    { "source": "/campaign-engine", "destination": "/campaign-engine.html" },
+    { "source": "/campaign-engine/", "destination": "/campaign-engine.html" }
   ]
 }
