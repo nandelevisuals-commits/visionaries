@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elevated Vision Engine — NANDYVISUALS</title>
+<meta name="description" content="One image. Multiple cinematic shots. Build a full Kling 3.0 Pro video sequence from a single photo — no editing, no stitching, no production overhead.">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Italiana&family=Jost:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#080b0f;--dark:#0d1117;--card:#111620;
+  --teal:#00d4c8;--teal-d:rgba(0,212,200,0.15);--teal-g:rgba(0,212,200,0.3);
+  --pink:#ff4d8d;--pink-d:rgba(255,77,141,0.12);--pink-g:rgba(255,77,141,0.28);
+  --white:#f0f4f8;--dim:rgba(240,244,248,0.55);--muted:rgba(240,244,248,0.3);--border:rgba(240,244,248,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);font-family:'Jost',sans-serif;color:var(--white);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,200,0.01) 2px,rgba(0,212,200,0.01) 4px);pointer-events:none;z-index:0;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;background:rgba(8,11,15,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.15em;background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-cta{background:linear-gradient(135deg,var(--pink),#cc3070);color:var(--white);border:none;border-radius:3px;padding:0.55rem 1.3rem;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all 0.3s;white-space:nowrap;}
+.nav-cta:hover{box-shadow:0 0 24px var(--pink-g);transform:translateY(-1px);}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 1.5rem 4rem;position:relative;z-index:1;}
+.hero::before{content:'';position:absolute;top:-10%;left:-5%;width:55%;height:55%;background:radial-gradient(ellipse,rgba(0,212,200,0.07) 0%,transparent 65%);pointer-events:none;}
+.hero::after{content:'';position:absolute;bottom:-5%;right:-5%;width:50%;height:50%;background:radial-gradient(ellipse,rgba(255,77,141,0.06) 0%,transparent 65%);pointer-events:none;}
+
+.hero-eyebrow{font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--teal);margin-bottom:1.5rem;animation:fadeUp 0.8s ease forwards;opacity:0;}
+.hero-title{font-family:'Italiana',serif;font-size:clamp(3rem,10vw,6.5rem);font-weight:400;line-height:1.0;color:var(--white);margin-bottom:0.4rem;animation:fadeUp 0.8s 0.1s ease forwards;opacity:0;}
+.hero-title em{font-style:italic;background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:clamp(0.9rem,2vw,1.1rem);font-weight:300;color:var(--dim);max-width:520px;margin:1.2rem auto 2.5rem;line-height:1.75;letter-spacing:0.02em;animation:fadeUp 0.8s 0.2s ease forwards;opacity:0;}
+.hero-price-block{display:flex;align-items:center;gap:1rem;justify-content:center;margin-bottom:2rem;animation:fadeUp 0.8s 0.3s ease forwards;opacity:0;}
+.hero-price{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:0.05em;background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-price-note{font-size:0.72rem;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;text-align:left;line-height:1.6;}
+.hero-btn{display:inline-block;background:linear-gradient(135deg,var(--pink),#cc3070);color:var(--white);text-decoration:none;border-radius:4px;padding:1.1rem 2.8rem;font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;transition:all 0.3s;animation:fadeUp 0.8s 0.4s ease forwards;opacity:0;position:relative;overflow:hidden;}
+.hero-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);opacity:0;transition:opacity 0.3s;}
+.hero-btn:hover{box-shadow:0 0 36px var(--pink-g);transform:translateY(-2px);}
+.hero-btn:hover::before{opacity:1;}
+.hero-disclaimer{font-size:0.65rem;color:var(--muted);margin-top:1rem;letter-spacing:0.08em;animation:fadeUp 0.8s 0.5s ease forwards;opacity:0;}
+
+.ticker{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:0.7rem 0;background:rgba(0,212,200,0.03);position:relative;z-index:1;}
+.ticker-track{display:flex;gap:3rem;animation:ticker 22s linear infinite;width:max-content;}
+.ticker-item{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--teal);white-space:nowrap;opacity:0.7;display:flex;align-items:center;gap:0.8rem;}
+.ticker-dot{width:3px;height:3px;background:var(--pink);border-radius:50%;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+section{position:relative;z-index:1;}
+.section-inner{max-width:780px;margin:0 auto;padding:5rem 1.5rem;}
+.section-label{font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--teal);margin-bottom:1rem;opacity:0.8;display:block;}
+.section-title{font-family:'Italiana',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:400;line-height:1.15;color:var(--white);margin-bottom:1rem;}
+.section-title em{font-style:italic;background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.section-body{font-size:0.95rem;font-weight:300;color:var(--dim);line-height:1.8;max-width:560px;}
+
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:3rem;}
+.step-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:1.5rem 1rem;text-align:center;position:relative;overflow:hidden;transition:border-color 0.3s;}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--teal),var(--pink));opacity:0.5;}
+.step-card:hover{border-color:rgba(0,212,200,0.2);}
+.step-num{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:0.05em;background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin-bottom:0.5rem;}
+.step-icon{font-size:1.6rem;margin-bottom:0.5rem;}
+.step-name{font-family:'Italiana',serif;font-style:italic;font-size:1rem;color:var(--teal);display:block;margin-bottom:0.35rem;}
+.step-desc{font-size:0.72rem;font-weight:300;color:var(--muted);line-height:1.55;}
+
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2.5rem;}
+@media(max-width:520px){.features-grid{grid-template-columns:1fr;}.steps-grid{grid-template-columns:1fr 1fr;}}
+.feature-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:1.4rem;position:relative;overflow:hidden;transition:border-color 0.3s,transform 0.3s;}
+.feature-card:hover{border-color:rgba(255,77,141,0.2);transform:translateY(-2px);}
+.feature-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--pink),transparent);opacity:0.3;}
+.feature-icon{font-size:1.4rem;margin-bottom:0.7rem;}
+.feature-name{font-family:'Italiana',serif;font-style:italic;font-size:1rem;color:var(--pink);display:block;margin-bottom:0.35rem;}
+.feature-desc{font-size:0.75rem;font-weight:300;color:var(--muted);line-height:1.55;}
+
+.mockup-zone{margin:1rem 0;background:var(--card);border:1.5px dashed rgba(0,212,200,0.18);border-radius:8px;padding:3rem 2rem;text-align:center;}
+.mockup-label{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-top:0.8rem;display:block;}
+.mockup-icon{font-size:3rem;opacity:0.18;display:block;margin-bottom:0.5rem;}
+
+.compare-table{margin-top:2.5rem;border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.compare-row{display:grid;grid-template-columns:1fr 1fr 1fr;padding:0.9rem 1.2rem;border-bottom:1px solid var(--border);font-size:0.82rem;transition:background 0.2s;}
+.compare-row:last-child{border-bottom:none;}
+.compare-row:hover{background:rgba(255,255,255,0.02);}
+.compare-row.header{background:rgba(0,212,200,0.05);font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);}
+.col-feature{color:var(--dim);font-weight:300;}
+.col-them{color:rgba(240,244,248,0.22);font-size:0.78rem;}
+.col-you{color:var(--teal);font-weight:500;}
+.check{color:var(--teal);}.cross{color:rgba(240,244,248,0.18);}.pink-check{color:var(--pink);}
+
+.proof-section{background:rgba(0,212,200,0.03);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.proof-inner{max-width:780px;margin:0 auto;padding:4rem 1.5rem;text-align:center;}
+.proof-quote{font-family:'Italiana',serif;font-style:italic;font-size:clamp(1.3rem,3.5vw,2rem);color:var(--white);line-height:1.4;max-width:580px;margin:0 auto 1.5rem;}
+.proof-quote em{background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.proof-author{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:3rem 0;}
+.stat{background:var(--card);padding:1.5rem 1rem;text-align:center;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:0.05em;background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
+.stat-label{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-top:0.2rem;}
+
+.cta-section{text-align:center;padding:5rem 1.5rem;position:relative;z-index:1;}
+.cta-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60%;height:60%;background:radial-gradient(ellipse,rgba(255,77,141,0.06) 0%,transparent 65%);pointer-events:none;}
+.cta-title{font-family:'Italiana',serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:400;line-height:1.1;color:var(--white);margin-bottom:0.8rem;}
+.cta-title em{font-style:italic;background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.cta-sub{font-size:0.9rem;font-weight:300;color:var(--muted);margin-bottom:2.5rem;letter-spacing:0.03em;line-height:1.7;}
+.cta-price{font-family:'Bebas Neue',sans-serif;font-size:5rem;letter-spacing:0.05em;background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin-bottom:0.5rem;line-height:1;}
+.cta-once{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:2rem;display:block;}
+.cta-btn{display:inline-block;background:linear-gradient(135deg,var(--pink),#cc3070);color:var(--white);text-decoration:none;border-radius:4px;padding:1.2rem 3.5rem;font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;transition:all 0.3s;position:relative;overflow:hidden;}
+.cta-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);opacity:0;transition:opacity 0.3s;}
+.cta-btn:hover{box-shadow:0 0 40px var(--pink-g);transform:translateY(-2px);}
+.cta-btn:hover::before{opacity:1;}
+.cta-access-note{margin-top:1rem;font-size:0.68rem;color:var(--muted);letter-spacing:0.06em;line-height:1.7;}
+.cta-access-note strong{color:var(--teal);}
+.already-btn{display:inline-block;margin-top:1rem;background:transparent;border:1px solid rgba(0,212,200,0.25);color:var(--teal);text-decoration:none;border-radius:3px;padding:0.6rem 1.5rem;font-family:'Jost',sans-serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;transition:all 0.2s;}
+.already-btn:hover{background:var(--teal-d);}
+
+.faq-list{margin-top:2.5rem;}
+.faq-item{border-bottom:1px solid var(--border);padding:1.2rem 0;cursor:pointer;}
+.faq-q{display:flex;justify-content:space-between;align-items:center;font-size:0.9rem;font-weight:400;color:var(--white);letter-spacing:0.02em;}
+.faq-arrow{color:var(--teal);font-size:1rem;transition:transform 0.3s;flex-shrink:0;margin-left:1rem;}
+.faq-item.open .faq-arrow{transform:rotate(45deg);}
+.faq-a{font-size:0.82rem;font-weight:300;color:var(--muted);line-height:1.7;max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding-top 0.3s;padding-top:0;}
+.faq-item.open .faq-a{max-height:200px;padding-top:0.8rem;}
+
+footer{text-align:center;padding:2.5rem 1.5rem;border-top:1px solid var(--border);font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);position:relative;z-index:1;}
+footer span{background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--black);}::-webkit-scrollbar-thumb{background:var(--teal);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">NANDYVISUALS</div>
+  <a class="nav-cta" href="https://wandiko.gumroad.com" target="_blank">Get Access — $50</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">Elevated Vision Engine · Kling 3.0 Pro</p>
+  <h1 class="hero-title">One Image.<br><em>Infinite Shots.</em></h1>
+  <p class="hero-sub">Upload one photo. Get a full cinematic shot sequence — different angles, different frames, dynamic camera movement. Built for Kling 3.0 Pro. No editing. No stitching. No production overhead.</p>
+  <div class="hero-price-block">
+    <div class="hero-price">$50</div>
+    <div class="hero-price-note">One-time payment<br>Instant access<br>No subscription</div>
+  </div>
+  <a class="hero-btn" href="https://wandiko.gumroad.com" target="_blank">Get Elevated Vision — $50</a>
+  <p class="hero-disclaimer">Access code delivered instantly via Gumroad after purchase.</p>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="ticker-dot"></span>One image · Multiple shots</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Kling 3.0 Pro optimized</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Visual storyboard view</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>PDF shot list export</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>6 style presets</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>AI vision reads your image</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Director's notes per shot</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>One image · Multiple shots</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Kling 3.0 Pro optimized</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Visual storyboard view</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>PDF shot list export</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>6 style presets</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>AI vision reads your image</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Director's notes per shot</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="section-inner">
+    <span class="section-label reveal">How it works</span>
+    <h2 class="section-title reveal">Four steps.<br><em>Full video sequence.</em></h2>
+    <p class="section-body reveal">No complex workflow. No hours of editing. Just your image, your vision, and a complete Kling 3.0 Pro shot list ready to execute.</p>
+    <div class="steps-grid">
+      <div class="step-card reveal"><span class="step-num">01</span><div class="step-icon">🖼️</div><span class="step-name">Upload Your Image</span><p class="step-desc">Drop in your reference photo. The AI reads every detail — hair, outfit, lighting, environment.</p></div>
+      <div class="step-card reveal"><span class="step-num">02</span><div class="step-icon">⚡</div><span class="step-name">Set Your Vision</span><p class="step-desc">Choose concept, mood, location, camera style — or one-tap a style preset to fill everything instantly.</p></div>
+      <div class="step-card reveal"><span class="step-num">03</span><div class="step-icon">✨</div><span class="step-name">Generate Shots</span><p class="step-desc">Get 3–6 rich Kling 3.0 Pro prompts with lighting, color grade, subject action, and a director's note.</p></div>
+      <div class="step-card reveal"><span class="step-num">04</span><div class="step-icon">🎬</div><span class="step-name">Create & Export</span><p class="step-desc">Paste into Kling, render your shots. Download your branded PDF shot list. Video done.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MOCKUPS -->
+<section>
+  <div class="section-inner" style="padding-top:0;">
+    <div class="mockup-zone reveal"><span class="mockup-icon">🎬</span><p style="color:var(--muted);font-size:0.82rem;font-weight:300;">[ Screenshot of the engine — add after testing ]</p><span class="mockup-label">Elevated Vision Engine</span></div>
+    <div class="mockup-zone reveal"><span class="mockup-icon">📋</span><p style="color:var(--muted);font-size:0.82rem;font-weight:300;">[ Screenshot of storyboard view ]</p><span class="mockup-label">Visual Storyboard View</span></div>
+    <div class="mockup-zone reveal"><span class="mockup-icon">📄</span><p style="color:var(--muted);font-size:0.82rem;font-weight:300;">[ Screenshot of PDF export ]</p><span class="mockup-label">Branded PDF Shot List</span></div>
+  </div>
+</section>
+
+<!-- WHAT'S INSIDE -->
+<section>
+  <div class="section-inner" style="padding-top:1rem;">
+    <span class="section-label reveal">What's inside</span>
+    <h2 class="section-title reveal">Everything you need<br>to build <em>cinematic content</em><br>from one image.</h2>
+    <div class="features-grid">
+      <div class="feature-card reveal"><div class="feature-icon">👁️</div><span class="feature-name">AI Vision Analysis</span><p class="feature-desc">Upload your photo and Claude actually sees it — reading your outfit, hair, skin tone, lighting, and environment to build accurate prompts.</p></div>
+      <div class="feature-card reveal"><div class="feature-icon">🎬</div><span class="feature-name">Rich Kling 3.0 Pro Prompts</span><p class="feature-desc">80+ word prompts per shot with Camera, Subject, Environment, Lighting, Color Grade, and Motion Quality — production-ready every time.</p></div>
+      <div class="feature-card reveal"><div class="feature-icon">🎞️</div><span class="feature-name">Visual Storyboard</span><p class="feature-desc">See your full shot sequence laid out like a real film storyboard — portrait frames with shot numbers and camera movements.</p></div>
+      <div class="feature-card reveal"><div class="feature-icon">📄</div><span class="feature-name">PDF Shot List Export</span><p class="feature-desc">Download a branded PDF with every shot's prompt, lighting, color grade, and director's note. Hand it to an editor or keep for your records.</p></div>
+      <div class="feature-card reveal"><div class="feature-icon">⚡</div><span class="feature-name">6 Style Presets</span><p class="feature-desc">Editorial Drip, Golden Hour Vlog, Afrofuturist, Soft UGC, Dark Luxury, Travel Reel — one tap fills all settings instantly.</p></div>
+      <div class="feature-card reveal"><div class="feature-icon">🎯</div><span class="feature-name">Director's Notes</span><p class="feature-desc">Every shot comes with a one-line creative direction note so you know exactly what energy each clip needs.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section>
+  <div class="section-inner" style="padding-top:0;padding-bottom:2rem;">
+    <div class="stats-row reveal">
+      <div class="stat"><span class="stat-num">1</span><span class="stat-label">Image needed</span></div>
+      <div class="stat"><span class="stat-num">6</span><span class="stat-label">Shots generated</span></div>
+      <div class="stat"><span class="stat-num">0</span><span class="stat-label">Hours of editing</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section>
+  <div class="section-inner" style="padding-top:1rem;">
+    <span class="section-label reveal">Why Elevated Vision</span>
+    <h2 class="section-title reveal">Built different.<br><em>Built better.</em></h2>
+    <div class="compare-table reveal">
+      <div class="compare-row header"><div>Feature</div><div>Other tools</div><div>Elevated Vision</div></div>
+      <div class="compare-row"><div class="col-feature">AI reads your actual image</div><div class="col-them"><span class="cross">✗</span> Text only</div><div class="col-you"><span class="check">✓</span> Vision AI</div></div>
+      <div class="compare-row"><div class="col-feature">80+ word detailed prompts</div><div class="col-them"><span class="cross">✗</span> Basic prompts</div><div class="col-you"><span class="check">✓</span> Director-level</div></div>
+      <div class="compare-row"><div class="col-feature">Visual storyboard view</div><div class="col-them"><span class="cross">✗</span> List only</div><div class="col-you"><span class="check">✓</span> Included</div></div>
+      <div class="compare-row"><div class="col-feature">PDF shot list export</div><div class="col-them"><span class="cross">✗</span> Copy/paste only</div><div class="col-you"><span class="check">✓</span> Branded PDF</div></div>
+      <div class="compare-row"><div class="col-feature">Lighting + Color Grade fields</div><div class="col-them"><span class="cross">✗</span> Not included</div><div class="col-you"><span class="check">✓</span> Every shot</div></div>
+      <div class="compare-row"><div class="col-feature">Director's notes per shot</div><div class="col-them"><span class="cross">✗</span> Not included</div><div class="col-you"><span class="pink-check">✦</span> Unique feature</div></div>
+      <div class="compare-row"><div class="col-feature">One-tap style presets</div><div class="col-them"><span class="cross">✗</span></div><div class="col-you"><span class="check">✓</span> 6 presets</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF -->
+<div class="proof-section">
+  <div class="proof-inner">
+    <p class="proof-quote reveal">"The real flex isn't just the aesthetic.<br>It's <em>speed + systems.</em>"</p>
+    <p class="proof-author reveal">— The philosophy behind Elevated Vision</p>
+  </div>
+</div>
+
+<!-- FOR WHO -->
+<section>
+  <div class="section-inner">
+    <span class="section-label reveal">This is for you if…</span>
+    <h2 class="section-title reveal">You want content that<br><em>looks like it took hours.</em></h2>
+    <div style="margin-top:2rem;display:grid;gap:0.8rem;">
+      <div class="feature-card reveal" style="display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.2rem;"><span style="color:var(--teal);font-size:1rem;flex-shrink:0;">✦</span><p class="feature-desc" style="color:var(--dim);">You're an AI content creator who wants cinematic multi-shot videos without a production team</p></div>
+      <div class="feature-card reveal" style="display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.2rem;"><span style="color:var(--teal);font-size:1rem;flex-shrink:0;">✦</span><p class="feature-desc" style="color:var(--dim);">You use Kling 3.0 Pro and want better, more detailed prompts that actually get consistent results</p></div>
+      <div class="feature-card reveal" style="display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.2rem;"><span style="color:var(--teal);font-size:1rem;flex-shrink:0;">✦</span><p class="feature-desc" style="color:var(--dim);">You're a brand or UGC creator who needs to produce volume without sacrificing quality</p></div>
+      <div class="feature-card reveal" style="display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.2rem;"><span style="color:var(--teal);font-size:1rem;flex-shrink:0;">✦</span><p class="feature-desc" style="color:var(--dim);">You're done overcomplicating your process — you want idea → full video sequence, fast</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="section-inner" style="padding-top:1rem;">
+    <span class="section-label reveal">Questions</span>
+    <h2 class="section-title reveal"><em>FAQ</em></h2>
+    <div class="faq-list reveal">
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">What AI video tool does this work with?<span class="faq-arrow">+</span></div><div class="faq-a">Elevated Vision generates prompts specifically optimized for Kling 3.0 Pro image-to-video. Upload your image to Kling, paste the prompt, and render.</div></div>
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Do I need to subscribe to anything else?<span class="faq-arrow">+</span></div><div class="faq-a">Elevated Vision is a one-time $50 purchase. You will need your own Kling 3.0 Pro subscription to generate the actual videos — Elevated Vision gives you the prompts.</div></div>
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">How do I access it after buying?<span class="faq-arrow">+</span></div><div class="faq-a">After purchasing on Gumroad you receive an access code instantly. Enter it on the tool page — no app download, no login, works on any device including mobile.</div></div>
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Can I use any photo?<span class="faq-arrow">+</span></div><div class="faq-a">Yes — any JPG, PNG, or WEBP up to 10MB. The AI vision reads the image to extract outfit, hair, lighting, and environment details to build accurate prompts.</div></div>
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">How many shots can I generate?<span class="faq-arrow">+</span></div><div class="faq-a">Choose between 3, 4, 5, or 6 shots per sequence. Regenerate as many times as you want — no usage limit on your access.</div></div>
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Is this a one-time payment?<span class="faq-arrow">+</span></div><div class="faq-a">Yes. $50 once. Lifetime access. No monthly fees, no subscriptions, no surprises.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+  <span class="section-label reveal" style="display:block;text-align:center;">Ready?</span>
+  <h2 class="cta-title reveal">Stop describing.<br><em>Start directing.</em></h2>
+  <p class="cta-sub reveal">One image is all you need. Everything else is already built.</p>
+  <span class="cta-price reveal">$50</span>
+  <span class="cta-once reveal">One-time · Lifetime access · Instant delivery</span>
+  <br><br>
+  <a class="cta-btn reveal" href="https://wandiko.gumroad.com" target="_blank">Get Elevated Vision Now</a>
+  <p class="cta-access-note reveal">After purchase, you'll receive your access code via Gumroad.<br>Enter it at <strong>nandyvisuals.com/elevated-vision</strong> to unlock the engine.</p>
+  <br>
+  <a class="already-btn reveal" href="/elevated-vision">Already bought? Enter your code →</a>
+</section>
+
+<footer>
+  <span>NANDYVISUALS</span> · Elevated Vision Engine · @theeaivisualz · @nandyvisuals
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);} });
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+function toggleFaq(el){
+  const open=el.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!open)el.classList.add('open');
+}
+</script>
+</body>
+</html>
