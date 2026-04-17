@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elevated Vision Engine — NANDYVISUALS</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Italiana&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:       #080b0f;
+    --dark:        #0d1117;
+    --dark-card:   #111620;
+    --teal:        #00d4c8;
+    --teal-dim:    rgba(0,212,200,0.18);
+    --teal-glow:   rgba(0,212,200,0.35);
+    --pink:        #ff4d8d;
+    --pink-dim:    rgba(255,77,141,0.15);
+    --pink-glow:   rgba(255,77,141,0.3);
+    --white:       #f0f4f8;
+    --white-dim:   rgba(240,244,248,0.6);
+    --muted:       rgba(240,244,248,0.32);
+    --border:      rgba(0,212,200,0.14);
+    --border-soft: rgba(240,244,248,0.07);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    font-family: 'Jost', sans-serif;
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,212,200,0.012) 2px,
+        rgba(0,212,200,0.012) 4px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: -10%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(ellipse, rgba(0,212,200,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #gate {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    animation: fadeIn 0.8s ease forwards;
+  }
+  #gate.hidden { animation: fadeOut 0.6s ease forwards; pointer-events: none; }
+  #gate::before, #gate::after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-color: var(--teal);
+    border-style: solid;
+    opacity: 0.4;
+  }
+  #gate::before { top: 2rem; left: 2rem; border-width: 1px 0 0 1px; }
+  #gate::after  { bottom: 2rem; right: 2rem; border-width: 0 1px 1px 0; }
+
+  .gate-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 7vw, 3rem);
+    letter-spacing: 0.12em;
+    background: linear-gradient(135deg, var(--teal), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.2rem;
+  }
+  .gate-sub { font-family: 'Jost', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; margin-bottom: 3rem; }
+  .gate-divider { width: 40px; height: 1px; background: linear-gradient(90deg, var(--teal), var(--pink)); margin: 0 auto 3rem; }
+  .gate-title { font-family: 'Italiana', serif; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 400; text-align: center; line-height: 1.2; margin-bottom: 0.7rem; color: var(--white); }
+  .gate-desc { font-family: 'Jost', sans-serif; font-weight: 300; font-size: clamp(0.85rem, 2vw, 0.95rem); color: var(--muted); text-align: center; margin-bottom: 2.5rem; max-width: 340px; line-height: 1.7; letter-spacing: 0.03em; }
+  .gate-input-wrap { width: 100%; max-width: 360px; margin-bottom: 0.8rem; position: relative; }
+  .gate-input { width: 100%; background: rgba(0,212,200,0.05); border: 1px solid var(--border); border-radius: 3px; padding: 1rem 1.2rem; font-family: 'Jost', sans-serif; font-size: 0.88rem; color: var(--teal); letter-spacing: 0.2em; text-align: center; text-transform: uppercase; outline: none; transition: border-color 0.3s, background 0.3s, box-shadow 0.3s; }
+  .gate-input:focus { border-color: var(--teal); background: rgba(0,212,200,0.08); box-shadow: 0 0 20px var(--teal-glow); }
+  .gate-input::placeholder { color: rgba(0,212,200,0.25); letter-spacing: 0.2em; }
+  .gate-btn { width: 100%; max-width: 360px; background: linear-gradient(135deg, var(--teal), #00b8ae); color: var(--black); border: none; border-radius: 3px; padding: 1rem; font-family: 'Jost', sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+  .gate-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent); opacity: 0; transition: opacity 0.3s; }
+  .gate-btn:hover { box-shadow: 0 0 28px var(--teal-glow); transform: translateY(-1px); }
+  .gate-btn:hover::after { opacity: 1; }
+  .gate-btn:active { transform: translateY(0); }
+  .gate-error { font-size: 0.75rem; color: var(--pink); text-align: center; margin-top: 0.8rem; min-height: 1.1em; letter-spacing: 0.06em; }
+  .gate-footer { position: absolute; bottom: 2rem; font-size: 0.58rem; letter-spacing: 0.22em; color: var(--muted); text-transform: uppercase; }
+
+  #app { display: none; min-height: 100vh; position: relative; z-index: 1; }
+  #app.visible { display: block; }
+
+  .header { text-align: center; padding: 3rem 2rem 2.5rem; position: relative; }
+  .header-accent { width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--teal), var(--pink), transparent); margin-bottom: 2.5rem; opacity: 0.5; }
+  .brand-name { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.6rem, 5vw, 2.2rem); letter-spacing: 0.15em; background: linear-gradient(135deg, var(--teal), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.2rem; }
+  .brand-tagline { font-size: 0.58rem; letter-spacing: 0.28em; color: var(--muted); text-transform: uppercase; margin-bottom: 2rem; }
+  .page-title { font-family: 'Italiana', serif; font-size: clamp(2.4rem, 7vw, 4rem); font-weight: 400; line-height: 1.1; color: var(--white); margin-bottom: 0.5rem; }
+  .page-title em { font-style: italic; background: linear-gradient(135deg, var(--teal), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .page-subtitle { font-size: clamp(0.82rem, 2vw, 0.95rem); font-weight: 300; color: var(--muted); max-width: 480px; margin: 0 auto 2rem; line-height: 1.75; letter-spacing: 0.03em; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 0 1.5rem 5rem; }
+
+  .card { background: var(--dark-card); border: 1px solid var(--border-soft); border-radius: 6px; padding: 1.8rem; margin-bottom: 1rem; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--teal), var(--pink)); opacity: 0.5; }
+  .card-label { font-size: 0.58rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--teal); margin-bottom: 1.2rem; opacity: 0.8; }
+
+  label { display: block; font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+  textarea, select, input[type="text"] { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border-soft); border-radius: 4px; padding: 0.85rem 1rem; font-family: 'Jost', sans-serif; font-size: 0.86rem; font-weight: 300; color: var(--white); outline: none; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; resize: vertical; line-height: 1.6; }
+  textarea { min-height: 90px; }
+  textarea:focus, select:focus, input[type="text"]:focus { border-color: rgba(0,212,200,0.4); background: rgba(0,212,200,0.04); box-shadow: 0 0 16px rgba(0,212,200,0.1); }
+  textarea::placeholder, input::placeholder { color: rgba(240,244,248,0.2); font-style: italic; }
+  select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300d4c8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; cursor: pointer; }
+  select option { background: var(--dark); }
+
+  .field { margin-bottom: 1.2rem; }
+  .field:last-child { margin-bottom: 0; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
+
+  .upload-zone { border: 1.5px dashed rgba(0,212,200,0.3); border-radius: 6px; padding: 2rem 1rem; text-align: center; cursor: pointer; transition: all 0.3s; background: rgba(0,212,200,0.03); position: relative; overflow: hidden; }
+  .upload-zone:hover, .upload-zone.drag-over { border-color: var(--teal); background: rgba(0,212,200,0.07); box-shadow: 0 0 20px rgba(0,212,200,0.1); }
+  .upload-zone.has-image { border-color: var(--pink); border-style: solid; padding: 0; cursor: default; }
+  .upload-icon { font-size: 2rem; margin-bottom: 0.6rem; display: block; }
+  .upload-label-text { font-size: 0.82rem; color: var(--teal); font-weight: 400; display: block; margin-bottom: 0.3rem; letter-spacing: 0.05em; }
+  .upload-hint { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  #image-file { display: none; }
+  .image-preview-wrap { position: relative; display: none; }
+  .image-preview-wrap.visible { display: block; }
+  .image-preview { width: 100%; max-height: 280px; object-fit: cover; border-radius: 5px; display: block; }
+  .preview-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,11,15,0.85) 0%, transparent 50%); border-radius: 5px; display: flex; align-items: flex-end; padding: 1rem; justify-content: space-between; }
+  .preview-info { font-size: 0.72rem; color: var(--white); letter-spacing: 0.05em; opacity: 0.85; }
+  .preview-info span { display: block; color: var(--teal); font-size: 0.62rem; margin-top: 0.15rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .remove-img-btn { background: rgba(255,77,141,0.2); border: 1px solid var(--pink); color: var(--pink); border-radius: 3px; padding: 0.3rem 0.65rem; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; font-family: 'Jost', sans-serif; transition: all 0.2s; }
+  .remove-img-btn:hover { background: rgba(255,77,141,0.35); }
+  .upload-replace { position: absolute; top: 0.7rem; left: 50%; transform: translateX(-50%); background: rgba(8,11,15,0.7); border: 1px solid rgba(0,212,200,0.3); color: var(--teal); border-radius: 3px; padding: 0.25rem 0.7rem; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; font-family: 'Jost', sans-serif; transition: all 0.2s; white-space: nowrap; }
+  .upload-replace:hover { background: rgba(0,212,200,0.12); }
+
+  .shot-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .shot-pill { background: rgba(255,255,255,0.03); border: 1px solid var(--border-soft); border-radius: 2px; padding: 0.45rem 1.1rem; font-size: 0.74rem; letter-spacing: 0.1em; color: var(--white-dim); cursor: pointer; transition: all 0.2s; font-family: 'Jost', sans-serif; text-transform: uppercase; }
+  .shot-pill:hover { border-color: var(--teal); color: var(--teal); }
+  .shot-pill.active { background: linear-gradient(135deg, var(--teal), #00b8ae); border-color: var(--teal); color: var(--black); font-weight: 500; box-shadow: 0 0 16px var(--teal-glow); }
+
+  .generate-btn { width: 100%; background: linear-gradient(135deg, var(--pink), #cc3070); color: var(--white); border: none; border-radius: 4px; padding: 1.1rem; font-family: 'Jost', sans-serif; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; margin-top: 0.8rem; position: relative; overflow: hidden; }
+  .generate-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent); opacity: 0; transition: opacity 0.3s; }
+  .generate-btn:hover { box-shadow: 0 0 32px var(--pink-glow); transform: translateY(-2px); }
+  .generate-btn:hover::before { opacity: 1; }
+  .generate-btn:active { transform: translateY(0); }
+  .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .loading-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: var(--white); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 0.5rem; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #output-section { display: none; margin-top: 1.5rem; }
+  #output-section.visible { display: block; animation: slideUp 0.5s ease forwards; }
+
+  .output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.8rem; }
+  .output-title { font-family: 'Italiana', serif; font-size: 1.3rem; color: var(--white); font-weight: 400; }
+  .output-subtitle { font-size: 0.78rem; color: var(--teal); margin-top: 0.2rem; letter-spacing: 0.06em; font-weight: 300; }
+  .copy-all-btn { background: transparent; border: 1px solid rgba(0,212,200,0.3); border-radius: 3px; padding: 0.5rem 1rem; font-family: 'Jost', sans-serif; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .copy-all-btn:hover { background: var(--teal-dim); box-shadow: 0 0 14px var(--teal-glow); }
+
+  .shot-card { background: var(--dark-card); border: 1px solid var(--border-soft); border-radius: 6px; padding: 1.4rem; margin-bottom: 0.9rem; animation: slideUp 0.4s ease forwards; opacity: 0; position: relative; overflow: hidden; }
+  .shot-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--pink), transparent); opacity: 0.3; }
+  .shot-card:nth-child(1){animation-delay:0.05s}.shot-card:nth-child(2){animation-delay:0.12s}.shot-card:nth-child(3){animation-delay:0.19s}.shot-card:nth-child(4){animation-delay:0.26s}.shot-card:nth-child(5){animation-delay:0.33s}.shot-card:nth-child(6){animation-delay:0.4s}
+
+  .shot-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+  .shot-badge { display: flex; align-items: center; gap: 0.7rem; }
+  .shot-number { background: linear-gradient(135deg, var(--pink), #cc3070); color: var(--white); font-size: 0.6rem; font-weight: 500; letter-spacing: 0.1em; padding: 0.22rem 0.65rem; border-radius: 2px; text-transform: uppercase; }
+  .shot-type { font-family: 'Italiana', serif; font-size: 0.95rem; color: var(--teal); font-style: italic; }
+  .copy-btn { background: none; border: 1px solid var(--border-soft); border-radius: 3px; padding: 0.32rem 0.75rem; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: 'Jost', sans-serif; }
+  .copy-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .copy-btn.copied { color: var(--teal); border-color: var(--teal); box-shadow: 0 0 10px var(--teal-glow); }
+  .shot-prompt { font-family: 'Jost', sans-serif; font-weight: 300; font-size: 0.83rem; line-height: 1.75; color: var(--white-dim); white-space: pre-wrap; border-left: 2px solid rgba(0,212,200,0.3); padding-left: 1rem; margin: 0; }
+  .shot-meta { margin-top: 0.9rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .meta-tag { background: rgba(0,212,200,0.06); border: 1px solid rgba(0,212,200,0.18); border-radius: 2px; padding: 0.2rem 0.6rem; font-size: 0.6rem; letter-spacing: 0.12em; color: var(--teal); text-transform: uppercase; opacity: 0.8; }
+
+  .how-section { margin-top: 3rem; padding: 2.5rem 0; border-top: 1px solid var(--border-soft); }
+  .how-title { font-family: 'Italiana', serif; font-size: 1.6rem; color: var(--white); margin-bottom: 1.5rem; text-align: center; }
+  .how-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 0.8rem; }
+  .how-step { text-align: center; padding: 1.3rem 0.8rem; background: var(--dark-card); border: 1px solid var(--border-soft); border-radius: 6px; transition: border-color 0.2s; }
+  .how-step:hover { border-color: var(--border); }
+  .step-icon { font-size: 1.5rem; margin-bottom: 0.6rem; }
+  .step-label { font-family: 'Italiana', serif; font-style: italic; font-size: 1rem; color: var(--pink); display: block; margin-bottom: 0.35rem; }
+  .step-desc { font-size: 0.7rem; font-weight: 300; color: var(--muted); line-height: 1.55; letter-spacing: 0.02em; }
+
+  .footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border-soft); font-size: 0.58rem; letter-spacing: 0.22em; color: var(--muted); text-transform: uppercase; }
+  .footer span { background: linear-gradient(135deg, var(--teal), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  .presets-section { margin-bottom: 1.4rem; }
+  .presets-label { font-size: 0.58rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--teal); opacity: 0.8; margin-bottom: 0.7rem; display: block; }
+  .presets-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .preset-chip { background: rgba(255,77,141,0.07); border: 1px solid rgba(255,77,141,0.2); border-radius: 20px; padding: 0.38rem 0.9rem; font-size: 0.7rem; color: var(--white-dim); cursor: pointer; transition: all 0.2s; font-family: 'Jost', sans-serif; letter-spacing: 0.04em; }
+  .preset-chip:hover { border-color: var(--pink); color: var(--pink); background: rgba(255,77,141,0.12); }
+  .preset-chip.active { background: linear-gradient(135deg, var(--pink), #cc3070); border-color: var(--pink); color: var(--white); }
+
+  .view-toggle { display: flex; gap: 0.4rem; background: rgba(255,255,255,0.04); border: 1px solid var(--border-soft); border-radius: 4px; padding: 0.28rem; }
+  .view-btn { background: none; border: none; border-radius: 3px; padding: 0.32rem 0.8rem; font-family: 'Jost', sans-serif; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+  .view-btn.active { background: var(--teal-dim); color: var(--teal); }
+
+  .output-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+  .action-btn { background: transparent; border: 1px solid rgba(0,212,200,0.3); border-radius: 3px; padding: 0.48rem 1rem; font-family: 'Jost', sans-serif; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .action-btn:hover { background: var(--teal-dim); box-shadow: 0 0 14px var(--teal-glow); }
+  .action-btn.pdf-btn { border-color: rgba(255,77,141,0.3); color: var(--pink); }
+  .action-btn.pdf-btn:hover { background: var(--pink-dim); box-shadow: 0 0 14px var(--pink-glow); }
+
+  #storyboard-view { display: none; }
+  #storyboard-view.active { display: block; }
+  #list-view.hidden { display: none; }
+
+  .storyboard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem; }
+  .sb-card { background: var(--dark-card); border: 1px solid var(--border-soft); border-radius: 6px; overflow: hidden; animation: slideUp 0.4s ease forwards; opacity: 0; position: relative; }
+  .sb-card:nth-child(1){animation-delay:0.05s}.sb-card:nth-child(2){animation-delay:0.1s}.sb-card:nth-child(3){animation-delay:0.15s}.sb-card:nth-child(4){animation-delay:0.2s}.sb-card:nth-child(5){animation-delay:0.25s}.sb-card:nth-child(6){animation-delay:0.3s}
+  .sb-frame { width: 100%; aspect-ratio: 9/16; background: var(--dark); position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .sb-frame::before, .sb-frame::after { content: ''; position: absolute; left: 0; right: 0; height: 16%; background: rgba(8,11,15,0.88); z-index: 2; }
+  .sb-frame::before { top: 0; }
+  .sb-frame::after  { bottom: 0; }
+  .sb-ref-img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; opacity: 0.5; }
+  .sb-placeholder-icon { font-size: 2.5rem; opacity: 0.12; position: relative; z-index: 1; }
+  .sb-shot-num { position: absolute; top: 18%; left: 0.6rem; background: linear-gradient(135deg, var(--pink), #cc3070); color: var(--white); font-size: 0.55rem; font-weight: 500; letter-spacing: 0.1em; padding: 0.18rem 0.5rem; border-radius: 2px; z-index: 3; text-transform: uppercase; }
+  .sb-cam-badge { position: absolute; bottom: 18%; left: 0; right: 0; text-align: center; z-index: 3; font-size: 0.6rem; color: var(--teal); letter-spacing: 0.06em; font-family: 'Jost', sans-serif; text-shadow: 0 1px 6px rgba(0,0,0,0.9); }
+  .sb-info { padding: 0.75rem; border-top: 1px solid var(--border-soft); }
+  .sb-type { font-family: 'Italiana', serif; font-style: italic; font-size: 0.92rem; color: var(--teal); display: block; margin-bottom: 0.3rem; }
+  .sb-prompt-preview { font-size: 0.67rem; font-weight: 300; color: var(--muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .sb-dur { font-size: 0.6rem; color: rgba(255,77,141,0.7); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.4rem; }
+  .sb-copy-btn { width: 100%; margin-top: 0.6rem; background: none; border: 1px solid var(--border-soft); border-radius: 3px; padding: 0.35rem; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: 'Jost', sans-serif; }
+  .sb-copy-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .sb-copy-btn.copied { color: var(--teal); border-color: var(--teal); }
+
+  .shot-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem 1rem; margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--border-soft); }
+  @media (max-width: 480px) { .shot-details-grid { grid-template-columns: 1fr; } }
+  .detail-label { font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 0.18rem; }
+  .detail-val { font-size: 0.78rem; font-weight: 300; color: var(--white-dim); line-height: 1.4; }
+  .detail-val.teal { color: var(--teal); }
+  .detail-val.pink { color: var(--pink); }
+
+  @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 2px; opacity: 0.5; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-logo">NANDYVISUALS</div>
+  <div class="gate-sub">Elevated Vision Engine</div>
+  <div class="gate-divider"></div>
+  <h1 class="gate-title">Enter your<br>access code</h1>
+  <p class="gate-desc">One image. Multiple shots.<br>Unlimited cinematic possibilities.</p>
+  <div class="gate-input-wrap">
+    <input class="gate-input" id="access-input" type="text" placeholder="ACCESS CODE" autocomplete="off" autocapitalize="characters">
+  </div>
+  <button class="gate-btn" onclick="checkAccess()">Unlock Access</button>
+  <p class="gate-error" id="gate-error"></p>
+  <div class="gate-footer">NANDYVISUALS · Elevated Vision Engine</div>
+</div>
+
+<div id="app">
+  <div class="header">
+    <div class="header-accent"></div>
+    <div class="brand-name">NANDYVISUALS</div>
+    <div class="brand-tagline">Elevated Vision Engine · Kling 3.0 Pro</div>
+    <h1 class="page-title">One Image.<br><em>Infinite Shots.</em></h1>
+    <p class="page-subtitle">Drop a description of your single image and generate a full Kling 3.0 Pro multi-shot video prompt sequence — different angles, different frames, dynamic movement.</p>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-label">Step 01 — Your Reference Image</div>
+      <div class="field">
+        <label>Upload your source image</label>
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('image-file').click()"
+          ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+          <div id="upload-placeholder">
+            <span class="upload-icon">🖼️</span>
+            <span class="upload-label-text">Tap to upload your reference photo</span>
+            <span class="upload-hint">JPG · PNG · WEBP · up to 10MB</span>
+          </div>
+          <div class="image-preview-wrap" id="preview-wrap">
+            <img class="image-preview" id="image-preview" src="" alt="Reference image">
+            <div class="preview-overlay">
+              <div class="preview-info">Reference image loaded<span id="img-filename">—</span></div>
+              <button class="remove-img-btn" onclick="removeImage(event)">✕ Remove</button>
+            </div>
+            <button class="upload-replace" onclick="document.getElementById('image-file').click(); event.stopPropagation();">↺ Replace</button>
+          </div>
+        </div>
+        <input type="file" id="image-file" accept="image/jpeg,image/png,image/webp,image/gif" onchange="handleImageUpload(event)">
+      </div>
+      <div class="field">
+        <label>Add details about your image <span style="color:var(--muted);font-size:0.6rem;letter-spacing:0.05em;text-transform:none;">(optional)</span></label>
+        <textarea id="image-desc" placeholder="e.g. wearing a white Prada crop top, green bomber, golden hour London setting…"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Step 02 — Video Concept</div>
+      <div class="presets-section">
+        <span class="presets-label">⚡ Quick Style Presets</span>
+        <div class="presets-row">
+          <div class="preset-chip" onclick="applyPreset(this,'editorial','bold, high contrast, editorial','dynamic, varied angles','London rooftop or fashion district')">✦ Editorial Drip</div>
+          <div class="preset-chip" onclick="applyPreset(this,'vlog','golden, warm, dreamy','handheld, documentary-style','city streets at golden hour')">☀️ Golden Hour Vlog</div>
+          <div class="preset-chip" onclick="applyPreset(this,'afrofuturist','futuristic, neon, otherworldly','dynamic, varied angles','surreal otherworldly landscape')">🌌 Afrofuturist</div>
+          <div class="preset-chip" onclick="applyPreset(this,'ugc','soft, ethereal, hazy','slow, smooth tracking shots','minimal clean environment')">🎀 Soft UGC</div>
+          <div class="preset-chip" onclick="applyPreset(this,'cinematic','moody, cinematic, dark luxury','slow, smooth tracking shots','dramatic urban night setting')">🎬 Dark Luxury</div>
+          <div class="preset-chip" onclick="applyPreset(this,'travel','golden, warm, dreamy','sweeping aerial and ground level','iconic travel destination')">✈️ Travel Reel</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Concept / Vibe</label>
+          <select id="concept" onchange="toggleCustom('concept')">
+            <option value="">Choose a concept…</option>
+            <option value="vlog">City Vlog / Day-in-the-Life</option>
+            <option value="editorial">Editorial / High Fashion</option>
+            <option value="ugc">UGC Brand Ad</option>
+            <option value="storytelling">Storytelling Reel</option>
+            <option value="travel">Travel / Destination</option>
+            <option value="lifestyle">Lifestyle / Aesthetic</option>
+            <option value="cinematic">Cinematic Narrative</option>
+            <option value="afrofuturist">Afrofuturist / Surreal</option>
+            <option value="custom">Custom (describe below)</option>
+          </select>
+          <input type="text" id="concept-custom" placeholder="Describe your concept…" style="display:none;margin-top:0.5rem;">
+        </div>
+        <div class="field">
+          <label>Location / Setting</label>
+          <input type="text" id="location" placeholder="e.g. London streets, Camden Market…">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Mood / Tone</label>
+          <select id="mood" onchange="toggleCustom('mood')">
+            <option value="">Choose mood…</option>
+            <option value="golden, warm, dreamy">Golden Hour Dream</option>
+            <option value="moody, cinematic, dark luxury">Dark Luxury</option>
+            <option value="soft, ethereal, hazy">Soft & Ethereal</option>
+            <option value="bold, high contrast, editorial">Bold Editorial</option>
+            <option value="playful, vibrant, energetic">Playful & Vibrant</option>
+            <option value="mysterious, deep shadows, film noir">Film Noir</option>
+            <option value="raw, documentary, natural light">Documentary Realism</option>
+            <option value="futuristic, neon, otherworldly">Afrofuturist Glow</option>
+            <option value="custom">Custom (describe below)</option>
+          </select>
+          <input type="text" id="mood-custom" placeholder="Describe your tone & mood…" style="display:none;margin-top:0.5rem;">
+        </div>
+        <div class="field">
+          <label>Brand / Product (optional)</label>
+          <input type="text" id="brand" placeholder="e.g. Maëlys TEMPT, Prada…">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Step 03 — Shot Settings</div>
+      <div class="field">
+        <label>Number of shots to generate</label>
+        <div class="shot-pills">
+          <div class="shot-pill active" onclick="selectShots(this, 3)">3 Shots</div>
+          <div class="shot-pill" onclick="selectShots(this, 4)">4 Shots</div>
+          <div class="shot-pill" onclick="selectShots(this, 5)">5 Shots</div>
+          <div class="shot-pill" onclick="selectShots(this, 6)">6 Shots</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Camera Style</label>
+          <select id="camera-style">
+            <option value="dynamic, varied angles">Dynamic Mixed</option>
+            <option value="slow, smooth tracking shots">Slow & Cinematic</option>
+            <option value="handheld, documentary-style">Handheld Vlog</option>
+            <option value="sweeping aerial and ground level">Aerial + Ground</option>
+            <option value="tight close-ups and medium shots">Close-Up Focus</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Duration per clip</label>
+          <select id="duration">
+            <option value="5 seconds">5 seconds</option>
+            <option value="8 seconds" selected>8 seconds</option>
+            <option value="10 seconds">10 seconds</option>
+            <option value="15 seconds">15 seconds</option>
+            <option value="30 seconds">30 seconds</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button class="generate-btn" id="gen-btn" onclick="generatePrompts()">Generate My Shot Sequence</button>
+
+    <div id="output-section">
+      <div class="output-header">
+        <div>
+          <div class="output-title">Your Shot Sequence</div>
+          <div class="output-subtitle">Ready to paste into Kling 3.0 Pro</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;align-items:flex-end;">
+          <div class="view-toggle">
+            <button class="view-btn active" id="btn-list" onclick="switchView('list')">≡ List</button>
+            <button class="view-btn" id="btn-board" onclick="switchView('board')">⊞ Storyboard</button>
+          </div>
+          <div class="output-actions">
+            <button class="action-btn" onclick="copyAll()">Copy All</button>
+            <button class="action-btn pdf-btn" onclick="exportPDF()">↓ PDF Shot List</button>
+          </div>
+        </div>
+      </div>
+      <div id="list-view"><div id="shots-container"></div></div>
+      <div id="storyboard-view"><div class="storyboard-grid" id="storyboard-container"></div></div>
+    </div>
+
+    <div class="how-section">
+      <div class="how-title">How It Works</div>
+      <div class="how-steps">
+        <div class="how-step"><div class="step-icon">🖼️</div><span class="step-label">One Image</span><p class="step-desc">Your single source photo. That's all you need to start.</p></div>
+        <div class="how-step"><div class="step-icon">✨</div><span class="step-label">Generate Shots</span><p class="step-desc">Engine creates multiple distinct Kling 3.0 Pro prompts with varied angles & movement.</p></div>
+        <div class="how-step"><div class="step-icon">🎬</div><span class="step-label">Paste & Create</span><p class="step-desc">Upload your image to Kling, paste each prompt, render your multi-shot video.</p></div>
+        <div class="how-step"><div class="step-icon">🔥</div><span class="step-label">Full Video Done</span><p class="step-desc">Multiple scenes, zero extra production. Content that looks like it took hours.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer"><span>NANDYVISUALS</span> · Elevated Vision Engine · Kling 3.0 Pro</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  const ACCESS_CODES = ['ELEVATEDVISION','NANDYVISION','ELEVATE2025','VISIONELEVE'];
+  let selectedShots = 3;
+  let generatedPrompts = [];
+  let uploadedImageBase64 = null;
+  let uploadedImageType = 'image/jpeg';
+  let uploadedImageName = '';
+  let currentView = 'list';
+
+  function checkAccess() {
+    const val = document.getElementById('access-input').value.trim().toUpperCase();
+    const err = document.getElementById('gate-error');
+    if (ACCESS_CODES.includes(val)) {
+      document.getElementById('gate').classList.add('hidden');
+      setTimeout(() => {
+        document.getElementById('gate').style.display = 'none';
+        document.getElementById('app').classList.add('visible');
+      }, 600);
+    } else {
+      err.textContent = 'Invalid code. Check your Gumroad receipt.';
+      setTimeout(() => err.textContent = '', 3000);
+    }
+  }
+  document.getElementById('access-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkAccess(); });
+
+  function toggleCustom(field) {
+    const sel = document.getElementById(field);
+    const inp = document.getElementById(field+'-custom');
+    if (sel.value==='custom') { inp.style.display='block'; inp.focus(); }
+    else { inp.style.display='none'; inp.value=''; }
+  }
+
+  function selectShots(el, count) {
+    document.querySelectorAll('.shot-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    selectedShots = count;
+  }
+
+  function applyPreset(el, concept, mood, camera, location) {
+    document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    const cs = document.getElementById('concept');
+    const ms = document.getElementById('mood');
+    const loc = document.getElementById('location');
+    let cFound = false;
+    for (let o of cs.options) { if (o.value===concept){cs.value=concept;cFound=true;break;} }
+    if (!cFound){cs.value='custom';document.getElementById('concept-custom').style.display='block';document.getElementById('concept-custom').value=concept;}
+    else{document.getElementById('concept-custom').style.display='none';}
+    let mFound = false;
+    for (let o of ms.options) { if (o.value===mood){ms.value=mood;mFound=true;break;} }
+    if (!mFound){ms.value='custom';document.getElementById('mood-custom').style.display='block';document.getElementById('mood-custom').value=mood;}
+    else{document.getElementById('mood-custom').style.display='none';}
+    document.getElementById('camera-style').value = camera;
+    if (location && !loc.value) loc.value = location;
+  }
+
+  function handleImageUpload(e) { const f=e.target.files[0]; if(f) loadImageFile(f); }
+  function handleDragOver(e) { e.preventDefault(); document.getElementById('upload-zone').classList.add('drag-over'); }
+  function handleDragLeave(e) { document.getElementById('upload-zone').classList.remove('drag-over'); }
+  function handleDrop(e) { e.preventDefault(); document.getElementById('upload-zone').classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f&&f.type.startsWith('image/')) loadImageFile(f); }
+  function loadImageFile(file) {
+    if(file.size>10*1024*1024){alert('Image must be under 10MB.');return;}
+    uploadedImageType=file.type||'image/jpeg'; uploadedImageName=file.name;
+    const reader=new FileReader();
+    reader.onload=(ev)=>{
+      const url=ev.target.result; uploadedImageBase64=url.split(',')[1];
+      document.getElementById('image-preview').src=url;
+      document.getElementById('img-filename').textContent=file.name;
+      document.getElementById('upload-placeholder').style.display='none';
+      document.getElementById('preview-wrap').classList.add('visible');
+      document.getElementById('upload-zone').classList.add('has-image');
+    };
+    reader.readAsDataURL(file);
+  }
+  function removeImage(e) {
+    e.stopPropagation(); uploadedImageBase64=null; uploadedImageName='';
+    document.getElementById('image-file').value='';
+    document.getElementById('image-preview').src='';
+    document.getElementById('preview-wrap').classList.remove('visible');
+    document.getElementById('upload-placeholder').style.display='';
+    document.getElementById('upload-zone').classList.remove('has-image');
+  }
+
+  function switchView(mode) {
+    currentView=mode;
+    document.getElementById('btn-list').classList.toggle('active',mode==='list');
+    document.getElementById('btn-board').classList.toggle('active',mode==='board');
+    document.getElementById('list-view').classList.toggle('hidden',mode==='board');
+    document.getElementById('storyboard-view').classList.toggle('active',mode==='board');
+  }
+
+  async function generatePrompts() {
+    const imageDesc=document.getElementById('image-desc').value.trim();
+    if(!uploadedImageBase64&&!imageDesc){
+      document.getElementById('upload-zone').style.boxShadow='0 0 0 2px var(--pink)';
+      setTimeout(()=>document.getElementById('upload-zone').style.boxShadow='',2000);
+      return;
+    }
+    const conceptRaw=document.getElementById('concept').value;
+    const concept=conceptRaw==='custom'?(document.getElementById('concept-custom').value.trim()||'lifestyle cinematic'):conceptRaw;
+    const location=document.getElementById('location').value.trim();
+    const moodRaw=document.getElementById('mood').value;
+    const mood=moodRaw==='custom'?(document.getElementById('mood-custom').value.trim()||'cinematic, warm, editorial'):moodRaw;
+    const brand=document.getElementById('brand').value.trim();
+    const cameraStyle=document.getElementById('camera-style').value;
+    const duration=document.getElementById('duration').value;
+
+    const btn=document.getElementById('gen-btn');
+    btn.disabled=true;
+    btn.innerHTML='<span class="loading-ring"></span> Analysing image & building your storyboard…';
+
+    const systemPrompt=`You are an elite AI video director and prompt engineer specializing in Kling 3.0 Pro.
+When an image is provided, deeply analyse: skin tone, hair texture/style/color, exact outfit, accessories, jewelry, body language, lighting, environment, color palette.
+Each prompt must be RICH and DETAILED — minimum 80 words. Use this format:
+[Camera: movement + lens] | [Subject: action + micro-movements + expression] | [Environment: setting + depth] | [Light: quality + direction + color temp] | [Color Grade: specific look] | [Motion Quality: speed + texture]
+Return JSON array only — no markdown:
+[{"shot":1,"type":"Name","prompt":"...","movement":"...","duration":"${duration}","lighting":"...","colorGrade":"...","subjectAction":"...","directorNote":"one sentence direction"}]`;
+
+    const textContent=`Create ${selectedShots} Kling 3.0 Pro video prompts:
+${imageDesc?`DIRECTOR NOTES: ${imageDesc}`:'Use uploaded image as reference — extract every detail.'}
+CONCEPT: ${concept||'lifestyle cinematic'}
+LOCATION: ${location||'match and elevate the image environment'}
+MOOD: ${mood||'cinematic, warm, editorial'}
+${brand?`BRAND: ${brand}`:''}
+CAMERA STYLE: ${cameraStyle}
+DURATION: ${duration}
+Requirements: Extract subject details from image. Distinct angles each shot. Vary wide/medium/close/low/aerial. Full character consistency. Min 80 words per prompt. Cinematic language.
+Output JSON array only.`;
+
+    const userContent=uploadedImageBase64
+      ?[{type:'image',source:{type:'base64',media_type:uploadedImageType,data:uploadedImageBase64}},{type:'text',text:textContent}]
+      :textContent;
+
+    try {
+      // ── Using Vercel proxy to avoid CORS issues on iOS ──
+      const res=await fetch('https://visionaries-rouge.vercel.app/api/proxy',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:2000,
+          system:systemPrompt,
+          messages:[{role:'user',content:userContent}]
+        })
+      });
+      const data=await res.json();
+      const raw=data.content.map(b=>b.text||'').join('');
+      const clean=raw.replace(/```json|```/g,'').trim();
+      generatedPrompts=JSON.parse(clean);
+      renderShots(generatedPrompts);
+    } catch(err) {
+      console.error(err);
+      generatedPrompts=generateFallback(imageDesc,concept,location,mood,cameraStyle,duration);
+      renderShots(generatedPrompts);
+    }
+    btn.disabled=false;
+    btn.innerHTML='✦ Regenerate Sequence';
+  }
+
+  function generateFallback(imgDesc,concept,location,mood,camera,duration){
+    const subj=imgDesc||'a Black woman with a bold editorial look, striking and magnetic';
+    const loc=location||'a cinematic urban location';
+    const moodStr=mood||'golden, warm, cinematic';
+    const shots=[
+      {shot:1,type:'Establishing Wide',movement:'Slow dolly back',duration,lighting:'Golden hour sidelight',colorGrade:'Warm amber, lifted shadows',subjectAction:'Walking forward confidently',directorNote:'Open wide — let the world frame her.',prompt:`[Camera: slow dolly backward, 24mm wide lens, shallow depth of field] | [Subject: ${subj}, striding forward with magnetic presence, hair catching breeze, natural shoulder sway, chin lifted] | [Environment: ${loc} expanding behind, layered depth, soft bokeh] | [Light: golden hour sidelight, warm amber casting across skin, long trailing shadows] | [Color Grade: warm amber tones, lifted shadows, analog film warmth] | [Motion Quality: silky smooth, cinematic 4K, ${duration}]`},
+      {shot:2,type:'Medium Tracking',movement:'Side tracking shot',duration,lighting:'Soft diffused natural light',colorGrade:'Clean warm editorial',subjectAction:'Natural purposeful movement',directorNote:'Follow the energy — feel every step.',prompt:`[Camera: smooth side tracking shot, camera moving parallel at medium distance, 50mm portrait lens] | [Subject: ${subj}, natural purposeful movement, micro head turn catching light, relaxed arms] | [Environment: ${loc} motion-blurring behind, layered environmental depth] | [Light: soft diffused natural wrap, even facial illumination] | [Color Grade: warm editorial tones, gentle vignette, ${moodStr}] | [Motion Quality: fluid tracking, cinematic depth of field, ${duration}]`},
+      {shot:3,type:'Intimate Close-Up',movement:'Slow push in',duration,lighting:'Rim light + soft front fill',colorGrade:'Skin-forward warmth, deep blacks',subjectAction:'Looking away then slow glance to lens',directorNote:'The face tells everything — let it.',prompt:`[Camera: slow push in with subtle upward drift, 85mm portrait lens, extreme bokeh depth] | [Subject: ${subj}, gaze softly away then slow deliberate glance into lens, lips slightly parted, hair floating in subtle air movement] | [Environment: ${loc} completely dissolved into smooth creamy bokeh] | [Light: warm rim light edging silhouette, soft diffused front fill, luminous glowing skin] | [Color Grade: skin-forward warmth, deep crushed blacks, rich ${moodStr}] | [Motion Quality: intimate slow drift, ${duration}]`},
+      {shot:4,type:'Low Angle Power',movement:'Rising low angle',duration,lighting:'Dramatic underlight + open sky',colorGrade:'High contrast bold cinematic',subjectAction:'Walking toward camera with full command',directorNote:'The icon shot — make her fill the sky.',prompt:`[Camera: ultra low angle rising from ground, tilting up as subject approaches, 20mm wide lens] | [Subject: ${subj}, walking directly toward camera with absolute command and presence, each step deliberate, shoulders back] | [Environment: ${moodStr} sky framing behind, ${loc} at full scale] | [Light: dramatic low-angle natural light sculpting the figure, backlight halo] | [Color Grade: bold high contrast, saturated deep tones] | [Motion Quality: powerful dynamic rise, ${duration}]`},
+      {shot:5,type:'Over-Shoulder Reveal',movement:'Orbit to face reveal',duration,lighting:'Golden front fill + backlight rim',colorGrade:'Warm intimate grade',subjectAction:'Facing away, natural turn to reveal face',directorNote:'Build the tension — make the reveal pay off.',prompt:`[Camera: over-shoulder start, slowly orbiting around to face reveal, 35mm] | [Subject: ${subj}, initially facing away with natural stillness, then turns organically to respond to scene] | [Environment: ${loc} revealed and expanding in background as camera orbits] | [Light: warm golden front light flooding the face on reveal, soft rim backlight] | [Color Grade: warm intimate ${moodStr}] | [Motion Quality: elegant orbital movement, ${duration}]`},
+      {shot:6,type:'Aerial Sweep',movement:'Aerial descent',duration,lighting:'Overhead directional natural light',colorGrade:'Airy lifted warmth, high-key',subjectAction:'Moving naturally, aware of camera above',directorNote:'Pull back — show the world she commands.',prompt:`[Camera: high aerial descent, camera swooping down toward subject, 16mm ultra-wide] | [Subject: ${subj}, moving naturally through ${loc}, looks up toward camera with ease and quiet confidence] | [Environment: full environment visible from above — textures, patterns, scale] | [Light: overhead directional natural light, ${moodStr} warmth from above] | [Color Grade: airy lifted midtones, high key warmth] | [Motion Quality: sweeping aerial descent, ${duration}]`}
+    ];
+    return shots.slice(0,selectedShots);
+  }
+
+  function renderShots(shots){
+    renderListView(shots); renderStoryboardView(shots);
+    const out=document.getElementById('output-section');
+    out.classList.add('visible');
+    out.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function renderListView(shots){
+    const container=document.getElementById('shots-container');
+    container.innerHTML='';
+    shots.forEach((shot,i)=>{
+      const card=document.createElement('div');
+      card.className='shot-card';
+      card.innerHTML=`
+        <div class="shot-header">
+          <div class="shot-badge"><span class="shot-number">Shot ${shot.shot}</span><span class="shot-type">${shot.type}</span></div>
+          <button class="copy-btn" onclick="copySingle(this,${i})">Copy Prompt</button>
+        </div>
+        <pre class="shot-prompt">${shot.prompt}</pre>
+        <div class="shot-details-grid">
+          <div><span class="detail-label">Camera Movement</span><span class="detail-val teal">${shot.movement}</span></div>
+          <div><span class="detail-label">Duration</span><span class="detail-val pink">${shot.duration}</span></div>
+          ${shot.lighting?`<div><span class="detail-label">Lighting</span><span class="detail-val">${shot.lighting}</span></div>`:''}
+          ${shot.colorGrade?`<div><span class="detail-label">Color Grade</span><span class="detail-val">${shot.colorGrade}</span></div>`:''}
+          ${shot.subjectAction?`<div><span class="detail-label">Subject Action</span><span class="detail-val">${shot.subjectAction}</span></div>`:''}
+          ${shot.directorNote?`<div><span class="detail-label">Director's Note</span><span class="detail-val" style="font-style:italic;color:rgba(255,77,141,0.85)">"${shot.directorNote}"</span></div>`:''}
+        </div>
+        <div class="shot-meta" style="margin-top:0.9rem;">
+          <span class="meta-tag">Kling 3.0 Pro</span>
+          <span class="meta-tag">${shot.movement}</span>
+          <span class="meta-tag">${shot.duration}</span>
+        </div>`;
+      container.appendChild(card);
+    });
+  }
+
+  function renderStoryboardView(shots){
+    const container=document.getElementById('storyboard-container');
+    container.innerHTML='';
+    const previewSrc=document.getElementById('image-preview').src;
+    const hasPreview=previewSrc&&previewSrc.startsWith('data:');
+    shots.forEach((shot,i)=>{
+      const card=document.createElement('div');
+      card.className='sb-card';
+      card.innerHTML=`
+        <div class="sb-frame">
+          ${hasPreview?`<img class="sb-ref-img" src="${previewSrc}" alt="">`:'<span class="sb-placeholder-icon">🎬</span>'}
+          <span class="sb-shot-num">Shot ${shot.shot}</span>
+          <span class="sb-cam-badge">${shot.movement}</span>
+        </div>
+        <div class="sb-info">
+          <span class="sb-type">${shot.type}</span>
+          <div class="sb-prompt-preview">${shot.prompt}</div>
+          <div class="sb-dur">${shot.duration}${shot.directorNote?' · '+shot.directorNote:''}</div>
+          <button class="sb-copy-btn" onclick="sbCopy(this,${i})">Copy Prompt</button>
+        </div>`;
+      container.appendChild(card);
+    });
+  }
+
+  function copySingle(btn,i){ navigator.clipboard.writeText(generatedPrompts[i].prompt); btn.textContent='✓ Copied'; btn.classList.add('copied'); setTimeout(()=>{btn.textContent='Copy Prompt';btn.classList.remove('copied');},2000); }
+  function sbCopy(btn,i){ navigator.clipboard.writeText(generatedPrompts[i].prompt); btn.textContent='✓ Copied'; btn.classList.add('copied'); setTimeout(()=>{btn.textContent='Copy Prompt';btn.classList.remove('copied');},2000); }
+  function copyAll(){
+    const all=generatedPrompts.map(s=>`── SHOT ${s.shot}: ${s.type.toUpperCase()} ──\n${s.prompt}${s.directorNote?'\n\nDirector\'s Note: "'+s.directorNote+'"':''}`).join('\n\n');
+    navigator.clipboard.writeText(all);
+    const btn=document.querySelector('.action-btn:not(.pdf-btn)');
+    btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='Copy All',2500);
+  }
+
+  async function exportPDF(){
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const pageW=doc.internal.pageSize.getWidth(); const pageH=doc.internal.pageSize.getHeight();
+    const margin=16; const contentW=pageW-margin*2; let y=margin;
+    const addBg=()=>{doc.setFillColor(8,11,15);doc.rect(0,0,pageW,pageH,'F');};
+    addBg();
+    doc.setFillColor(0,212,200);doc.rect(0,0,pageW/2,1.8,'F');
+    doc.setFillColor(255,77,141);doc.rect(pageW/2,0,pageW/2,1.8,'F');
+    y+=8;
+    doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(0,212,200);
+    doc.text('NANDYVISUALS',margin,y);
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(100,110,125);
+    doc.text('ELEVATED VISION ENGINE  ·  KLING 3.0 PRO SHOT LIST',margin,y+6);
+    doc.text(new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),pageW-margin,y+6,{align:'right'});
+    doc.setDrawColor(255,77,141);doc.setLineWidth(0.3);doc.line(margin,y+10,pageW-margin,y+10);
+    y+=18;
+    doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(240,244,248);
+    doc.text(`Shot Sequence  —  ${generatedPrompts.length} Shots`,margin,y); y+=10;
+    generatedPrompts.forEach((shot)=>{
+      if(y>pageH-55){doc.addPage();addBg();y=margin;}
+      doc.setFillColor(18,24,38);doc.roundedRect(margin,y,contentW,9,1.5,1.5,'F');
+      doc.setFillColor(255,77,141);doc.roundedRect(margin,y,24,9,1.5,1.5,'F');
+      doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(255,255,255);
+      doc.text(`SHOT ${shot.shot}`,margin+12,y+5.5,{align:'center'});
+      doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(0,212,200);
+      doc.text(shot.type.toUpperCase(),margin+28,y+5.5);
+      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(130,140,155);
+      doc.text(shot.duration,pageW-margin,y+5.5,{align:'right'});
+      y+=13;
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(210,218,228);
+      const pLines=doc.splitTextToSize(shot.prompt,contentW-2);
+      doc.text(pLines,margin+1,y);y+=pLines.length*4.5+4;
+      const dets=[];
+      if(shot.movement)dets.push(`📷 ${shot.movement}`);
+      if(shot.lighting)dets.push(`💡 ${shot.lighting}`);
+      if(shot.colorGrade)dets.push(`🎨 ${shot.colorGrade}`);
+      if(dets.length){doc.setFontSize(7);doc.setTextColor(0,190,185);const dl=doc.splitTextToSize(dets.join('   '),contentW);doc.text(dl,margin,y);y+=dl.length*4+2;}
+      if(shot.directorNote){doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(255,100,150);const nl=doc.splitTextToSize(`"${shot.directorNote}"`,contentW);doc.text(nl,margin,y);y+=nl.length*4+2;doc.setFont('helvetica','normal');}
+      doc.setDrawColor(25,35,52);doc.setLineWidth(0.25);doc.line(margin,y+2,pageW-margin,y+2);y+=8;
+    });
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(50,60,75);
+    doc.text('NANDYVISUALS · Elevated Vision Engine · Kling 3.0 Pro',pageW/2,pageH-7,{align:'center'});
+    doc.setFillColor(255,77,141);doc.rect(0,pageH-1.5,pageW/2,1.5,'F');
+    doc.setFillColor(0,212,200);doc.rect(pageW/2,pageH-1.5,pageW/2,1.5,'F');
+    doc.save(`NANDYVISUALS-ShotList-${generatedPrompts.length}shots.pdf`);
+  }
+</script>
+</body>
+</html>
