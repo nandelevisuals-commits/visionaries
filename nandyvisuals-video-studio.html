@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NANDYVISUALS — AI Video Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&family=Unbounded:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080808;
+    --off-black: #0f0f0f;
+    --panel: #141414;
+    --border: #1e1e1e;
+    --gold: #c9a84c;
+    --gold-dim: #7a621e;
+    --gold-glow: rgba(201,168,76,0.12);
+    --seed-cyan: #00e5ff;
+    --seed-cyan-dim: rgba(0,229,255,0.1);
+    --kling-rose: #ff4d8d;
+    --kling-rose-dim: rgba(255,77,141,0.1);
+    --hybrid-violet: #9b5de5;
+    --hybrid-violet-dim: rgba(155,93,229,0.1);
+    --text: #f0ece4;
+    --text-dim: #6b6660;
+    --text-mid: #a09890;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(8,8,8,0.95);
+    backdrop-filter: blur(20px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+  }
+
+  .logo span {
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+
+  .header-tag {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 60px 32px 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: 'NANDY\AVISUALS';
+    white-space: pre;
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 120px;
+    font-weight: 900;
+    color: rgba(201,168,76,0.03);
+    line-height: 1;
+    pointer-events: none;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    max-width: 480px;
+  }
+
+  /* ENGINE TABS */
+  .tabs-bar {
+    display: flex;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+    padding: 0 32px;
+  }
+  .tabs-bar::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    white-space: nowrap;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+
+  .tab-btn.active {
+    color: var(--text);
+    border-bottom-color: var(--gold);
+  }
+
+  .tab-btn.seedance.active { border-bottom-color: var(--seed-cyan); color: var(--seed-cyan); }
+  .tab-btn.kling.active { border-bottom-color: var(--kling-rose); color: var(--kling-rose); }
+  .tab-btn.hybrid.active { border-bottom-color: var(--hybrid-violet); color: var(--hybrid-violet); }
+
+  .tab-dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    margin-right: 7px;
+    background: currentColor;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+
+  /* ENGINE PANELS */
+  .engine-panel {
+    display: none;
+    padding: 32px;
+    max-width: 1100px;
+  }
+  .engine-panel.active { display: block; }
+
+  .engine-header {
+    margin-bottom: 28px;
+  }
+
+  .engine-badge {
+    display: inline-block;
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid currentColor;
+    margin-bottom: 12px;
+  }
+
+  .engine-badge.seedance { color: var(--seed-cyan); }
+  .engine-badge.kling { color: var(--kling-rose); }
+  .engine-badge.hybrid { color: var(--hybrid-violet); }
+  .engine-badge.gold { color: var(--gold); }
+
+  .engine-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+
+  .engine-desc {
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    letter-spacing: 0.05em;
+    max-width: 600px;
+  }
+
+  /* FORM ELEMENTS */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .form-grid.single { grid-template-columns: 1fr; }
+  .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+
+  @media (max-width: 700px) {
+    .form-grid, .form-grid.three { grid-template-columns: 1fr; }
+    .engine-panel { padding: 20px 16px; }
+    .tabs-bar { padding: 0 16px; }
+    .hero { padding: 40px 16px 28px; }
+    header { padding: 16px; }
+  }
+
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+
+  label {
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  input[type="text"], textarea, select {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    resize: vertical;
+  }
+
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--gold);
+  }
+
+  textarea { min-height: 90px; }
+
+  select option { background: var(--panel); }
+
+  /* SCENARIO CARDS */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .scenario-card {
+    border: 1px solid var(--border);
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .scenario-card:hover { border-color: var(--gold-dim); background: var(--gold-glow); }
+  .scenario-card.selected { border-color: var(--gold); background: var(--gold-glow); }
+  .scenario-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 8px; right: 10px;
+    color: var(--gold);
+    font-size: 10px;
+  }
+
+  .scenario-card.seedance:hover, .scenario-card.seedance.selected { border-color: var(--seed-cyan); background: var(--seed-cyan-dim); }
+  .scenario-card.seedance.selected::after { color: var(--seed-cyan); }
+
+  .scenario-icon { font-size: 20px; margin-bottom: 8px; display: block; }
+  .scenario-name { font-size: 9px; letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+  .scenario-hint { font-size: 8px; color: var(--text-dim); line-height: 1.5; letter-spacing: 0.05em; }
+
+  /* IMAGE UPLOAD ZONE */
+  .upload-zone {
+    border: 1px dashed var(--border);
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .upload-zone:hover { border-color: var(--seed-cyan); background: var(--seed-cyan-dim); }
+  .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .upload-zone-text { font-size: 9px; letter-spacing: 0.2em; color: var(--text-dim); text-transform: uppercase; }
+  .upload-zone-sub { font-size: 8px; color: var(--text-dim); margin-top: 4px; }
+  .upload-previews { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; justify-content: center; }
+  .upload-thumb {
+    width: 60px; height: 60px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+  }
+
+  /* GENERATE BUTTON */
+  .gen-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border: 1px solid var(--gold);
+    background: transparent;
+    color: var(--gold);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    margin-top: 20px;
+  }
+  .gen-btn:hover { background: var(--gold); color: var(--black); }
+  .gen-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .gen-btn.seedance { border-color: var(--seed-cyan); color: var(--seed-cyan); }
+  .gen-btn.seedance:hover { background: var(--seed-cyan); color: var(--black); }
+  .gen-btn.kling { border-color: var(--kling-rose); color: var(--kling-rose); }
+  .gen-btn.kling:hover { background: var(--kling-rose); color: var(--black); }
+  .gen-btn.hybrid { border-color: var(--hybrid-violet); color: var(--hybrid-violet); }
+  .gen-btn.hybrid:hover { background: var(--hybrid-violet); color: var(--black); }
+
+  .btn-spinner {
+    width: 10px; height: 10px;
+    border: 1px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* OUTPUT */
+  .output-section {
+    margin-top: 28px;
+    border: 1px solid var(--border);
+    display: none;
+  }
+  .output-section.visible { display: block; }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+
+  .output-label { font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-dim); }
+
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .output-body {
+    padding: 20px;
+    font-size: 11px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    letter-spacing: 0.02em;
+  }
+
+  /* PROMPT BLOCKS */
+  .prompt-block {
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .prompt-block-header {
+    padding: 8px 14px;
+    background: var(--panel);
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .prompt-block-body { padding: 14px; font-size: 11px; line-height: 1.8; }
+
+  /* DIVIDER */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+  }
+
+  /* REFERENCE PILLS */
+  .ref-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .ref-pill {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-dim);
+  }
+  .ref-pill:hover { border-color: var(--gold); color: var(--text); }
+  .ref-pill.active { border-color: var(--seed-cyan); color: var(--seed-cyan); background: var(--seed-cyan-dim); }
+
+  /* LOADING */
+  .loading-bar {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    display: none;
+  }
+  .loading-bar.seedance { background: linear-gradient(90deg, transparent, var(--seed-cyan), transparent); background-size: 200% 100%; }
+  .loading-bar.kling { background: linear-gradient(90deg, transparent, var(--kling-rose), transparent); background-size: 200% 100%; }
+  .loading-bar.visible { display: block; }
+  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+  .hint-row {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;
+  }
+  .hint-chip {
+    font-size: 8px; letter-spacing: 0.1em; color: var(--text-dim);
+    border: 1px solid var(--border); padding: 3px 8px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .hint-chip:hover { color: var(--text); border-color: var(--text-mid); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">NANDY<span>VISUALS</span></div>
+  <div class="header-tag">AI VIDEO STUDIO v2</div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">● Powered by Claude AI</div>
+  <h1 class="hero-title">The <em>Prompter</em><br>For What's Next</h1>
+  <p class="hero-sub">Seedance 2.0 · Kling 3.0 Pro · Hybrid Workflows · Music Visual · Afrofuturist Series</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn seedance active" onclick="switchTab('seedance')">
+    <span class="tab-dot"></span>Seedance 2.0 Prompter
+  </button>
+  <button class="tab-btn kling" onclick="switchTab('kling')">
+    <span class="tab-dot"></span>Kling 3.0 Pro
+  </button>
+  <button class="tab-btn hybrid" onclick="switchTab('hybrid')">
+    <span class="tab-dot"></span>Hybrid Pipeline
+  </button>
+  <button class="tab-btn" onclick="switchTab('music')">
+    <span class="tab-dot"></span>Music Visual Series
+  </button>
+  <button class="tab-btn" onclick="switchTab('afrofuturist')">
+    <span class="tab-dot"></span>Afrofuturist Worlds
+  </button>
+  <button class="tab-btn" onclick="switchTab('ugc')">
+    <span class="tab-dot"></span>UGC Product Studio
+  </button>
+  <button class="tab-btn" onclick="switchTab('fabric')">
+    <span class="tab-dot"></span>Fabric & Physics
+  </button>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SEEDANCE 2.0 PROMPTER -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="panel-seedance" class="engine-panel active">
+  <div class="engine-header">
+    <div class="engine-badge seedance">Seedance 2.0</div>
+    <h2 class="engine-title">Seedance 2.0 Prompt Generator</h2>
+    <p class="engine-desc">Input raw ideas or reference context. The AI will generate fully structured prompts optimized for Seedance 2.0's quad-modal architecture — covering subject, motion, environment, audio sync, reference strategy, and physics cues.</p>
+  </div>
+
+  <div class="form-grid single">
+    <div class="field-group">
+      <label>Raw Idea / Scene Concept</label>
+      <textarea id="sd-raw-idea" placeholder="e.g. A Black woman in a white silk dress standing in the middle of a Lagos market at golden hour, fabric catching the wind, feeling triumphant..." rows="4"></textarea>
+      <div class="hint-row">
+        <span class="hint-chip" onclick="fillHint('sd-raw-idea', 'A Black woman in a flowing silk dress, walking through an Afrofuturist cityscape at dusk, neon reflections on wet stone')">Afrofuturist walk</span>
+        <span class="hint-chip" onclick="fillHint('sd-raw-idea', 'Close-up of hands lifting a perfume bottle into golden hour sunlight, fabric sleeve catching the breeze, cinematic luxury product shot')">Product golden hour</span>
+        <span class="hint-chip" onclick="fillHint('sd-raw-idea', 'A woman in braids and a satin coat emerging from dusty desert sand, wind exploding around her, like a music video')">Desert emergence</span>
+        <span class="hint-chip" onclick="fillHint('sd-raw-idea', 'Traditional Tanzanian market scene, ugali being served, steam rising, natural warm daylight, documentary realism')">Tanzania realism</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-grid three">
+    <div class="field-group">
+      <label>Content Type</label>
+      <select id="sd-content-type">
+        <option value="cinematic editorial">Cinematic Editorial</option>
+        <option value="UGC product">UGC Product</option>
+        <option value="music visual">Music Visual</option>
+        <option value="documentary realism">Documentary Realism</option>
+        <option value="Afrofuturist narrative">Afrofuturist Narrative</option>
+        <option value="fashion campaign">Fashion Campaign</option>
+        <option value="lifestyle b-roll">Lifestyle B-Roll</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Protagonist Hairstyle</label>
+      <select id="sd-hair">
+        <option value="long natural coils">Long Natural Coils</option>
+        <option value="sculptural locs">Sculptural Locs</option>
+        <option value="box braids">Box Braids</option>
+        <option value="sleek low bun">Sleek Low Bun</option>
+        <option value="voluminous afro">Voluminous Afro</option>
+        <option value="cornrows with beads">Cornrows with Beads</option>
+        <option value="bantu knots">Bantu Knots</option>
+        <option value="half-up braided crown">Half-Up Braided Crown</option>
+        <option value="short natural fade">Short Natural Fade</option>
+        <option value="flowing senegalese twists">Senegalese Twists</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Aspect Ratio</label>
+      <select id="sd-ratio">
+        <option value="9:16 vertical">9:16 — TikTok / Reels</option>
+        <option value="16:9 cinematic">16:9 — Cinematic Wide</option>
+        <option value="1:1 square">1:1 — Square Feed</option>
+        <option value="4:5 portrait">4:5 — Portrait Feed</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <label>Audio Direction (optional)</label>
+      <input type="text" id="sd-audio" placeholder="e.g. Afrobeats with low rumbling bass, or soft ambient silence with wind...">
+    </div>
+    <div class="field-group">
+      <label>Reference Strategy</label>
+      <select id="sd-ref-strategy">
+        <option value="text-only prompt">Text Only (no references)</option>
+        <option value="character image reference">Character Image Reference (upload photo)</option>
+        <option value="style/mood board reference">Style / Mood Board Reference</option>
+        <option value="motion reference video">Motion Reference Video</option>
+        <option value="full multi-modal (image + video + audio)">Full Multi-Modal (image + video + audio)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- REFERENCE IMAGE UPLOAD -->
+  <div class="field-group" style="margin-bottom:16px;">
+    <label>Reference Images (optional — up to 9 for Seedance)</label>
+    <div class="upload-zone" id="sd-upload-zone">
+      <input type="file" id="sd-images" accept="image/*" multiple onchange="handleImageUpload('sd-images', 'sd-previews', 9)">
+      <div class="upload-zone-text">↑ Drop or tap to upload reference images</div>
+      <div class="upload-zone-sub">Seedance 2.0 supports up to 9 images per generation</div>
+      <div class="upload-previews" id="sd-previews"></div>
+    </div>
+  </div>
+
+  <div class="form-grid single">
+    <div class="field-group">
+      <label>Additional Notes / Vibe</label>
+      <textarea id="sd-notes" placeholder="Optional: describe the feeling, era, color palette, or any special elements..." rows="2"></textarea>
+    </div>
+  </div>
+
+  <button class="gen-btn seedance" id="sd-gen-btn" onclick="generateSeedance()">
+    <span class="btn-spinner" id="sd-spinner"></span>
+    <span>Generate Seedance 2.0 Prompts</span>
+  </button>
+
+  <div class="loading-bar seedance" id="sd-loading"></div>
+  <div class="output-section" id="sd-output">
+    <div class="output-header">
+      <span class="output-label" style="color:var(--seed-cyan)">◈ Seedance 2.0 Prompt Package</span>
+      <button class="copy-btn" onclick="copyOutput('sd-output-body')">Copy All</button>
+    </div>
+    <div class="output-body" id="sd-output-body"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- KLING 3.0 PRO -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="panel-kling" class="engine-panel">
+  <div class="engine-header">
+    <div class="engine-badge kling">Kling 3.0 Pro</div>
+    <h2 class="engine-title">Kling 3.0 Director Engine</h2>
+    <p class="engine-desc">Generate high-kinetic Director Mode prompts for Kling 3.0 Pro. Optimized for explosive hair/fabric motion, dynamic camera work, and cinematic movement — your established standard.</p>
+  </div>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <label>Scene Concept</label>
+      <textarea id="kl-concept" placeholder="What's the scene? Who's in it, what's happening..."></textarea>
+    </div>
+    <div class="field-group">
+      <label>Camera Movement Style</label>
+      <select id="kl-camera">
+        <option>Crash zoom into face</option>
+        <option>360 orbital around subject</option>
+        <option>Drone dive from sky to close-up</option>
+        <option>Slow push in with shallow depth</option>
+        <option>Low-angle hero shot with upward tilt</option>
+        <option>Whip pan between scenes</option>
+        <option>Tracking shot — subject walking</option>
+        <option>Dutch angle with slow reveal</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-grid three">
+    <div class="field-group">
+      <label>Protagonist Hairstyle</label>
+      <select id="kl-hair">
+        <option>Fiber optic locs catching light</option>
+        <option>Explosive natural coils in wind</option>
+        <option>Sleek ponytail with motion blur</option>
+        <option>Voluminous braids swinging</option>
+        <option>Tight bantu knots — regal</option>
+        <option>Cornrows with gold cuffs</option>
+        <option>Natural afro in slow motion</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Environment</label>
+      <input type="text" id="kl-env" placeholder="e.g. rooftop Lagos sunset, desert sandstorm...">
+    </div>
+    <div class="field-group">
+      <label>Kinetic Level</label>
+      <select id="kl-kinetic">
+        <option value="maximum — Hollywood action">Maximum — Hollywood Action</option>
+        <option value="high — music video energy">High — Music Video Energy</option>
+        <option value="medium — editorial flow">Medium — Editorial Flow</option>
+        <option value="controlled — luxury stillness">Controlled — Luxury Stillness</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <label>Outfit / Fabric Type</label>
+      <input type="text" id="kl-outfit" placeholder="e.g. liquid gold satin, sheer organza, structured blazer...">
+    </div>
+    <div class="field-group">
+      <label>Lighting Mood</label>
+      <select id="kl-light">
+        <option>Golden hour — warm amber backlight</option>
+        <option>Neon city — cyan and magenta</option>
+        <option>High noon harsh desert sun</option>
+        <option>Blue hour twilight softness</option>
+        <option>Studio ring light — clean beauty</option>
+        <option>Fire/flame practical lighting</option>
+        <option>Overcast — moody editorial</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="gen-btn kling" id="kl-gen-btn" onclick="generateKling()">
+    <span class="btn-spinner" id="kl-spinner"></span>
+    <span>Generate Kling Director Prompt</span>
+  </button>
+
+  <div class="loading-bar kling" id="kl-loading"></div>
+  <div class="output-section" id="kl-output">
+    <div class="output-header">
+      <span class="output-label" style="color:var(--kling-rose)">◈ Kling 3.0 Pro Director Prompt</span>
+      <button class="copy-btn" onclick="copyOutput('kl-output-body')">Copy All</button>
+    </div>
+    <div class="output-body" id="kl-output-body"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- HYBRID PIPELINE -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="panel-hybrid" class="engine-panel">
+  <div class="engine-header">
+    <div class="engine-badge hybrid">Hybrid Pipeline</div>
+    <h2 class="engine-title">Seedance × Kling Strategy Engine</h2>
+    <p class="engine-desc">Describe your full scene vision. The AI will split it into a Seedance 2.0 shot plan + a Kling 3.0 Pro shot plan — leveraging each model's strengths — then give you an edit assembly guide.</p>
+  </div>
+
+  <div class="form-grid single">
+    <div class="field-group">
+      <label>Full Scene / Video Vision</label>
+      <textarea id="hy-vision" placeholder="Describe the full video — all shots, the feeling, the story arc. Be as detailed or loose as you want..." rows="5"></textarea>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <label>Content Category</label>
+      <select id="hy-category">
+        <option>Fashion Editorial Series</option>
+        <option>Music Visual / Sora Sync</option>
+        <option>Brand UGC Campaign</option>
+        <option>Afrofuturist Narrative</option>
+        <option>TikTok Shop Product</option>
+        <option>Documentary / Cultural</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Total Clip Length Target</label>
+      <select id="hy-length">
+        <option>15–30 seconds (TikTok hook)</option>
+        <option>30–60 seconds (full Reel)</option>
+        <option>60–90 seconds (brand story)</option>
+        <option>2–3 minutes (mini film)</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="gen-btn hybrid" id="hy-gen-btn" onclick="generateHybrid()">
+    <span class="btn-spinner" id="hy-spinner"></span>
+    <span>Generate Hybrid Shot Plan</span>
+  </button>
+
+  <div class="loading-bar" id="hy-loading" style="background:linear-gradient(90deg,transparent,var(--hybrid-violet),transparent);background-size:200% 100%;"></div>
+  <div class="output-section" id="hy-output">
+    <div class="output-header">
+      <span class="output-label" style="color:var(--hybrid-violet)">◈ Hybrid Pipeline Plan</span>
+      <button class="copy-btn" onclick="copyOutput('hy-output-body')">Copy All</button>
+    </div>
+    <div class="output-body" id="hy-output-body"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MUSIC VISUAL SERIES -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="panel-music" class="engine-panel">
+  <div class="engine-header">
+    <div class="engine-badge gold">Songs Visualized</div>
+    <h2 class="engine-title">Music Visual Generator</h2>
+    <p class="engine-desc">Input a song title and/or lyrics. Get 3 high-kinetic visual prompt variations (The Feeling · The World · The Icon) — now with a Seedance 2.0 audio-sync version for each.</p>
+  </div>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <label>Song Title & Artist</label>
+      <input type="text" id="mv-song" placeholder="e.g. Energy — Beyoncé ft. BEAM">
+    </div>
+    <div class="field-group">
+      <label>Key Lyrics or Emotional Feel (optional)</label>
+      <input type="text" id="mv-lyrics" placeholder="e.g. 'I feel like a star' — triumphant, golden, unstoppable">
+    </div>
+  </div>
+
+  <div class="form-grid three">
+    <div class="field-group">
+      <label>Protagonist Hairstyle</label>
+      <select id="mv-hair">
+        <option>Long natural coils</option>
+        <option>Sculptural locs</option>
+        <option>Box braids</option>
+        <option>Bantu knots</option>
+        <option>Voluminous afro</option>
+        <option>Half-up braided crown</option>
+        <option>Cornrows with gold cuffs</option>
+        <option>Sleek low bun</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Video Platform</label>
+      <select id="mv-platform">
+        <option>TikTok — 9:16</option>
+        <option>Instagram Reels — 9:16</option>
+        <option>YouTube Shorts — 9:16</option>
+        <option>Cinematic 16:9</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Primary Tool</label>
+      <select id="mv-tool">
+        <option>Seedance 2.0 (audio-sync native)</option>
+        <option>Kling 3.0 Pro (high kinetic)</option>
+        <option>Both — Seedance + Kling versions</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="gen-btn" id="mv-gen-btn" onclick="generateMusic()">
+    <span class="btn-spinner" id="mv-spinner"></span>
+    <span>Visualize This Song</span>
+  </button>
+
+  <div class="loading-bar" id="mv-loading"></div>
+  <div class="output-section" id="mv-output">
+    <div class="output-header">
+      <span class="output-label">◈ Music Visual Prompts</span>
+      <button class="copy-btn" onclick="copyOutput('mv-output-body')">Copy All</button>
+    </div>
+    <div class="output-body" id="mv-output-body"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- AFROFUTURIST WORLDS -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="panel-afrofuturist" class="engine-panel">
+  <div class="engine-header">
+    <div class="engine-badge gold">Afrofuturist Series</div>
+    <h2 class="engine-title">Worlds She Walks Through</h2>
+    <p class="engine-desc">One protagonist. Multiple Afrofuturist environments. Generate a multi-scene world-building series — with Seedance multi-shot prompts that transition between worlds in one generation.</p>
+  </div>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <label>Protagonist Hairstyle</label>
+      <select id="af-hair">
+        <option>Sculptural locs with gold cuffs</option>
+        <option>Intricately beaded cornrows</option>
+        <option>Crown of natural coils</option>
+        <option>Flowing senegalese twists</option>
+        <option>Afro with halo of light</option>
+        <option>Sleek slicked back — futuristic</option>
+        <option>Bantu knots with crystal pins</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Protagonist Outfit Aesthetic</label>
+      <select id="af-outfit">
+        <option>Kente-inspired futuristic armor</option>
+        <option>Liquid chrome body suit with Adire print</option>
+        <option>Draped white linen — celestial priestess</option>
+        <option>High fashion editorial — black structured</option>
+        <option>Wax print couture with metallics</option>
+        <option>Earth tones — terra cotta and clay</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-grid single">
+    <div class="field-group">
+      <label>Select Worlds to Travel Through (choose 2–4)</label>
+      <div class="scenario-grid" id="af-world-grid">
+        <div class="scenario-card seedance" onclick="toggleWorld(this, 'Lagos mega-city skyline with floating markets and Afrobeats reverberating through neon-lit towers')">
+          <span class="scenario-icon">🌆</span>
+          <div class="scenario-name">Lagos Neon</div>
+          <div class="scenario-hint">Floating markets, neon towers, Afrobeats city</div>
+        </div>
+        <div class="scenario-card seedance" onclick="toggleWorld(this, 'Ancient desert temple with golden sand dunes, hieroglyph stones, and a cosmic purple sky')">
+          <span class="scenario-icon">🏛️</span>
+          <div class="scenario-name">Desert Temple</div>
+          <div class="scenario-hint">Gold dunes, ancient stones, cosmic sky</div>
+        </div>
+        <div class="scenario-card seedance" onclick="toggleWorld(this, 'Bioluminescent underwater palace with glowing coral and deep sea silence')">
+          <span class="scenario-icon">🌊</span>
+          <div class="scenario-name">Ocean Palace</div>
+          <div class="scenario-hint">Bioluminescent deep sea world</div>
+        </div>
+        <div class="scenario-card seedance" onclick="toggleWorld(this, 'Interstellar void with constellation fields, floating African textile patterns woven into star clusters')">
+          <span class="scenario-icon">✨</span>
+          <div class="scenario-name">Constellation Field</div>
+          <div class="scenario-hint">Stars, Kente-woven galaxies, cosmic void</div>
+        </div>
+        <div class="scenario-card seedance" onclick="toggleWorld(this, 'Lush Tanzanian savanna at magic hour, baobab trees casting long shadows, wildlife silhouettes')">
+          <span class="scenario-icon">🌍</span>
+          <div class="scenario-name">Savanna Magic Hour</div>
+          <div class="scenario-hint">Baobab trees, Tanzania magic hour</div>
+        </div>
+        <div class="scenario-card seedance" onclick="toggleWorld(this, 'Futuristic ancestral throne room carved from obsidian rock with floating Adire patterns')">
+          <span class="scenario-icon">👑</span>
+          <div class="scenario-name">Obsidian Throne</div>
+          <div class="scenario-hint">Ancestral future — obsidian and gold</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field-group" style="margin-bottom:16px;">
+    <label>Series Narrative Mood</label>
+    <select id="af-mood">
+      <option>Triumphant — she is arriving at her power</option>
+      <option>Mystical — she moves between worlds as the guide</option>
+      <option>Defiant — she reclaims every space she enters</option>
+      <option>Tender — she carries her culture with her</option>
+      <option>Otherworldly — she is not from here, she is above it</option>
+    </select>
+  </div>
+
+  <button class="gen-btn seedance" id="af-gen-btn" onclick="generateAfrofuturist()">
+    <span class="btn-spinner" id="af-spinner"></span>
+    <span>Build the World Series</span>
+  </button>
+
+  <div class="loading-bar seedance" id="af-loading"></div>
+  <div class="output-section" id="af-output">
+    <div class="output-header">
+      <span class="output-label" style="color:var(--seed-cyan)">◈ Worlds She Walks Through — Series Prompts</span>
+      <button class="copy-btn" onclick="copyOutput('af-output-body')">Copy All</button>
+    </div>
+    <div class="output-body" id="af-output-body"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- UGC PRODUCT STUDIO -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="panel-ugc" class="engine-panel">
+  <div class="engine-header">
+    <div class="engine-badge gold">UGC Studio</div>
+    <h2 class="engine-title">Product UGC Engine</h2>
+    <p class="engine-desc">TikTok Shop · Brand Collabs · Affiliate Content. Generate Seedance 2.0 and Kling prompts for product videos where AI-generated visuals pass as authentic UGC.</p>
+  </div>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <label>Product Name & Type</label>
+      <input type="text" id="ug-product" placeholder="e.g. Medicube PDRN Pink Collagen Balm — Korean skincare stick">
+    </div>
+    <div class="field-group">
+      <label>Hero Benefit / Key Claim</label>
+      <input type="text" id="ug-benefit" placeholder="e.g. plumps fine lines, all-in-one multi-zone balm">
+    </div>
+  </div>
+
+  <div class="form-grid three">
+    <div class="field-group">
+      <label>UGC Style</label>
+      <select id="ug-style">
+        <option>Aesthetic B-Roll — no talking</option>
+        <option>Ritual Montage — skincare routine</option>
+        <option>POV — viewer perspective</option>
+        <option>Unboxing — first impression</option>
+        <option>Before & After — transformation</option>
+        <option>Golden Hour Glow — lifestyle</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Protagonist Hairstyle</label>
+      <select id="ug-hair">
+        <option>Natural coils — casual morning vibe</option>
+        <option>Sleek bun — polished editorial</option>
+        <option>Locs — relaxed self-care day</option>
+        <option>Box braids — lifestyle cool</option>
+        <option>Bantu knots — styled shoot</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Primary Tool</label>
+      <select id="ug-tool">
+        <option>Seedance 2.0 (realistic physics)</option>
+        <option>Kling 3.0 Pro (kinetic motion)</option>
+        <option>Both versions</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- PRODUCT IMAGE UPLOAD -->
+  <div class="field-group" style="margin-bottom:16px;">
+    <label>Product Reference Images (optional)</label>
+    <div class="upload-zone">
+      <input type="file" id="ug-images" accept="image/*" multiple onchange="handleImageUpload('ug-images', 'ug-previews', 3)">
+      <div class="upload-zone-text">↑ Upload product photos to ground the AI prompt</div>
+      <div class="upload-zone-sub">Helps the prompter describe product packaging and colors accurately</div>
+      <div class="upload-previews" id="ug-previews"></div>
+    </div>
+  </div>
+
+  <button class="gen-btn" id="ug-gen-btn" onclick="generateUGC()">
+    <span class="btn-spinner" id="ug-spinner"></span>
+    <span>Generate UGC Prompts</span>
+  </button>
+
+  <div class="loading-bar" id="ug-loading"></div>
+  <div class="output-section" id="ug-output">
+    <div class="output-header">
+      <span class="output-label">◈ UGC Prompt Package</span>
+      <button class="copy-btn" onclick="copyOutput('ug-output-body')">Copy All</button>
+    </div>
+    <div class="output-body" id="ug-output-body"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- FABRIC & PHYSICS -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="panel-fabric" class="engine-panel">
+  <div class="engine-header">
+    <div class="engine-badge seedance">Seedance 2.0</div>
+    <h2 class="engine-title">Fabric & Physics Showcase</h2>
+    <p class="engine-desc">Seedance 2.0's physics engine is its superpower. This engine generates prompts specifically engineered to trigger maximum fabric movement, environmental reaction, and physics-accurate motion.</p>
+  </div>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <label>Outfit / Fabric Type</label>
+      <select id="fb-fabric">
+        <option>Silk organza full-length gown</option>
+        <option>Liquid satin slip dress</option>
+        <option>Sheer chiffon layers</option>
+        <option>Structured linen coat</option>
+        <option>Wax print wrap dress</option>
+        <option>White cotton in dust / wind</option>
+        <option>Velvet draped cape</option>
+        <option>Metallic chrome bodysuit</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Physics Trigger</label>
+      <select id="fb-trigger">
+        <option>High desert wind — fabric explosion</option>
+        <option>Ocean breeze — gentle constant flow</option>
+        <option>Sudden gust from below — upward billow</option>
+        <option>Running through water / puddle</option>
+        <option>Slow spin — fabric fans out</option>
+        <option>Falling rain — fabric clings and moves</option>
+        <option>Emerging from doorway into wind</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-grid three">
+    <div class="field-group">
+      <label>Setting</label>
+      <input type="text" id="fb-setting" placeholder="e.g. Zanzibar beach, Lagos rooftop...">
+    </div>
+    <div class="field-group">
+      <label>Lighting</label>
+      <select id="fb-light">
+        <option>Golden hour backlight</option>
+        <option>Overcast soft diffuse</option>
+        <option>Harsh midday sun</option>
+        <option>Blue hour twilight</option>
+        <option>Neon-lit night</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Protagonist Hairstyle</label>
+      <select id="fb-hair">
+        <option>Long locs — catching wind</option>
+        <option>Natural coils exploding outward</option>
+        <option>Braids swinging with motion</option>
+        <option>Sleek — focus on fabric only</option>
+        <option>Voluminous afro — wind-reactive</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="gen-btn seedance" id="fb-gen-btn" onclick="generateFabric()">
+    <span class="btn-spinner" id="fb-spinner"></span>
+    <span>Generate Physics Prompt</span>
+  </button>
+
+  <div class="loading-bar seedance" id="fb-loading"></div>
+  <div class="output-section" id="fb-output">
+    <div class="output-header">
+      <span class="output-label" style="color:var(--seed-cyan)">◈ Fabric Physics Prompt</span>
+      <button class="copy-btn" onclick="copyOutput('fb-output-body')">Copy All</button>
+    </div>
+    <div class="output-body" id="fb-output-body"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// CORE STATE
+// ═══════════════════════════════════════
+const selectedWorlds = [];
+
+function switchTab(tab) {
+  document.querySelectorAll('.engine-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function fillHint(id, text) {
+  document.getElementById(id).value = text;
+}
+
+function toggleWorld(el, world) {
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+    const i = selectedWorlds.indexOf(world);
+    if (i > -1) selectedWorlds.splice(i, 1);
+  } else {
+    if (selectedWorlds.length >= 4) { alert('Max 4 worlds. Deselect one first.'); return; }
+    el.classList.add('selected');
+    selectedWorlds.push(world);
+  }
+}
+
+// ═══════════════════════════════════════
+// IMAGE UPLOAD
+// ═══════════════════════════════════════
+function handleImageUpload(inputId, previewId, maxCount) {
+  const input = document.getElementById(inputId);
+  const preview = document.getElementById(previewId);
+  const files = Array.from(input.files).slice(0, maxCount);
+  preview.innerHTML = '';
+  files.forEach(file => {
+    const img = document.createElement('img');
+    img.className = 'upload-thumb';
+    const reader = new FileReader();
+    reader.onload = e => { img.src = e.target.result; };
+    reader.readAsDataURL(file);
+    preview.appendChild(img);
+  });
+}
+
+// ═══════════════════════════════════════
+// API CALL
+// ═══════════════════════════════════════
+async function callClaude(systemPrompt, userMessage, engineId) {
+  const btn = document.getElementById(engineId + '-gen-btn');
+  const spinner = document.getElementById(engineId + '-spinner');
+  const loading = document.getElementById(engineId + '-loading');
+  const output = document.getElementById(engineId + '-output');
+  const outputBody = document.getElementById(engineId + '-output-body');
+
+  btn.disabled = true;
+  spinner.style.display = 'block';
+  loading.classList.add('visible');
+  output.classList.remove('visible');
+
+  try {
+    const response = await fetch('https://nandyvisuals.com/api/proxy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      const errMsg = data.error?.message || data.error || JSON.stringify(data);
+      outputBody.textContent = '⚠ API Error (' + response.status + '): ' + errMsg;
+      output.classList.add('visible');
+      return;
+    }
+
+    const text = data.content?.map(b => b.text || '').join('') || 'No response received.';
+    outputBody.textContent = text;
+    output.classList.add('visible');
+  } catch (err) {
+    outputBody.textContent = '⚠ Connection error: ' + err.message;
+    output.classList.add('visible');
+  } finally {
+    btn.disabled = false;
+    spinner.style.display = 'none';
+    loading.classList.remove('visible');
+    output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// ═══════════════════════════════════════
+// COPY OUTPUT
+// ═══════════════════════════════════════
+function copyOutput(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.currentTarget;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = 'Copy All', 2000);
+  });
+}
+
+// ═══════════════════════════════════════
+// SEEDANCE 2.0 PROMPTER
+// ═══════════════════════════════════════
+function generateSeedance() {
+  const rawIdea = document.getElementById('sd-raw-idea').value.trim();
+  if (!rawIdea) { alert('Enter your raw idea or scene concept first.'); return; }
+
+  const contentType = document.getElementById('sd-content-type').value;
+  const hair = document.getElementById('sd-hair').value;
+  const ratio = document.getElementById('sd-ratio').value;
+  const audio = document.getElementById('sd-audio').value;
+  const refStrategy = document.getElementById('sd-ref-strategy').value;
+  const notes = document.getElementById('sd-notes').value;
+
+  const hasImages = document.getElementById('sd-images').files.length > 0;
+  const imageCount = document.getElementById('sd-images').files.length;
+
+  const system = `You are an expert AI video prompt engineer specializing in Seedance 2.0 by ByteDance. 
+
+SEEDANCE 2.0 ARCHITECTURE YOU MUST UNDERSTAND:
+- Quad-modal input system: accepts text, images (up to 9), video clips (up to 3), and audio clips (up to 3) simultaneously
+- Dual-Branch Diffusion Transformer: generates video frames AND audio waveforms simultaneously — audio is native, not layered post-edit
+- Physics-aware motion synthesis: exceptional fabric physics, realistic light refraction, accurate environmental reactions
+- Multi-shot storytelling: can generate scene transitions within one generation, not just single clips
+- Character consistency: maintains visual identity across multiple scenes when given reference images
+- Output: up to 2K resolution, up to 15 seconds, 6 aspect ratios including 9:16 for vertical social
+
+PROMPT STRUCTURE FOR SEEDANCE 2.0:
+A great Seedance prompt should include:
+1. SUBJECT LINE: Who/what is in frame, with precise visual description
+2. ACTION & MOTION: What is physically happening — Seedance responds well to specific physics descriptions
+3. ENVIRONMENT: Setting with atmospheric detail — light quality, weather, time of day
+4. CAMERA: Framing and movement (Seedance handles camera motion well)
+5. AUDIO DIRECTION: What the viewer should hear — Seedance generates this natively
+6. REFERENCE STRATEGY: How to use the @ reference system with any uploaded images/videos
+7. PHYSICS NOTES: Fabric, hair, environmental elements — Seedance excels here
+
+ALWAYS produce:
+- A PRIMARY PROMPT (optimized for text-to-video)
+- A REFERENCE STRATEGY (how to use uploaded images effectively if applicable)
+- AUDIO NOTES (what audio to expect or provide as reference)
+- GENERATION TIPS (aspect ratio, duration, any Seedance-specific settings)
+- A VARIATION PROMPT (alternative take on the same scene)
+
+The creator is a Black woman content creator making cinematic Afrofuturist, editorial beauty, and lifestyle content. Protagonists are always diverse Black women. NO teal hair. Rotate hairstyle to the one specified.`;
+
+  const user = `Generate a complete Seedance 2.0 prompt package for this:
+
+RAW IDEA: ${rawIdea}
+CONTENT TYPE: ${contentType}
+PROTAGONIST HAIRSTYLE: ${hair}
+ASPECT RATIO: ${ratio}
+AUDIO DIRECTION: ${audio || 'Not specified — suggest best audio approach'}
+REFERENCE STRATEGY REQUESTED: ${refStrategy}
+UPLOADED IMAGES: ${hasImages ? imageCount + ' reference images uploaded by creator' : 'None uploaded'}
+ADDITIONAL NOTES: ${notes || 'None'}
+
+Generate the full structured prompt package. Make the prompts specific, vivid, and cinematic — optimized for Seedance 2.0's architecture. Include physics-specific language that triggers Seedance's best capabilities.`;
+
+  callClaude(system, user, 'sd');
+}
+
+// ═══════════════════════════════════════
+// KLING 3.0 PRO
+// ═══════════════════════════════════════
+function generateKling() {
+  const concept = document.getElementById('kl-concept').value.trim();
+  if (!concept) { alert('Describe your scene concept first.'); return; }
+
+  const camera = document.getElementById('kl-camera').value;
+  const hair = document.getElementById('kl-hair').value;
+  const env = document.getElementById('kl-env').value;
+  const kinetic = document.getElementById('kl-kinetic').value;
+  const outfit = document.getElementById('kl-outfit').value;
+  const light = document.getElementById('kl-light').value;
+
+  const system = `You are an expert Kling 3.0 Pro Director Mode prompt engineer. 
+
+KLING 3.0 PRO PROMPT RULES:
+- Use directional metaphors, not technical camera terms
+- Always include fiber optic hair physics and fabric motion descriptors
+- Back three-quarters framing performs best for character shots
+- Speed calibration: describe motion as "slow drift" / "snapping fast" / "explosive burst"
+- Director Mode structure: Camera → Subject → Atmosphere → Texture → Audio
+- High-kinetic is the default standard — no static poses
+
+ALWAYS produce:
+1. DIRECTOR MODE PROMPT (full structured prompt)
+2. CAMERA NOTE (specific movement language Kling responds to)  
+3. HAIR + FABRIC PHYSICS cues (critical for Kling's best outputs)
+4. AUDIO DIRECTION (even though Kling adds audio post — describe the scene sound)
+5. A VARIATION with different camera movement
+
+Protagonists are always diverse Black women. The kinetic standard is Hollywood cinematic — explosive motion, dynamic camera work, environmental drama reacting to subject.`;
+
+  const user = `Generate a complete Kling 3.0 Pro Director Mode prompt:
+
+SCENE CONCEPT: ${concept}
+CAMERA MOVEMENT: ${camera}
+PROTAGONIST HAIRSTYLE: ${hair}
+ENVIRONMENT: ${env || 'Creator to define'}
+KINETIC LEVEL: ${kinetic}
+OUTFIT / FABRIC: ${outfit || 'Creator to define'}
+LIGHTING: ${light}
+
+Make the prompt explosive and cinematic. Kling needs directional, metaphorical language — not technical terms.`;
+
+  callClaude(system, user, 'kl');
+}
+
+// ═══════════════════════════════════════
+// HYBRID PIPELINE
+// ═══════════════════════════════════════
+function generateHybrid() {
+  const vision = document.getElementById('hy-vision').value.trim();
+  if (!vision) { alert('Describe your full scene vision first.'); return; }
+
+  const category = document.getElementById('hy-category').value;
+  const length = document.getElementById('hy-length').value;
+
+  const system = `You are a cinematic AI video production strategist who knows both Seedance 2.0 (ByteDance) and Kling 3.0 Pro deeply.
+
+SEEDANCE 2.0 STRENGTHS: fabric physics, environmental reactions, audio-native generation, multi-shot transitions, realistic textures, multi-reference consistency, wide shots and environmental storytelling
+SEEDANCE 2.0 WEAKNESSES: face generation restricted (anti-deepfake), close-up expression work limited, less kinetic explosive movement vs Kling
+
+KLING 3.0 PRO STRENGTHS: explosive kinetic movement, close-up facial expressions and emotion, Director Mode camera control, hair physics (fiber optic quality), high-energy action moments, dramatic hero shots
+KLING 3.0 PRO WEAKNESSES: no native audio, single-shot (not multi-shot native), character consistency across scenes harder
+
+HYBRID STRATEGY: Use each model for what it dominates. Seedance handles establishing shots, environment, fabric physics, audio-driven moments. Kling handles close-ups, hero shots, explosive kinetic moments. Cut together in CapCut.
+
+Produce a full HYBRID SHOT PLAN with:
+1. SEEDANCE SHOTS — list each shot, what to prompt, why Seedance is better here
+2. KLING SHOTS — list each shot, Director Mode prompt, why Kling is better here  
+3. EDIT ASSEMBLY GUIDE — order to cut shots together, transition suggestions
+4. AUDIO NOTES — what native audio Seedance will generate, what to add in CapCut for Kling shots
+
+Protagonist is always a diverse Black woman. No teal hair.`;
+
+  const user = `Create a full Seedance × Kling hybrid shot plan:
+
+VISION: ${vision}
+CONTENT CATEGORY: ${category}
+TARGET LENGTH: ${length}
+
+Split this vision intelligently between the two models. Be specific with prompts for each shot.`;
+
+  callClaude(system, user, 'hy');
+}
+
+// ═══════════════════════════════════════
+// MUSIC VISUAL
+// ═══════════════════════════════════════
+function generateMusic() {
+  const song = document.getElementById('mv-song').value.trim();
+  if (!song) { alert('Enter the song title first.'); return; }
+
+  const lyrics = document.getElementById('mv-lyrics').value;
+  const hair = document.getElementById('mv-hair').value;
+  const platform = document.getElementById('mv-platform').value;
+  const tool = document.getElementById('mv-tool').value;
+
+  const system = `You are a music visual director and AI video prompt specialist. You analyze songs' emotional DNA and generate three distinct visual prompt variations for AI video tools.
+
+FRAMEWORK — THREE VARIATIONS:
+1. THE FEELING — The emotional core. Abstract, impressionistic. What does the music feel like in your body?
+2. THE WORLD — Cinematic environment and storytelling. The universe the song inhabits.  
+3. THE ICON — High-fashion editorial power. The subject as the visual centerpiece.
+
+MOVEMENT STANDARD — ALL PROMPTS MUST BE HIGH-KINETIC:
+- Explosive hair and fabric motion always
+- Dynamic camera work (crash zooms, 360 orbits, drone dives, whip pans)
+- Environmental drama reacting to the subject
+- Subject always in physical motion — no static poses
+
+If Seedance 2.0 is included: add AUDIO SYNC NOTES explaining how the song's energy maps to Seedance's native audio generation and what audio reference clip to input.
+
+Protagonist is always a diverse Black woman. Hairstyle as specified.`;
+
+  const user = `Generate music visual prompts for:
+
+SONG: ${song}
+LYRICS / FEEL: ${lyrics || 'Analyze from song title'}
+PROTAGONIST HAIRSTYLE: ${hair}
+PLATFORM / RATIO: ${platform}
+TOOLS: ${tool}
+
+Analyze the emotional DNA of this song first (3–4 sentences), then produce all three visual variations with full prompts. Each variation must be vivid, cinematic, and worthy of going viral.`;
+
+  callClaude(system, user, 'mv');
+}
+
+// ═══════════════════════════════════════
+// AFROFUTURIST
+// ═══════════════════════════════════════
+function generateAfrofuturist() {
+  if (selectedWorlds.length < 2) { alert('Select at least 2 worlds to travel through.'); return; }
+
+  const hair = document.getElementById('af-hair').value;
+  const outfit = document.getElementById('af-outfit').value;
+  const mood = document.getElementById('af-mood').value;
+
+  const system = `You are an Afrofuturist visual director and Seedance 2.0 specialist. You create multi-world cinematic series featuring Black women protagonists moving through Afrofuturist environments.
+
+SERIES CONCEPT — "WORLDS SHE WALKS THROUGH":
+A recurring series where one protagonist (consistent visual identity) moves through distinct Afrofuturist worlds. Each world is a separate Seedance generation. Character consistency is maintained via the @ reference system.
+
+SEEDANCE 2.0 MULTI-SHOT CAPABILITY: Seedance can generate scene transitions within a single generation. Use this for world-to-world transitions where possible.
+
+For each world, produce:
+- A complete Seedance 2.0 PROMPT (subject, action, environment, camera, audio, physics)
+- TRANSITION NOTE (how to move from this world to the next)
+- REFERENCE STRATEGY (what @ reference images to use to maintain character consistency)
+
+Also produce:
+- A SERIES BIBLE summary (protagonist description for consistency across all generations)
+- CONTENT CALENDAR suggestion (how to post this as a TikTok/Reels series)
+
+Aesthetic DNA: cinematic surrealism, Afrofuturist visual language, physics-defying elements, high-fashion editorial quality. Motion is always explosive and Hollywood-grade.`;
+
+  const user = `Create the "Worlds She Walks Through" series:
+
+PROTAGONIST HAIRSTYLE: ${hair}
+PROTAGONIST OUTFIT: ${outfit}
+SERIES MOOD: ${mood}
+WORLDS TO VISIT (in order): 
+${selectedWorlds.map((w, i) => `${i+1}. ${w}`).join('\n')}
+
+Generate full Seedance 2.0 prompts for each world, plus the series bible and posting strategy.`;
+
+  callClaude(system, user, 'af');
+}
+
+// ═══════════════════════════════════════
+// UGC PRODUCT
+// ═══════════════════════════════════════
+function generateUGC() {
+  const product = document.getElementById('ug-product').value.trim();
+  if (!product) { alert('Enter the product name and type first.'); return; }
+
+  const benefit = document.getElementById('ug-benefit').value;
+  const style = document.getElementById('ug-style').value;
+  const hair = document.getElementById('ug-hair').value;
+  const tool = document.getElementById('ug-tool').value;
+  const hasImages = document.getElementById('ug-images').files.length > 0;
+
+  const system = `You are a UGC AI video director specializing in TikTok Shop and brand collab content. You generate AI video prompts that produce content indistinguishable from authentic UGC.
+
+UGC REALISM PRINCIPLES FOR AI VIDEO:
+- Products must catch a specular highlight (light reflecting off packaging = realness cue)
+- Hands and skin texture must be described with specific physics detail
+- Environment should be specific and lived-in (not generic "bathroom" — "marble shelf with morning light through frosted glass")
+- Movement should feel natural and un-choreographed (Seedance's physics engine is ideal here)
+- AIGC disclosure required for TikTok Shop — note this in output
+
+FOR SEEDANCE 2.0 UGC:
+- Describe fabric on protagonist's arm/clothing as it moves — Seedance physics makes this look authentic
+- Include audio direction (product sounds, ambient room sounds) — Seedance generates natively
+- Reference strategy: if product images are available, use as @ reference for accurate packaging
+
+FOR KLING 3.0 PRO UGC:
+- Director Mode for close-up hand shots
+- Fabric on wrist/sleeve physics for lifestyle feel
+- Audio direction for CapCut post-edit
+
+Produce complete prompts ready to paste into Dreamina or Kling immediately.`;
+
+  const user = `Generate UGC video prompts for:
+
+PRODUCT: ${product}
+KEY BENEFIT: ${benefit || 'General product showcase'}
+UGC STYLE: ${style}
+PROTAGONIST HAIRSTYLE: ${hair}
+TOOLS: ${tool}
+PRODUCT IMAGES UPLOADED: ${hasImages ? 'Yes — describe packaging from what creator has provided' : 'No — work from product name/description'}
+
+Generate complete ready-to-use prompts. Include a hook text overlay suggestion and TikTok caption starter.`;
+
+  callClaude(system, user, 'ug');
+}
+
+// ═══════════════════════════════════════
+// FABRIC & PHYSICS
+// ═══════════════════════════════════════
+function generateFabric() {
+  const fabric = document.getElementById('fb-fabric').value;
+  const trigger = document.getElementById('fb-trigger').value;
+  const setting = document.getElementById('fb-setting').value;
+  const light = document.getElementById('fb-light').value;
+  const hair = document.getElementById('fb-hair').value;
+
+  const system = `You are a Seedance 2.0 physics prompt specialist. Your expertise is engineering prompts that maximally trigger Seedance 2.0's physics simulation engine — specifically fabric motion, hair physics, and environmental reactions.
+
+SEEDANCE 2.0 PHYSICS LANGUAGE:
+- Be hyper-specific about fabric weight and behavior: "liquid-weighted silk that collapses in folds before the wind grabs its hem"
+- Describe the physics trigger precisely: "a sudden gust hits from the left at waist height"
+- Include environmental reaction: "the dry grass in the background bends in the same direction as the fabric"
+- Light interaction with fabric: "backlit so the organza becomes translucent at the edges, opacity rippling with movement"
+- Hair physics paired with fabric: both should move in coordinated response to the same force
+
+PROMPT STRUCTURE:
+1. PHYSICS SETUP — the exact trigger and its direction/intensity
+2. FABRIC DESCRIPTION — material, weight, cut, how it will respond
+3. SUBJECT — protagonist, what they're doing (always in motion)
+4. ENVIRONMENT — setting with physics-reactive elements (grass, dust, leaves, water)
+5. CAMERA — frame this to maximize visible fabric movement
+6. LIGHT — how light passes through or reflects off fabric mid-motion
+7. AUDIO — ambient sound of fabric movement, environment
+
+Generate 2 variations: one maximally explosive, one elegantly controlled.`;
+
+  const user = `Generate Seedance 2.0 fabric physics prompts:
+
+FABRIC TYPE: ${fabric}
+PHYSICS TRIGGER: ${trigger}
+SETTING: ${setting || 'Creator to define — suggest best option'}
+LIGHTING: ${light}
+HAIR: ${hair}
+
+Make the prompts specifically trigger Seedance's physics engine. Use technical fabric behavior language that instructs the model precisely.`;
+
+  callClaude(system, user, 'fb');
+}
+</script>
+</body>
+</html>
