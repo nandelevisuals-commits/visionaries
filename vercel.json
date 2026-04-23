@@ -1,0 +1,29 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/linkinbio.html" },
+    { "source": "/linkinbio", "destination": "/linkinbio.html" },
+    { "source": "/mediakit", "destination": "/mediakit.html" },
+    { "source": "/ad-studio", "destination": "/nandyvisuals-ad-studio.html" },
+    { "source": "/media-studio", "destination": "/nandyvisuals-mediakit.html" },
+    { "source": "/video-studio", "destination": "/nandyvisuals-video-studio.html" },
+    { "source": "/tanzania-landing", "destination": "/real-tanzania-landing.html" },
+    { "source": "/story-engine", "destination": "/story-engine.html" },
+    { "source": "/tanzania-atlas", "destination": "/tanzania-atlas.html" },
+    { "source": "/threads-access", "destination": "/threads-access.html" },
+    { "source": "/threads-growth-agent", "destination": "/threads-growth-agent.html" },
+    { "source": "/elevated-vision", "destination": "/elevated-vision-landing.html" },
+    { "source": "/elevated-vision/access", "destination": "/elevated-vision.html" },
+    { "source": "/visionaire-studio", "destination": "/visionaire-studio.html" },
+    { "source": "/vibe-engine", "destination": "/vibe-code-engine-v2.html" },
+    { "source": "/scene-engine", "destination": "/scene-engine.html" },
+    { "source": "/journey-engine", "destination": "/journey-engine.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*).html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    }
+  ]
+}
