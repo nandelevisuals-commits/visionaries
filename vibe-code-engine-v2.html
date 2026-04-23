@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIBE CODE ENGINE v2 — NANDYVISUALS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --pink: #FF3CAC;
+  --teal: #00F5D4;
+  --black: #060608;
+  --s1: #0e0e12;
+  --s2: #161619;
+  --s3: #1e1e23;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.1);
+  --text: #efefef;
+  --muted: #555;
+  --muted2: #888;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  background: var(--black);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── AMBIENT BG ── */
+.ambient {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 10%, rgba(255,60,172,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 10% 90%, rgba(0,245,212,0.05) 0%, transparent 60%);
+}
+.grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── LAYOUT ── */
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 20px 100px; position: relative; z-index: 1; }
+
+/* ── HEADER ── */
+header {
+  padding: 36px 0 32px;
+  text-align: center;
+}
+.brand-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid rgba(0,245,212,0.25);
+  border-radius: 100px; padding: 5px 14px 5px 10px;
+  margin-bottom: 18px;
+}
+.brand-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 8px var(--teal); animation: pulse 2s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.brand-text { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: var(--teal); text-transform: uppercase; }
+
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(52px, 12vw, 96px);
+  letter-spacing: 0.04em;
+  line-height: 0.9;
+  background: linear-gradient(160deg, #fff 0%, #fff 30%, var(--pink) 65%, var(--teal) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.tagline { font-size: 14px; color: var(--muted2); margin-top: 10px; font-weight: 400; letter-spacing: 0.01em; }
+
+/* ── SECTION STEPS ── */
+.step {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.step::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,60,172,0.35) 30%, rgba(0,245,212,0.35) 70%, transparent 100%);
+}
+.step-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
+}
+.step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.15em; color: var(--muted);
+  border: 1px solid var(--border2); border-radius: 6px;
+  padding: 3px 8px;
+}
+.step-title { font-size: 13px; font-weight: 600; color: var(--muted2); letter-spacing: 0.02em; }
+
+/* ── ENGINE SELECTOR ── */
+.engine-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px;
+}
+.engine-card {
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.engine-card:hover { border-color: rgba(255,60,172,0.3); transform: translateY(-1px); }
+.engine-card.active {
+  background: linear-gradient(135deg, rgba(255,60,172,0.12), rgba(0,245,212,0.07));
+  border-color: var(--pink);
+}
+.engine-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+.engine-name { font-size: 12px; font-weight: 600; color: var(--text); display: block; margin-bottom: 2px; }
+.engine-hint { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+
+/* ── PERSONA PRESETS ── */
+.persona-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px;
+}
+.persona-card {
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.persona-card:hover { border-color: rgba(0,245,212,0.3); }
+.persona-card.active {
+  background: linear-gradient(135deg, rgba(0,245,212,0.1), rgba(255,60,172,0.06));
+  border-color: var(--teal);
+}
+.persona-emoji { font-size: 20px; margin-bottom: 5px; display: block; }
+.persona-name { font-size: 11px; font-weight: 600; color: var(--text); display: block; margin-bottom: 2px; }
+.persona-vibe { font-size: 10px; color: var(--muted); }
+
+/* ── INPUT MODES ── */
+.mode-switcher {
+  display: flex; gap: 4px;
+  background: var(--s2); border-radius: 10px; padding: 4px;
+  margin-bottom: 14px; width: fit-content;
+}
+.mode-btn {
+  background: transparent; border: none; border-radius: 7px;
+  color: var(--muted); font-family: 'Outfit', sans-serif;
+  font-size: 12px; font-weight: 500; padding: 7px 14px;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.mode-btn.active { background: var(--s3); color: var(--text); border: 1px solid var(--border2); }
+
+textarea {
+  width: 100%;
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text);
+  font-family: 'Outfit', sans-serif; font-size: 14px;
+  padding: 14px 16px; resize: none; height: 80px;
+  outline: none; transition: border-color 0.2s;
+}
+textarea::placeholder { color: var(--muted); }
+textarea:focus { border-color: rgba(255,60,172,0.4); }
+
+/* ── UPLOAD ZONE ── */
+.upload-zone {
+  border: 2px dashed rgba(0,245,212,0.2);
+  border-radius: 12px; padding: 28px 20px;
+  text-align: center; cursor: pointer;
+  transition: all 0.25s;
+  background: rgba(0,245,212,0.015);
+  position: relative;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--teal);
+  background: rgba(0,245,212,0.05);
+}
+.upload-zone input[type="file"] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.upload-icon-big { font-size: 28px; margin-bottom: 8px; display: block; }
+.upload-label { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.upload-sub { font-size: 12px; color: var(--muted); }
+.upload-sub em { color: var(--teal); font-style: normal; }
+
+.img-preview-wrap {
+  display: none; border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border); position: relative;
+}
+.img-preview-wrap img {
+  width: 100%; max-height: 240px; object-fit: cover; display: block;
+}
+.img-badge {
+  position: absolute; bottom: 10px; left: 10px;
+  background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+  border: 1px solid rgba(0,245,212,0.3); border-radius: 8px;
+  padding: 5px 12px;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  color: var(--teal); letter-spacing: 0.12em;
+}
+.img-remove {
+  position: absolute; top: 10px; right: 10px;
+  background: rgba(0,0,0,0.7); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--muted);
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  padding: 4px 10px; cursor: pointer; transition: all 0.2s;
+}
+.img-remove:hover { color: var(--pink); border-color: var(--pink); }
+
+/* ── CAPTION FORMAT PICKER ── */
+.format-grid {
+  display: flex; flex-wrap: wrap; gap: 7px;
+}
+.format-chip {
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--muted2);
+  font-size: 12px; font-weight: 500; padding: 7px 14px;
+  cursor: pointer; transition: all 0.2s;
+}
+.format-chip:hover { border-color: rgba(255,60,172,0.3); color: var(--text); }
+.format-chip.active {
+  background: rgba(255,60,172,0.1);
+  border-color: var(--pink); color: var(--text);
+}
+
+/* ── COUNT + AB ── */
+.options-row {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.count-chips { display: flex; gap: 6px; }
+.count-chip {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--s2); border: 1px solid var(--border);
+  color: var(--muted); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.count-chip.active { background: rgba(0,245,212,0.12); border-color: var(--teal); color: var(--teal); }
+
+.ab-toggle {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 14px;
+  font-size: 12px; font-weight: 500; color: var(--muted2);
+  transition: all 0.2s;
+}
+.ab-toggle.active { border-color: var(--pink); color: var(--text); background: rgba(255,60,172,0.08); }
+.ab-toggle-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--muted); transition: all 0.2s;
+}
+.ab-toggle.active .ab-toggle-dot { background: var(--pink); box-shadow: 0 0 6px var(--pink); }
+
+/* ── ADVANCED SECTION ── */
+.advanced-toggle {
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; color: var(--muted); font-size: 12px;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em;
+  margin: 4px 0 12px; width: fit-content;
+  transition: color 0.2s;
+}
+.advanced-toggle:hover { color: var(--teal); }
+.chevron { transition: transform 0.3s; display: inline-block; }
+.chevron.open { transform: rotate(180deg); }
+
+.advanced-panel { display: none; }
+.advanced-panel.open { display: block; }
+
+.adv-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+@media(max-width:580px){ .adv-grid { grid-template-columns: 1fr; } }
+
+.adv-card {
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.adv-card:hover { border-color: rgba(0,245,212,0.25); }
+.adv-card.active { border-color: var(--teal); background: rgba(0,245,212,0.05); }
+.adv-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.adv-info {}
+.adv-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.adv-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.adv-badge {
+  display: inline-block; font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; letter-spacing: 0.1em; color: var(--teal);
+  border: 1px solid rgba(0,245,212,0.3); border-radius: 4px;
+  padding: 2px 6px; margin-top: 5px;
+}
+
+/* ── VIDEO MODE UPLOAD ── */
+.video-mode-section {
+  display: none; margin-top: 10px;
+  background: var(--s3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px;
+}
+.video-mode-section.show { display: block; }
+
+/* ── GENERATE BUTTON ── */
+.gen-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--pink) 0%, #9d2fff 50%, var(--teal) 100%);
+  border: none; border-radius: 14px;
+  color: #fff; font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: 0.12em;
+  padding: 20px; cursor: pointer;
+  transition: all 0.3s; position: relative; overflow: hidden;
+  margin-top: 4px;
+}
+.gen-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--teal) 0%, #9d2fff 50%, var(--pink) 100%);
+  opacity: 0; transition: opacity 0.4s;
+}
+.gen-btn:hover::before { opacity: 1; }
+.gen-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(255,60,172,0.3); }
+.gen-btn:active { transform: translateY(0); }
+.gen-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.gen-btn span { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── OUTPUT SECTION ── */
+#output { display: none; margin-top: 20px; }
+
+.output-tabs {
+  display: flex; gap: 4px;
+  background: var(--s2); border-radius: 10px; padding: 4px;
+  margin-bottom: 16px;
+}
+.out-tab {
+  flex: 1; background: transparent; border: none; border-radius: 7px;
+  color: var(--muted); font-family: 'Outfit', sans-serif;
+  font-size: 12px; font-weight: 600; padding: 9px 6px;
+  cursor: pointer; transition: all 0.2s;
+}
+.out-tab.active {
+  background: var(--s1); color: var(--text);
+  border: 1px solid var(--border2);
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+}
+.panel-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.05em; }
+.copy-all {
+  background: transparent; border: 1px solid var(--border2);
+  border-radius: 7px; color: var(--muted2);
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.08em; padding: 6px 12px; cursor: pointer;
+  transition: all 0.2s;
+}
+.copy-all:hover { border-color: var(--teal); color: var(--teal); }
+
+/* ── PROMPT CARDS ── */
+.prompt-card {
+  background: var(--s1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 18px;
+  margin-bottom: 8px; position: relative;
+  transition: border-color 0.2s;
+  animation: fadeUp 0.35s ease both;
+}
+.prompt-card:hover { border-color: rgba(255,60,172,0.25); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+.prompt-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.15em; color: var(--pink);
+  margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+}
+.engine-tag {
+  color: var(--teal); border: 1px solid rgba(0,245,212,0.25);
+  border-radius: 4px; padding: 1px 7px;
+}
+.prompt-text { font-size: 13px; line-height: 1.65; color: #ccc; padding-right: 52px; }
+.copy-btn {
+  position: absolute; top: 12px; right: 12px;
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--muted);
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  padding: 4px 10px; cursor: pointer; transition: all 0.2s;
+}
+.copy-btn:hover { border-color: var(--teal); color: var(--teal); }
+.copy-btn.ok { border-color: var(--teal); color: var(--teal); }
+
+/* AB variant label */
+.ab-label {
+  display: inline-block; font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.1em; padding: 2px 8px;
+  border-radius: 4px; margin-bottom: 6px;
+}
+.ab-label.safe { background: rgba(0,245,212,0.1); color: var(--teal); border: 1px solid rgba(0,245,212,0.2); }
+.ab-label.bold { background: rgba(255,60,172,0.1); color: var(--pink); border: 1px solid rgba(255,60,172,0.2); }
+
+/* ── TEXT ITEMS ── */
+.text-item {
+  background: var(--s1); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+  margin-bottom: 8px; display: flex;
+  align-items: flex-start; justify-content: space-between; gap: 12px;
+  transition: border-color 0.2s;
+  animation: fadeUp 0.35s ease both;
+}
+.text-item:hover { border-color: rgba(0,245,212,0.2); }
+.text-body { font-size: 13px; line-height: 1.5; flex: 1; }
+.text-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+.plat-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 8px;
+  letter-spacing: 0.12em; color: var(--teal);
+  border: 1px solid rgba(0,245,212,0.25); border-radius: 4px; padding: 2px 8px;
+}
+.fmt-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 8px;
+  letter-spacing: 0.12em; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px;
+}
+
+/* ── ANALYSIS BANNER ── */
+.analysis-banner {
+  background: rgba(0,245,212,0.05);
+  border: 1px solid rgba(0,245,212,0.15);
+  border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;
+  font-size: 13px; color: #aaa; line-height: 1.55;
+  animation: fadeUp 0.35s ease;
+}
+.analysis-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.15em; color: var(--teal);
+  display: block; margin-bottom: 5px;
+}
+
+/* ── EXPORT ── */
+.export-row {
+  display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;
+}
+.export-btn {
+  flex: 1; min-width: 120px;
+  background: var(--s2); border: 1px solid var(--border2);
+  border-radius: 10px; color: var(--muted2);
+  font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600;
+  padding: 12px; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.export-btn:hover { border-color: var(--pink); color: var(--text); background: rgba(255,60,172,0.06); }
+
+/* ── ERROR ── */
+.err {
+  background: rgba(255,60,172,0.07);
+  border: 1px solid rgba(255,60,172,0.25);
+  border-radius: 10px; padding: 14px; font-size: 13px; color: #ff9090;
+}
+
+/* ── DIVIDER ── */
+.div { height: 1px; background: var(--border); margin: 18px 0; }
+.label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+
+/* ── FOOTER ── */
+footer {
+  text-align: center; padding: 24px 0;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase;
+}
+footer span { color: var(--pink); }
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<div class="grain"></div>
+
+<div class="wrap">
+
+<!-- HEADER -->
+<header>
+  <div class="brand-pill">
+    <div class="brand-dot"></div>
+    <span class="brand-text">NANDYVISUALS</span>
+  </div>
+  <h1>VIBE CODE<br>ENGINE</h1>
+  <p class="tagline">Drop an idea or image. Get a full content pack — prompts, captions, hooks, covers.</p>
+</header>
+
+<!-- STEP 1: ENGINE -->
+<div class="step">
+  <div class="step-header">
+    <span class="step-num">01</span>
+    <span class="step-title">SELECT YOUR ENGINE</span>
+  </div>
+  <div class="engine-grid">
+    <div class="engine-card active" data-engine="chatgpt" onclick="selectEngine(this)">
+      <span class="engine-icon">🤖</span>
+      <span class="engine-name">ChatGPT Images</span>
+      <span class="engine-hint">GPT IMAGE 2</span>
+    </div>
+    <div class="engine-card" data-engine="midjourney" onclick="selectEngine(this)">
+      <span class="engine-icon">🎨</span>
+      <span class="engine-name">Midjourney</span>
+      <span class="engine-hint">V7 SYNTAX</span>
+    </div>
+    <div class="engine-card" data-engine="sora" onclick="selectEngine(this)">
+      <span class="engine-icon">🎬</span>
+      <span class="engine-name">Sora 2</span>
+      <span class="engine-hint">STILL / COVER</span>
+    </div>
+    <div class="engine-card" data-engine="kling" onclick="selectEngine(this)">
+      <span class="engine-icon">⚡</span>
+      <span class="engine-name">Kling 3.0 Pro</span>
+      <span class="engine-hint">COVER FRAME</span>
+    </div>
+    <div class="engine-card" data-engine="higgsfield" onclick="selectEngine(this)">
+      <span class="engine-icon">🌊</span>
+      <span class="engine-name">Higgsfield</span>
+      <span class="engine-hint">SOUL 2</span>
+    </div>
+    <div class="engine-card" data-engine="seedance" onclick="selectEngine(this)">
+      <span class="engine-icon">🌱</span>
+      <span class="engine-name">Seedance 2.0</span>
+      <span class="engine-hint">VIDEO LOOP</span>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: PERSONA -->
+<div class="step">
+  <div class="step-header">
+    <span class="step-num">02</span>
+    <span class="step-title">CHOOSE YOUR PERSONA</span>
+  </div>
+  <div class="persona-grid">
+    <div class="persona-card" data-persona="luxury" onclick="selectPersona(this)">
+      <span class="persona-emoji">💎</span>
+      <span class="persona-name">Luxury Minimalist</span>
+      <span class="persona-vibe">Clean, rich, elevated</span>
+    </div>
+    <div class="persona-card" data-persona="unhinged" onclick="selectPersona(this)">
+      <span class="persona-emoji">🔥</span>
+      <span class="persona-name">Unhinged Relatable</span>
+      <span class="persona-vibe">Raw, real, chaotic</span>
+    </div>
+    <div class="persona-card active" data-persona="editorial" onclick="selectPersona(this)">
+      <span class="persona-emoji">🖤</span>
+      <span class="persona-name">Dark Editorial</span>
+      <span class="persona-vibe">Fashion-forward, moody</span>
+    </div>
+    <div class="persona-card" data-persona="thatgirl" onclick="selectPersona(this)">
+      <span class="persona-emoji">🌿</span>
+      <span class="persona-name">That Girl Era</span>
+      <span class="persona-vibe">Aspirational, soft goals</span>
+    </div>
+    <div class="persona-card" data-persona="softlife" onclick="selectPersona(this)">
+      <span class="persona-emoji">🌸</span>
+      <span class="persona-name">Soft Life</span>
+      <span class="persona-vibe">Gentle, dreamy, peace</span>
+    </div>
+    <div class="persona-card" data-persona="darkacademia" onclick="selectPersona(this)">
+      <span class="persona-emoji">📚</span>
+      <span class="persona-name">Dark Academia</span>
+      <span class="persona-vibe">Intellectual, mysterious</span>
+    </div>
+    <div class="persona-card" data-persona="baddie" onclick="selectPersona(this)">
+      <span class="persona-emoji">👑</span>
+      <span class="persona-name">Unbothered Baddie</span>
+      <span class="persona-vibe">Confident, unapologetic</span>
+    </div>
+    <div class="persona-card" data-persona="surreal" onclick="selectPersona(this)">
+      <span class="persona-emoji">🌀</span>
+      <span class="persona-name">Cinematic Surreal</span>
+      <span class="persona-vibe">Dreamlike, art-film</span>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3: INPUT -->
+<div class="step">
+  <div class="step-header">
+    <span class="step-num">03</span>
+    <span class="step-title">YOUR INPUT</span>
+  </div>
+
+  <div class="mode-switcher">
+    <button class="mode-btn active" onclick="switchMode('text',this)">✏️ Text Idea</button>
+    <button class="mode-btn" onclick="switchMode('image',this)">🖼️ Image Upload</button>
+    <button class="mode-btn" onclick="switchMode('remix',this)">🔀 Remix a Cover</button>
+    <button class="mode-btn" onclick="switchMode('both',this)">✨ Both</button>
+  </div>
+
+  <!-- TEXT -->
+  <div id="mode-text">
+    <textarea id="textIdea" placeholder="e.g. confidence era, money mindset, soft life goals, glow up journey, NYC aesthetics..."></textarea>
+  </div>
+
+  <!-- IMAGE UPLOAD -->
+  <div id="mode-image" style="display:none">
+    <div class="upload-zone" id="imgZone" ondragover="dOver(event)" ondragleave="dLeave(event)" ondrop="dDrop(event,'img')">
+      <input type="file" accept="image/*" onchange="fileSelect(event,'img')">
+      <span class="upload-icon-big">🖼️</span>
+      <div class="upload-label">Drop reference image or click to browse</div>
+      <div class="upload-sub">Claude extracts <em>pose · lighting · composition · color · mood</em> → rebuilds in your brand</div>
+    </div>
+    <div class="img-preview-wrap" id="imgPreview">
+      <img id="imgPreviewSrc" src="" alt="">
+      <div class="img-badge">✦ VISUAL DNA DETECTED</div>
+      <button class="img-remove" onclick="removeImg('img')">✕ REMOVE</button>
+    </div>
+  </div>
+
+  <!-- REMIX -->
+  <div id="mode-remix" style="display:none">
+    <div class="upload-zone" id="remixZone" ondragover="dOver(event)" ondragleave="dLeave(event)" ondrop="dDrop(event,'remix')">
+      <input type="file" accept="image/*" onchange="fileSelect(event,'remix')">
+      <span class="upload-icon-big">🔀</span>
+      <div class="upload-label">Upload a viral cover to remix</div>
+      <div class="upload-sub">Claude reverse-engineers <em>why it works</em> (typography · negative space · contrast · hierarchy) then rebuilds it in your niche</div>
+    </div>
+    <div class="img-preview-wrap" id="remixPreview">
+      <img id="remixPreviewSrc" src="" alt="">
+      <div class="img-badge">✦ ANALYZING VIRAL STRUCTURE</div>
+      <button class="img-remove" onclick="removeImg('remix')">✕ REMOVE</button>
+    </div>
+    <textarea id="remixContext" style="margin-top:10px" placeholder="Optional: what's your content niche or topic for this remix?"></textarea>
+  </div>
+
+  <!-- BOTH -->
+  <div id="mode-both" style="display:none">
+    <div class="upload-zone" id="bothZone" ondragover="dOver(event)" ondragleave="dLeave(event)" ondrop="dDrop(event,'both')">
+      <input type="file" accept="image/*" onchange="fileSelect(event,'both')">
+      <span class="upload-icon-big">✨</span>
+      <div class="upload-label">Upload your reference image</div>
+      <div class="upload-sub">Drag & drop or click to browse</div>
+    </div>
+    <div class="img-preview-wrap" id="bothPreview" style="margin-top:10px">
+      <img id="bothPreviewSrc" src="" alt="">
+      <div class="img-badge">✦ VISUAL DNA DETECTED</div>
+      <button class="img-remove" onclick="removeImg('both')">✕ REMOVE</button>
+    </div>
+    <textarea id="bothIdea" style="margin-top:10px" placeholder="Add context, content angle, or extra direction..."></textarea>
+  </div>
+</div>
+
+<!-- STEP 4: CAPTION FORMAT -->
+<div class="step">
+  <div class="step-header">
+    <span class="step-num">04</span>
+    <span class="step-title">CAPTION FORMAT</span>
+  </div>
+  <div class="format-grid">
+    <div class="format-chip active" data-fmt="nobody" onclick="selectFmt(this)">"Nobody talks about this"</div>
+    <div class="format-chip" data-fmt="dayof" onclick="selectFmt(this)">Day X of series</div>
+    <div class="format-chip" data-fmt="confession" onclick="selectFmt(this)">Lowercase confession</div>
+    <div class="format-chip" data-fmt="pov" onclick="selectFmt(this)">POV format</div>
+    <div class="format-chip" data-fmt="list" onclick="selectFmt(this)">List / breakdown</div>
+    <div class="format-chip" data-fmt="hook" onclick="selectFmt(this)">Hard opening hook</div>
+    <div class="format-chip" data-fmt="story" onclick="selectFmt(this)">Micro-story arc</div>
+    <div class="format-chip" data-fmt="question" onclick="selectFmt(this)">Question bait</div>
+  </div>
+</div>
+
+<!-- STEP 5: OPTIONS -->
+<div class="step">
+  <div class="step-header">
+    <span class="step-num">05</span>
+    <span class="step-title">OUTPUT OPTIONS</span>
+  </div>
+  <div class="options-row">
+    <div>
+      <div class="label" style="margin-bottom:8px">COVER PROMPTS</div>
+      <div class="count-chips">
+        <div class="count-chip" onclick="setCount(3,this)">3</div>
+        <div class="count-chip active" onclick="setCount(5,this)">5</div>
+        <div class="count-chip" onclick="setCount(7,this)">7</div>
+        <div class="count-chip" onclick="setCount(10,this)">10</div>
+      </div>
+    </div>
+    <div id="abToggle" class="ab-toggle" onclick="toggleAB()">
+      <div class="ab-toggle-dot"></div>
+      A/B Variation Mode
+    </div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- ADVANCED -->
+  <div class="advanced-toggle" onclick="toggleAdvanced()">
+    <span class="chevron" id="chevron">▾</span>
+    ADVANCED FEATURES
+  </div>
+
+  <div class="advanced-panel" id="advPanel">
+    <div class="adv-grid">
+      <div class="adv-card" data-adv="styleAnalyzer" onclick="toggleAdv(this)">
+        <span class="adv-icon">🔬</span>
+        <div class="adv-info">
+          <div class="adv-name">Cover Style Analyzer</div>
+          <div class="adv-desc">Reverse-engineer why a cover performs. Get a breakdown of font, space, contrast & hierarchy.</div>
+          <span class="adv-badge">ANALYSIS</span>
+        </div>
+      </div>
+      <div class="adv-card" data-adv="videoMode" onclick="toggleAdv(this)">
+        <span class="adv-icon">🎞️</span>
+        <div class="adv-info">
+          <div class="adv-name">Video Cover Mode</div>
+          <div class="adv-desc">Generate 2–3 sec loop prompts for Seedance/Kling. Outputs motion-first cover briefs.</div>
+          <span class="adv-badge">2026 TREND</span>
+        </div>
+      </div>
+      <div class="adv-card" data-adv="textOverlay" onclick="toggleAdv(this)">
+        <span class="adv-icon">🖋️</span>
+        <div class="adv-info">
+          <div class="adv-name">Text Overlay System</div>
+          <div class="adv-desc">Bold headline suggestions + font style + placement guide baked into every prompt.</div>
+          <span class="adv-badge">HIGH IMPACT</span>
+        </div>
+      </div>
+      <div class="adv-card" data-adv="exportPack" onclick="toggleAdv(this)">
+        <span class="adv-icon">📦</span>
+        <div class="adv-info">
+          <div class="adv-name">Export Full Pack</div>
+          <div class="adv-desc">Download everything as a formatted text file. Ready for CapCut, Notion, or client delivery.</div>
+          <span class="adv-badge">EXPORT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GENERATE -->
+<button class="gen-btn" id="genBtn" onclick="generate()">
+  <span>⚡ GENERATE MY VIBE PACK</span>
+</button>
+
+<!-- OUTPUT -->
+<div id="output">
+  <div class="output-tabs">
+    <button class="out-tab active" onclick="switchOutTab('prompts',this)">Prompts</button>
+    <button class="out-tab" onclick="switchOutTab('captions',this)">Captions</button>
+    <button class="out-tab" onclick="switchOutTab('hooks',this)">Hooks</button>
+    <button class="out-tab" onclick="switchOutTab('overlay',this)" id="overlayTab" style="display:none">Text Overlay</button>
+    <button class="out-tab" onclick="switchOutTab('analysis',this)" id="analysisTab" style="display:none">Analysis</button>
+    <button class="out-tab" onclick="switchOutTab('video',this)" id="videoTab" style="display:none">Video Loop</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-prompts">
+    <div class="panel-header">
+      <span class="panel-title">COVER PROMPTS</span>
+      <button class="copy-all" onclick="copyAll('prompts')">COPY ALL</button>
+    </div>
+    <div id="prompts-out"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-captions">
+    <div class="panel-header">
+      <span class="panel-title">CAPTION PACK</span>
+      <button class="copy-all" onclick="copyAll('captions')">COPY ALL</button>
+    </div>
+    <div id="captions-out"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-hooks">
+    <div class="panel-header">
+      <span class="panel-title">VIRAL HOOKS</span>
+      <button class="copy-all" onclick="copyAll('hooks')">COPY ALL</button>
+    </div>
+    <div id="hooks-out"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-overlay">
+    <div class="panel-header">
+      <span class="panel-title">TEXT OVERLAY SYSTEM</span>
+      <button class="copy-all" onclick="copyAll('overlay')">COPY ALL</button>
+    </div>
+    <div id="overlay-out"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-analysis">
+    <div class="panel-header">
+      <span class="panel-title">COVER ANALYSIS</span>
+    </div>
+    <div id="analysis-out"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-video">
+    <div class="panel-header">
+      <span class="panel-title">VIDEO LOOP BRIEFS</span>
+      <button class="copy-all" onclick="copyAll('video')">COPY ALL</button>
+    </div>
+    <div id="video-out"></div>
+  </div>
+
+  <!-- EXPORT ROW -->
+  <div class="export-row" id="exportRow" style="display:none">
+    <button class="export-btn" onclick="exportTxt()">📄 Download .TXT Pack</button>
+    <button class="export-btn" onclick="exportMd()">📋 Copy as Markdown</button>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+<footer>MADE WITH <span>♥</span> BY NANDYVISUALS &nbsp;·&nbsp; VIBE CODE ENGINE V2 &nbsp;·&nbsp; 2026</footer>
+
+<script>
+// ── STATE ──
+let engine = 'chatgpt';
+let persona = 'editorial';
+let captionFmt = 'nobody';
+let promptCount = 5;
+let abMode = false;
+let advFeatures = new Set();
+let currentMode = 'text';
+let images = { img: null, imgType: null, remix: null, remixType: null, both: null, bothType: null };
+let generated = { prompts:[], captions:[], hooks:[], overlay:[], analysis:'', video:[] };
+
+// ── ENGINE ──
+function selectEngine(el) {
+  document.querySelectorAll('.engine-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  engine = el.dataset.engine;
+}
+
+// ── PERSONA ──
+function selectPersona(el) {
+  document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  persona = el.dataset.persona;
+}
+
+// ── MODE ──
+function switchMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['text','image','remix','both'].forEach(m => {
+    document.getElementById('mode-'+m).style.display = m===mode ? 'block' : 'none';
+  });
+}
+
+// ── CAPTION FORMAT ──
+function selectFmt(el) {
+  document.querySelectorAll('.format-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  captionFmt = el.dataset.fmt;
+}
+
+// ── COUNT ──
+function setCount(n, el) {
+  promptCount = n;
+  document.querySelectorAll('.count-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── AB ──
+function toggleAB() {
+  abMode = !abMode;
+  document.getElementById('abToggle').classList.toggle('active', abMode);
+}
+
+// ── ADVANCED ──
+function toggleAdvanced() {
+  const panel = document.getElementById('advPanel');
+  const chev = document.getElementById('chevron');
+  panel.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+function toggleAdv(el) {
+  const key = el.dataset.adv;
+  if (advFeatures.has(key)) { advFeatures.delete(key); el.classList.remove('active'); }
+  else { advFeatures.add(key); el.classList.add('active'); }
+}
+
+// ── IMAGE HANDLING ──
+function dOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function dLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function dDrop(e, slot) {
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) loadImg(f, slot);
+}
+function fileSelect(e, slot) { const f = e.target.files[0]; if (f) loadImg(f, slot); }
+function loadImg(file, slot) {
+  const r = new FileReader();
+  r.onload = ev => {
+    const b64 = ev.target.result.split(',')[1];
+    images[slot] = b64;
+    images[slot+'Type'] = file.type;
+    const zoneId = slot==='img' ? 'imgZone' : slot==='remix' ? 'remixZone' : 'bothZone';
+    const prevId = slot==='img' ? 'imgPreview' : slot==='remix' ? 'remixPreview' : 'bothPreview';
+    const srcId  = slot==='img' ? 'imgPreviewSrc' : slot==='remix' ? 'remixPreviewSrc' : 'bothPreviewSrc';
+    document.getElementById(zoneId).style.display = 'none';
+    document.getElementById(prevId).style.display = 'block';
+    document.getElementById(srcId).src = ev.target.result;
+  };
+  r.readAsDataURL(file);
+}
+function removeImg(slot) {
+  images[slot] = null; images[slot+'Type'] = null;
+  const zoneId = slot==='img' ? 'imgZone' : slot==='remix' ? 'remixZone' : 'bothZone';
+  const prevId = slot==='img' ? 'imgPreview' : slot==='remix' ? 'remixPreview' : 'bothPreview';
+  document.getElementById(zoneId).style.display = 'block';
+  document.getElementById(prevId).style.display = 'none';
+}
+
+// ── OUTPUT TABS ──
+function switchOutTab(name, btn) {
+  document.querySelectorAll('.out-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+// ── ENGINE SYNTAX GUIDE ──
+const engineGuide = {
+  chatgpt: 'Optimized for GPT Image 2. Use natural language, describe style and mood directly, include specific visual details about lighting and composition. Great for text-in-image covers.',
+  midjourney: 'Use Midjourney v7 syntax: end with --ar 9:16 --style raw --v 7. Separate visual elements with commas. Use double colons :: for weighted emphasis. Include style references like "editorial photography::".',
+  sora: 'Optimized for Sora 2 still frame extraction. Include camera lens description, film look, and color grade. Use cinematic language like "shot on RED camera, anamorphic lens, golden hour".',
+  kling: 'Optimized for Kling 3.0 Pro cover frame. Include exact camera angle (eye level/low angle/high angle), lighting rig description, and fashion-forward styling details.',
+  higgsfield: 'Use Higgsfield Soul 2 Director Mode structure: [CAMERA: ...] [SUBJECT: ...] [ATMOSPHERE: ...] [TEXTURE: ...]. Separate each bracket clearly.',
+  seedance: 'Optimized for Seedance 2.0 video loop brief. Describe 2-3 second motion, camera movement, and loop point. Include "seamless loop" instruction.'
+};
+
+const personaGuide = {
+  luxury: 'Ultra-minimalist luxury aesthetic. Negative space dominates. Muted palette with one rich accent. Think Bottega Veneta campaign energy.',
+  unhinged: 'Raw, real, chaotic energy. Imperfect angles, authentic expressions, messy beauty. Anti-polish is the aesthetic.',
+  editorial: 'High fashion editorial. Dramatic lighting, architectural poses, magazine-quality composition. Bold and unapologetic.',
+  thatgirl: 'Aspirational soft aesthetic. Morning light, clean spaces, intentional living. Warm neutrals with teal accent.',
+  softlife: 'Dreamy, gentle, peaceful energy. Soft focus, pastel tones, flowing fabric, golden light. Pure escapism.',
+  darkacademia: 'Mysterious, intellectual, dramatic. Deep shadows, rich textures, candlelight energy, thoughtful expressions.',
+  baddie: 'Confident, unapologetic, powerful. Strong gaze, commanding presence, fashion-forward, zero apologies.',
+  surreal: 'Cinematic dreamlike reality. Unexpected scale, surreal elements, film-still quality, emotional atmosphere.'
+};
+
+const captionFmtGuide = {
+  nobody: '"Nobody tells you this about [topic]." format — revealing, insider, creates urgency to read',
+  dayof: '"Day [X] of [doing something]" format — builds serialized content, creates follow-through motivation',
+  confession: 'lowercase, vulnerable, stream of consciousness. no caps. raw and real. feels like a 2am text.',
+  pov: '"POV: [relatable scenario]" format — immersive, second-person, immediate identification',
+  list: 'Numbered breakdown or list format. "5 things I wish I knew about [topic]" energy. Scannable.',
+  hook: 'Aggressive first line that stops the scroll. No buildup — punch immediately. Bold claim or statement.',
+  story: 'Micro-story arc in 3-5 sentences. Setup → tension → resolution. Creates emotional investment.',
+  question: 'Opens with a question that the viewer HAS to answer in their head. Creates instant engagement loop.'
+};
+
+// ── GENERATE ──
+async function generate() {
+  // Validate
+  const textVal = currentMode==='text' ? document.getElementById('textIdea').value.trim()
+    : currentMode==='remix' ? document.getElementById('remixContext').value.trim()
+    : currentMode==='both' ? document.getElementById('bothIdea').value.trim() : '';
+  const hasImg = currentMode==='image' ? !!images.img
+    : currentMode==='remix' ? !!images.remix
+    : currentMode==='both' ? !!images.both : false;
+
+  if (!textVal && !hasImg) {
+    alert('Add an idea or upload an image first!');
+    return;
+  }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.querySelector('span').innerHTML = '<div class="spinner"></div> GENERATING YOUR PACK...';
+
+  // Build system prompt
+  const isVideoEngine = engine === 'seedance';
+  const wantsTextOverlay = advFeatures.has('textOverlay');
+  const wantsStyleAnalysis = advFeatures.has('styleAnalyzer') || currentMode === 'remix';
+  const wantsVideoMode = advFeatures.has('videoMode');
+  const wantsExport = advFeatures.has('exportPack');
+
+  const sysPrompt = `You are VIBE CODE ENGINE v2 — elite AI content strategist and visual prompt architect for NANDYVISUALS, a cinematic AI creator brand built around Black women protagonists, editorial fashion, and high-end aesthetics.
+
+BRAND DNA (ALWAYS APPLY):
+- Protagonist: Black woman, diverse and rotating hairstyles (locs, braids, natural coils, sleek styles, bantu knots, updos, color variations). NEVER teal hair.
+- Brand colors: black base, teal accent lighting, soft pink highlights
+- Style: cinematic surrealism, high-fashion editorial, luxury aesthetic
+- Format: 9:16 portrait reel cover layout, strong negative space for text overlay
+
+TARGET ENGINE: ${engine.toUpperCase()}
+Engine guidance: ${engineGuide[engine]}
+
+ACTIVE PERSONA: ${persona.toUpperCase()}
+Persona guidance: ${personaGuide[persona]}
+
+CAPTION FORMAT: ${captionFmt.toUpperCase()}
+Format guidance: ${captionFmtGuide[captionFmt]}
+
+${abMode ? 'A/B MODE ACTIVE: For each prompt, generate TWO versions — one labeled SAFE (polished, broad appeal) and one labeled BOLD (aggressive, provocative, higher risk higher reward).' : ''}
+
+${currentMode==='remix' ? 'REMIX MODE: Analyze the uploaded viral cover. Identify: 1) Why the typography works (font weight, size contrast, placement), 2) How negative space is used, 3) Color contrast strategy, 4) Text hierarchy. Then rebuild this exact structure in the NANDYVISUALS brand.' : ''}
+
+${wantsTextOverlay ? 'TEXT OVERLAY SYSTEM: For each prompt, include a specific text overlay brief: headline suggestion, font style recommendation (e.g. "condensed bold, all caps, Impact or Bebas Neue"), text placement (top/center/bottom), color treatment, and background contrast tip.' : ''}
+
+${wantsVideoMode ? 'VIDEO LOOP MODE: Generate video_loops — 2-3 second Seedance/Kling loop briefs. Include: motion description, camera movement, loop start/end point, and mood.' : ''}
+
+You MUST respond with ONLY valid JSON, no markdown fences, no preamble:
+{
+  "image_analysis": "${hasImg ? 'brief analysis of uploaded image visual DNA' : ''}",
+  "remix_analysis": "${currentMode==='remix' ? 'breakdown of why the viral cover works — typography, space, contrast, hierarchy, then rebuild strategy' : ''}",
+  "prompts": ${abMode ? '[{"safe":"prompt version A","bold":"prompt version B"}]' : '["prompt1","prompt2"]'},
+  "captions": [{"text":"caption","platform":"TikTok","format":"${captionFmt}"},{"text":"caption","platform":"Threads","format":"${captionFmt}"}],
+  "hooks": ["hook1","hook2"],
+  ${wantsTextOverlay ? '"overlay": [{"headline":"text","font_style":"font rec","placement":"top/center/bottom","color":"color treatment","contrast_tip":"tip"}],' : '"overlay": [],'}
+  ${wantsVideoMode ? '"video_loops": [{"motion":"desc","camera":"movement","loop_point":"desc","mood":"desc"}]' : '"video_loops": []'}
+}`;
+
+  // Build message content
+  const msgContent = [];
+  if (hasImg) {
+    const imgSlot = currentMode==='image' ? 'img' : currentMode==='remix' ? 'remix' : 'both';
+    msgContent.push({ type:'image', source:{ type:'base64', media_type: images[imgSlot+'Type'], data: images[imgSlot] }});
+  }
+
+  const modeInstruction = currentMode==='text'
+    ? `Content idea: "${textVal}"`
+    : currentMode==='image'
+    ? `Analyze this reference image and extract its visual DNA to build the content pack.`
+    : currentMode==='remix'
+    ? `Analyze this viral cover and reverse-engineer its success. ${textVal ? `Content niche context: "${textVal}"` : ''}`
+    : `Use this reference image. ${textVal ? `Additional context: "${textVal}"` : ''}`;
+
+  msgContent.push({ type:'text', text:`${modeInstruction}
+
+Generate ${promptCount} cover prompts, 4 captions (2 TikTok + 2 Threads), and 6 viral hook titles. Be concise but cinematic. Each prompt must have a distinct angle. Keep each prompt under 80 words.` });
+
+  try {
+    const isVercel = ['nandyvisuals.com','www.nandyvisuals.com','visionaries-rouge.vercel.app'].includes(location.hostname);
+    const endpoint = isVercel ? '/api/proxy' : 'https://api.anthropic.com/v1/messages';
+    const res = await fetch(endpoint, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:4000,
+        system: sysPrompt,
+        messages:[{ role:'user', content: msgContent }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.find(b=>b.type==='text')?.text || '';
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(clean);
+    generated = {
+      prompts: parsed.prompts || [],
+      captions: parsed.captions || [],
+      hooks: parsed.hooks || [],
+      overlay: parsed.overlay || [],
+      analysis: parsed.image_analysis || parsed.remix_analysis || '',
+      video: parsed.video_loops || []
+    };
+    renderOutput(wantsTextOverlay, wantsStyleAnalysis || currentMode==='remix', wantsVideoMode, wantsExport);
+    document.getElementById('output').style.display = 'block';
+    document.getElementById('output').scrollIntoView({behavior:'smooth', block:'start'});
+  } catch(e) {
+    document.getElementById('output').style.display = 'block';
+    document.getElementById('prompts-out').innerHTML = `<div class="err">Generation failed. Check connection and try again.<br><small>${e.message}</small></div>`;
+  }
+
+  btn.disabled = false;
+  btn.querySelector('span').innerHTML = '⚡ REGENERATE';
+}
+
+// ── RENDER ──
+function renderOutput(showOverlay, showAnalysis, showVideo, showExport) {
+  // Show/hide extra tabs
+  document.getElementById('overlayTab').style.display = showOverlay && generated.overlay.length ? 'flex' : 'none';
+  document.getElementById('analysisTab').style.display = showAnalysis && generated.analysis ? 'flex' : 'none';
+  document.getElementById('videoTab').style.display = showVideo && generated.video.length ? 'flex' : 'none';
+  document.getElementById('exportRow').style.display = showExport ? 'flex' : 'none';
+
+  // PROMPTS
+  const po = document.getElementById('prompts-out');
+  po.innerHTML = '';
+  if (generated.analysis) {
+    po.innerHTML = `<div class="analysis-banner"><span class="analysis-label">✦ ${currentMode==='remix' ? 'REMIX ANALYSIS' : 'IMAGE ANALYSIS'}</span>${esc(generated.analysis)}</div>`;
+  }
+  generated.prompts.forEach((p, i) => {
+    const isAB = typeof p === 'object';
+    po.innerHTML += `<div class="prompt-card" style="animation-delay:${i*0.05}s">
+      <div class="prompt-label">PROMPT ${String(i+1).padStart(2,'0')} <span class="engine-tag">${engine.toUpperCase()}</span></div>
+      ${isAB
+        ? `<div class="ab-label safe">A — SAFE</div><div class="prompt-text" style="margin-bottom:12px">${esc(p.safe)}</div>
+           <div class="ab-label bold">B — BOLD</div><div class="prompt-text">${esc(p.bold)}</div>
+           <button class="copy-btn" onclick="copyTxt(this,'${escStr(p.safe)}\\n\\n${escStr(p.bold)}')">COPY</button>`
+        : `<div class="prompt-text">${esc(p)}</div><button class="copy-btn" onclick="copyTxt(this,'${escStr(p)}')">COPY</button>`}
+    </div>`;
+  });
+
+  // CAPTIONS
+  const co = document.getElementById('captions-out');
+  co.innerHTML = '';
+  generated.captions.forEach((c, i) => {
+    co.innerHTML += `<div class="text-item" style="animation-delay:${i*0.04}s">
+      <div class="text-body">${esc(c.text)}</div>
+      <div class="text-meta">
+        <span class="plat-badge">${(c.platform||'').toUpperCase()}</span>
+        <span class="fmt-badge">${(c.format||captionFmt).toUpperCase()}</span>
+        <button class="copy-btn" style="position:static" onclick="copyTxt(this,'${escStr(c.text)}')">COPY</button>
+      </div>
+    </div>`;
+  });
+
+  // HOOKS
+  const ho = document.getElementById('hooks-out');
+  ho.innerHTML = '';
+  generated.hooks.forEach((h, i) => {
+    ho.innerHTML += `<div class="text-item" style="animation-delay:${i*0.03}s">
+      <div class="text-body">${esc(h)}</div>
+      <button class="copy-btn" style="position:static;flex-shrink:0" onclick="copyTxt(this,'${escStr(h)}')">COPY</button>
+    </div>`;
+  });
+
+  // TEXT OVERLAY
+  const oo = document.getElementById('overlay-out');
+  oo.innerHTML = '';
+  generated.overlay.forEach((o, i) => {
+    oo.innerHTML += `<div class="prompt-card" style="animation-delay:${i*0.05}s">
+      <div class="prompt-label">OVERLAY ${String(i+1).padStart(2,'0')}</div>
+      <div style="display:grid;gap:6px;font-size:13px;color:#ccc;line-height:1.6">
+        <div><span style="color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:10px">HEADLINE</span><br>${esc(o.headline||'')}</div>
+        <div><span style="color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:10px">FONT</span><br>${esc(o.font_style||'')}</div>
+        <div><span style="color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:10px">PLACEMENT</span><br>${esc(o.placement||'')} · ${esc(o.color||'')}</div>
+        <div><span style="color:var(--pink);font-family:'JetBrains Mono',monospace;font-size:10px">CONTRAST TIP</span><br>${esc(o.contrast_tip||'')}</div>
+      </div>
+      <button class="copy-btn" onclick="copyTxt(this,'HEADLINE: ${escStr(o.headline||'')}\\nFONT: ${escStr(o.font_style||'')}\\nPLACEMENT: ${escStr(o.placement||'')}\\nCOLOR: ${escStr(o.color||'')}\\nCONTRAST: ${escStr(o.contrast_tip||'')}')">COPY</button>
+    </div>`;
+  });
+
+  // ANALYSIS
+  document.getElementById('analysis-out').innerHTML = generated.analysis
+    ? `<div class="analysis-banner" style="font-size:14px;line-height:1.7">${esc(generated.analysis)}</div>` : '';
+
+  // VIDEO
+  const vo = document.getElementById('video-out');
+  vo.innerHTML = '';
+  generated.video.forEach((v, i) => {
+    vo.innerHTML += `<div class="prompt-card" style="animation-delay:${i*0.05}s">
+      <div class="prompt-label">LOOP BRIEF ${String(i+1).padStart(2,'0')} <span class="engine-tag">SEEDANCE / KLING</span></div>
+      <div style="display:grid;gap:6px;font-size:13px;color:#ccc;line-height:1.6">
+        <div><span style="color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:10px">MOTION</span><br>${esc(v.motion||'')}</div>
+        <div><span style="color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:10px">CAMERA</span><br>${esc(v.camera||'')}</div>
+        <div><span style="color:var(--pink);font-family:'JetBrains Mono',monospace;font-size:10px">LOOP POINT</span><br>${esc(v.loop_point||'')}</div>
+        <div><span style="color:var(--muted2);font-family:'JetBrains Mono',monospace;font-size:10px">MOOD</span><br>${esc(v.mood||'')}</div>
+      </div>
+      <button class="copy-btn" onclick="copyTxt(this,'MOTION: ${escStr(v.motion||'')}\\nCAMERA: ${escStr(v.camera||'')}\\nLOOP: ${escStr(v.loop_point||'')}\\nMOOD: ${escStr(v.mood||'')}')">COPY</button>
+    </div>`;
+  });
+}
+
+// ── UTILS ──
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escStr(s) { return String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' '); }
+
+function copyTxt(btn, text) {
+  navigator.clipboard.writeText(text.replace(/\\n/g,'\n'));
+  btn.textContent = '✓'; btn.classList.add('ok');
+  setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('ok'); }, 2000);
+}
+
+function copyAll(type) {
+  let txt = '';
+  if (type==='prompts') txt = generated.prompts.map((p,i) => typeof p==='object'
+    ? `PROMPT ${i+1}\nA (SAFE): ${p.safe}\nB (BOLD): ${p.bold}` : `PROMPT ${i+1}: ${p}`).join('\n\n---\n\n');
+  if (type==='captions') txt = generated.captions.map(c=>`[${c.platform}] ${c.text}`).join('\n\n');
+  if (type==='hooks') txt = generated.hooks.join('\n');
+  if (type==='overlay') txt = generated.overlay.map((o,i)=>`OVERLAY ${i+1}\nHEADLINE: ${o.headline}\nFONT: ${o.font_style}\nPLACEMENT: ${o.placement}\nCOLOR: ${o.color}\nCONTRAST: ${o.contrast_tip}`).join('\n\n---\n\n');
+  if (type==='video') txt = generated.video.map((v,i)=>`LOOP ${i+1}\nMOTION: ${v.motion}\nCAMERA: ${v.camera}\nLOOP POINT: ${v.loop_point}\nMOOD: ${v.mood}`).join('\n\n---\n\n');
+  navigator.clipboard.writeText(txt);
+}
+
+function exportTxt() {
+  const lines = [
+    '═══════════════════════════════════',
+    'VIBE CODE ENGINE v2 — NANDYVISUALS',
+    '═══════════════════════════════════',
+    `ENGINE: ${engine.toUpperCase()} | PERSONA: ${persona.toUpperCase()} | FORMAT: ${captionFmt.toUpperCase()}`,
+    '',
+    '── COVER PROMPTS ──',
+    ...generated.prompts.map((p,i)=> typeof p==='object'
+      ? `[${i+1}A SAFE] ${p.safe}\n[${i+1}B BOLD] ${p.bold}` : `[${i+1}] ${p}`),
+    '',
+    '── CAPTIONS ──',
+    ...generated.captions.map(c=>`[${c.platform}] ${c.text}`),
+    '',
+    '── HOOKS ──',
+    ...generated.hooks,
+    '',
+    '── TEXT OVERLAYS ──',
+    ...generated.overlay.map((o,i)=>`[${i+1}] HEADLINE: ${o.headline} | FONT: ${o.font_style} | PLACEMENT: ${o.placement}`),
+    '',
+    '── VIDEO LOOP BRIEFS ──',
+    ...generated.video.map((v,i)=>`[${i+1}] ${v.motion} | CAMERA: ${v.camera}`),
+    '',
+    '═══════════════════════════════════',
+    'Generated by NANDYVISUALS Vibe Code Engine v2',
+    '═══════════════════════════════════'
+  ];
+  const blob = new Blob([lines.join('\n')], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'vibe-pack-nandyvisuals.txt';
+  a.click();
+}
+
+function exportMd() {
+  const md = `# VIBE CODE ENGINE — Content Pack\n**Engine:** ${engine} | **Persona:** ${persona} | **Format:** ${captionFmt}\n\n## Cover Prompts\n${generated.prompts.map((p,i)=> typeof p==='object' ? `**${i+1}A SAFE:** ${p.safe}\n\n**${i+1}B BOLD:** ${p.bold}` : `**${i+1}.** ${p}`).join('\n\n')}\n\n## Captions\n${generated.captions.map(c=>`**[${c.platform}]** ${c.text}`).join('\n\n')}\n\n## Hooks\n${generated.hooks.map((h,i)=>`${i+1}. ${h}`).join('\n')}`;
+  navigator.clipboard.writeText(md);
+}
+</script>
+</body>
+</html>
