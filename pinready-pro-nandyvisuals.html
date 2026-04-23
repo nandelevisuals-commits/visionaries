@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PinReady Pro — NANDYVISUALS</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink:#FF3CAC; --teal:#2DFFF2; --black:#080808; --white:#F8F4EF;
+  --gray:#141414; --gray2:#1E1E1E; --muted:#666; --border:#222;
+  --pink-dim:#FF3CAC18; --teal-dim:#2DFFF210;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 5% 0%,#FF3CAC0F,transparent 55%),radial-gradient(ellipse 50% 50% at 95% 100%,#2DFFF20A,transparent 55%);pointer-events:none;z-index:0}
+
+.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 20px 100px}
+
+/* ── HEADER ── */
+.hdr{padding:36px 0 26px;border-bottom:1px solid var(--border);margin-bottom:32px}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.brand{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--teal);text-transform:uppercase}
+.ver{font-family:'DM Mono',monospace;font-size:10px;padding:4px 12px;border-radius:100px;border:1px solid var(--border);color:var(--muted);letter-spacing:.1em}
+.hdr h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,46px);font-weight:700;background:linear-gradient(135deg,#FF3CAC,#F8F4EF 50%,#2DFFF2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.06}
+.hdr p{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.6}
+
+/* ── MODE TABS ── */
+.slabel{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--pink);text-transform:uppercase;margin-bottom:10px}
+.mode-row{display:flex;gap:7px;margin-bottom:28px;flex-wrap:wrap}
+.mbt{padding:7px 16px;border-radius:100px;border:1px solid var(--border);background:var(--gray);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
+.mbt:hover{border-color:var(--pink);color:var(--white)}
+.mbt.active{background:var(--pink-dim);border-color:var(--pink);color:var(--pink);font-weight:700}
+
+/* ── CARDS ── */
+.card{background:var(--gray);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:12px;transition:border-color .2s}
+.card:focus-within{border-color:#FF3CAC33}
+.card label{display:block;font-size:12px;font-weight:600;letter-spacing:.03em;color:var(--white);margin-bottom:5px}
+.card small{display:block;font-size:11px;color:var(--muted);margin-bottom:9px;line-height:1.5;font-family:'DM Mono',monospace}
+textarea,input[type="text"],select{width:100%;background:var(--black);border:1px solid var(--border);border-radius:9px;padding:11px 13px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;outline:none;transition:border-color .2s;-webkit-appearance:none}
+textarea:focus,input:focus,select:focus{border-color:var(--pink)}
+textarea{min-height:72px}
+select option{background:#141414}
+.pill-grp{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
+.pchk{display:none}
+.plbl{padding:6px 14px;border-radius:100px;border:1px solid var(--border);font-size:11px;font-weight:500;cursor:pointer;transition:all .18s;color:var(--muted);background:var(--black);user-select:none}
+.pchk:checked+.plbl{background:var(--pink-dim);border-color:var(--pink);color:var(--pink)}
+
+/* ── AESTHETIC GRID ── */
+.aes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+@media(max-width:580px){.aes-grid{grid-template-columns:repeat(2,1fr)}}
+.ac{cursor:pointer}
+.ac input{display:none}
+.ai{border:1px solid var(--border);border-radius:12px;padding:11px 13px;background:var(--black);transition:all .18s}
+.ac input:checked+.ai{border-color:var(--pink);background:var(--pink-dim)}
+.asw{width:100%;height:5px;border-radius:3px;margin-bottom:8px}
+.aem{font-size:15px;margin-bottom:4px;display:block}
+.anm{font-size:11px;font-weight:700;color:var(--white);margin-bottom:2px;line-height:1.2}
+.ac input:checked+.ai .anm{color:var(--pink)}
+.ads{font-size:9px;color:var(--muted);line-height:1.4;font-family:'DM Mono',monospace}
+.atr{display:inline-block;margin-top:4px;font-size:8px;font-family:'DM Mono',monospace;color:var(--teal);letter-spacing:.05em}
+
+/* swatches */
+.s1{background:linear-gradient(90deg,#E8DFD0,#C9A96E,#F9F5F0)}
+.s2{background:linear-gradient(90deg,#0A0A0A,#FF3CAC,#1A0A14)}
+.s3{background:linear-gradient(90deg,#1A0015,#8B0057,#C8A0D0)}
+.s4{background:linear-gradient(90deg,#B8D8F0,#7CB9E8,#E8F4FF)}
+.s5{background:linear-gradient(90deg,#C9A96E,#FFD700,#1A1A1A)}
+.s6{background:linear-gradient(90deg,#FFB3C6,#B5EAD7,#FFDAC1)}
+.s7{background:linear-gradient(90deg,#2A1A0A,#C9A96E,#F0D080)}
+.s8{background:linear-gradient(90deg,#00F5E4,#8A2BE2,#E0D0FF)}
+.s9{background:linear-gradient(90deg,#F9F0E8,#E8D5C0,#D4A8A0)}
+.s10{background:linear-gradient(90deg,#8B4513,#DAA520,#006400)}
+.s11{background:linear-gradient(90deg,#2C3E50,#6B8E9F,#B8C9D4)}
+.s12{background:linear-gradient(90deg,#1A1A1A,#FFD700,#C0B080)}
+.s13{background:linear-gradient(90deg,#E8C49A,#D4956A,#F5E6D0)}
+.s14{background:linear-gradient(90deg,#FF2D55,#FF9500,#FFCC00)}
+
+/* ── PIN LAYOUT SELECTOR ── */
+.layout-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+@media(max-width:580px){.layout-grid{grid-template-columns:repeat(2,1fr)}}
+.lc{cursor:pointer}
+.lc input{display:none}
+.li{border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--black);transition:all .18s;text-align:center}
+.lc input:checked+.li{border-color:var(--teal);background:var(--teal-dim)}
+.lc input:checked+.li .lnm{color:var(--teal)}
+/* mini pin mockup inside selector */
+.lpreview{width:100%;aspect-ratio:2/3;border-radius:6px;background:var(--gray2);margin-bottom:7px;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.lp-img{background:linear-gradient(160deg,#2A2020 0%,#1A1A2A 100%);flex:1}
+.lp-bar{background:#1A1A1A;padding:5px 6px}
+.lp-line{background:#333;border-radius:2px;margin-bottom:3px}
+.lp-line.thick{height:6px;width:80%}
+.lp-line.thin{height:4px;width:55%}
+.lp-line.xtra{height:4px;width:35%}
+/* layout variations */
+.layout-split .lp-img{height:55%}
+.layout-split .lp-bar{height:45%;display:flex;flex-direction:column;justify-content:center;padding:8px}
+.layout-overlay .lpreview{background:linear-gradient(160deg,#2A2020,#1A1A2A)}
+.layout-overlay .lp-img{position:absolute;inset:0;opacity:0.7}
+.layout-overlay .lp-bar{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(0,0,0,0.9),transparent);padding:8px}
+.layout-top .lp-bar{order:-1}
+.layout-top .lp-img{flex:1}
+.layout-center .lpreview{align-items:center;justify-content:center}
+.layout-center .lp-bar{position:absolute;top:50%;transform:translateY(-50%);width:90%;text-align:center;background:rgba(0,0,0,0.75);border-radius:6px}
+.layout-center .lp-img{position:absolute;inset:0}
+.lnm{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-align:center}
+
+/* ── GEN BTN ── */
+.gbtn{width:100%;padding:17px;border-radius:13px;border:none;background:linear-gradient(135deg,#FF3CAC,#c0186f);color:white;font-family:'Playfair Display',serif;font-size:17px;font-style:italic;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;margin-top:8px}
+.gbtn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(45,255,242,.2),transparent);opacity:0;transition:opacity .3s}
+.gbtn:hover::before{opacity:1}
+.gbtn:hover{transform:translateY(-2px);box-shadow:0 12px 40px #FF3CAC44}
+.gbtn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ── LOADING ── */
+.ld{display:none;text-align:center;padding:60px 20px}
+.ld.show{display:block}
+.ld-dots{display:flex;gap:8px;justify-content:center;margin-bottom:18px}
+.dot{width:9px;height:9px;border-radius:50%;animation:dp 1.3s ease-in-out infinite}
+.dot:nth-child(1){background:var(--pink)}
+.dot:nth-child(2){background:var(--white);animation-delay:.18s}
+.dot:nth-child(3){background:var(--teal);animation-delay:.36s}
+@keyframes dp{0%,80%,100%{transform:scale(.65);opacity:.35}40%{transform:scale(1.25);opacity:1}}
+.ld p{color:var(--muted);font-size:12px;font-family:'DM Mono',monospace;letter-spacing:.08em}
+
+/* ── RESULTS ── */
+#results{display:none}
+#results.show{display:block}
+.res-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
+.res-hdr h2{font-family:'Playfair Display',serif;font-size:22px;font-style:italic}
+.back-btn{padding:8px 20px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;letter-spacing:.04em}
+.back-btn:hover{border-color:var(--white);color:var(--white)}
+
+/* ── PIN VISUAL PREVIEW ── */
+.pin-preview-wrap{margin-bottom:32px}
+.pin-preview-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--teal);text-transform:uppercase;margin-bottom:12px}
+.pin-previews{display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.pin-card{flex-shrink:0;width:220px;cursor:pointer;transition:transform .2s}
+.pin-card:hover{transform:translateY(-3px)}
+.pin-canvas{width:220px;height:330px;border-radius:14px;overflow:hidden;position:relative;border:1px solid var(--border)}
+.pin-variant-label{font-size:11px;color:var(--muted);margin-top:8px;font-family:'DM Mono',monospace;letter-spacing:.06em;text-align:center}
+
+/* ── COPY RESULTS ── */
+.rb{background:var(--gray);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:10px;position:relative;overflow:hidden}
+.rb::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--pink),var(--teal))}
+.rbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--teal);text-transform:uppercase;margin-bottom:12px}
+.rbc{font-size:13px;line-height:1.8;color:var(--white);white-space:pre-wrap;word-break:break-word}
+.cpbtn{position:absolute;top:14px;right:14px;padding:4px 12px;border-radius:100px;border:1px solid var(--border);background:var(--black);color:var(--muted);font-size:10px;cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace}
+.cpbtn:hover,.cpbtn.ok{border-color:var(--teal);color:var(--teal)}
+
+.err{background:#180808;border:1px solid #ff3c3c33;border-radius:10px;padding:12px 16px;color:#ff8888;font-size:12px;display:none;margin-top:10px;font-family:'DM Mono',monospace}
+.err.show{display:block}
+
+.ftr{text-align:center;padding-top:40px;border-top:1px solid var(--border);margin-top:40px}
+.ftr p{font-family:'DM Mono',monospace;font-size:10px;color:#2A2A2A;letter-spacing:.08em}
+.ftr span{color:var(--pink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="brand">📌 NANDYVISUALS — PinReady Pro</div>
+    <div class="ver">v2.0 · 2026 Trends</div>
+  </div>
+  <h1>Pinterest Pin Generator</h1>
+  <p>Stop-scroll pin packages with live visual mockups — see your pin design before you create it.</p>
+</div>
+
+<!-- PIN TYPE -->
+<div class="slabel">Pin Type</div>
+<div class="mode-row">
+  <button class="mbt active" onclick="setMode('fashion',this)">👗 Fashion</button>
+  <button class="mbt" onclick="setMode('beauty',this)">💄 Beauty</button>
+  <button class="mbt" onclick="setMode('lifestyle',this)">🌿 Lifestyle</button>
+  <button class="mbt" onclick="setMode('affiliate',this)">🛍️ Affiliate</button>
+  <button class="mbt" onclick="setMode('tiktok',this)">🎵 TikTok Shop</button>
+  <button class="mbt" onclick="setMode('brand',this)">✨ Brand Deal</button>
+</div>
+
+<div id="form-section">
+
+  <div class="card">
+    <label>Product or Content *</label>
+    <small>Be specific — product name, outfit, campaign, or content piece.</small>
+    <textarea id="product" placeholder="e.g. Yellow tweed cropped blazer + wide-leg taupe trousers — polished spring office look"></textarea>
+  </div>
+
+  <div class="card">
+    <label>Main Benefit / Problem It Solves</label>
+    <textarea id="benefit" style="min-height:56px" placeholder="e.g. Makes any outfit look expensive and put-together instantly"></textarea>
+  </div>
+
+  <div class="card">
+    <label>Who Is This For? (Their exact moment)</label>
+    <textarea id="audience" style="min-height:56px" placeholder="e.g. Someone returning to the office who wants to look polished but not stiff"></textarea>
+  </div>
+
+  <div class="card">
+    <label>Pin Goal</label>
+    <div class="pill-grp">
+      <input type="radio" name="goal" id="g1" class="pchk" value="Save the pin" checked><label for="g1" class="plbl">Save Pin</label>
+      <input type="radio" name="goal" id="g2" class="pchk" value="Click to shop"><label for="g2" class="plbl">Click to Shop</label>
+      <input type="radio" name="goal" id="g3" class="pchk" value="Follow my Pinterest"><label for="g3" class="plbl">Follow Pinterest</label>
+      <input type="radio" name="goal" id="g4" class="pchk" value="Visit my TikTok or Instagram"><label for="g4" class="plbl">TikTok / IG</label>
+      <input type="radio" name="goal" id="g5" class="pchk" value="Click affiliate link"><label for="g5" class="plbl">Affiliate Link</label>
+    </div>
+  </div>
+
+  <!-- AESTHETIC -->
+  <div class="card">
+    <label>Visual Aesthetic — 2026 Trending</label>
+    <small>Visual codes, palette & lighting baked into every image prompt.</small>
+    <div class="aes-grid">
+      <label class="ac"><input type="radio" name="vibe" value="editorial_cream" checked>
+      <div class="ai"><div class="asw s1"></div><span class="aem">🤍</span><div class="anm">Clean Editorial</div><div class="ads">Cream, gold, linen minimal</div><span class="atr">Evergreen</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="dark_luxury">
+      <div class="ai"><div class="asw s2"></div><span class="aem">🖤</span><div class="anm">Dark Luxury</div><div class="ads">Black, pink glow, cinematic</div><span class="atr">Evergreen</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="vamp_romantic">
+      <div class="ai"><div class="asw s3"></div><span class="aem">🩸</span><div class="anm">Vamp Romantic</div><div class="ads">Plum, burgundy, gothic romance</div><span class="atr">↑ +160%</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="glacier_blue">
+      <div class="ai"><div class="asw s4"></div><span class="aem">🧊</span><div class="anm">Glacier Blue</div><div class="ads">Icy, frosted, polar elegance</div><span class="atr">↑ +150%</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="neo_deco">
+      <div class="ai"><div class="asw s5"></div><span class="aem">✦</span><div class="anm">Neo Deco</div><div class="ads">Art Deco + shimmer geometry</div><span class="atr">↑ Trending</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="gummy_jelly">
+      <div class="ai"><div class="asw s6"></div><span class="aem">🍬</span><div class="anm">Gummy / Jelly</div><div class="ads">Candy pastels, dewy texture</div><span class="atr">↑ +130%</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="goddess_complex">
+      <div class="ai"><div class="asw s7"></div><span class="aem">👑</span><div class="anm">Goddess Complex</div><div class="ads">Gold, amber, divine feminine</div><span class="atr">↑ +760%</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="alien_core">
+      <div class="ai"><div class="asw s8"></div><span class="aem">🛸</span><div class="anm">Alien Core</div><div class="ads">Holographic, opalescent, cosmic</div><span class="atr">↑ +140%</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="lace_core">
+      <div class="ai"><div class="asw s9"></div><span class="aem">🕊️</span><div class="anm">Lace Core</div><div class="ads">Ivory, blush, romantic detail</div><span class="atr">↑ +215%</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="afrohemian">
+      <div class="ai"><div class="asw s10"></div><span class="aem">🌍</span><div class="anm">Afrohemian</div><div class="ads">African textiles, warm earth</div><span class="atr">↑ +220%</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="mystic_outlands">
+      <div class="ai"><div class="asw s11"></div><span class="aem">🌫️</span><div class="anm">Mystic Outlands</div><div class="ads">Mist, moody, ethereal escape</div><span class="atr">↑ +465%</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="glamoratti">
+      <div class="ai"><div class="asw s12"></div><span class="aem">💎</span><div class="anm">Glamoratti</div><div class="ads">80s luxury, gold maximalism</div><span class="atr">↑ Trending</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="warm_lifestyle">
+      <div class="ai"><div class="asw s13"></div><span class="aem">☀️</span><div class="anm">Warm Lifestyle</div><div class="ads">Natural light, amber, candid</div><span class="atr">Evergreen</span></div></label>
+
+      <label class="ac"><input type="radio" name="vibe" value="bold_vibrant">
+      <div class="ai"><div class="asw s14"></div><span class="aem">🔥</span><div class="anm">Bold & Vibrant</div><div class="ads">High contrast, saturated pop</div><span class="atr">Evergreen</span></div></label>
+    </div>
+  </div>
+
+  <!-- LAYOUT SELECTOR -->
+  <div class="card">
+    <label>Pin Text Layout</label>
+    <small>Choose how text sits on your pin — each generates a different visual mockup.</small>
+    <div class="layout-grid">
+
+      <label class="lc"><input type="radio" name="layout" value="split_bottom" checked>
+      <div class="li">
+        <div class="lpreview layout-split">
+          <div class="lp-img"></div>
+          <div class="lp-bar"><div class="lp-line thick"></div><div class="lp-line thin"></div><div class="lp-line xtra"></div></div>
+        </div>
+        <div class="lnm">Split Bottom</div>
+      </div></label>
+
+      <label class="lc"><input type="radio" name="layout" value="overlay_bottom">
+      <div class="li">
+        <div class="lpreview layout-overlay">
+          <div class="lp-img"></div>
+          <div class="lp-bar"><div class="lp-line thick"></div><div class="lp-line thin"></div></div>
+        </div>
+        <div class="lnm">Overlay Bottom</div>
+      </div></label>
+
+      <label class="lc"><input type="radio" name="layout" value="split_top">
+      <div class="li">
+        <div class="lpreview layout-top">
+          <div class="lp-bar" style="padding:8px"><div class="lp-line thick"></div><div class="lp-line thin"></div></div>
+          <div class="lp-img"></div>
+        </div>
+        <div class="lnm">Text Top</div>
+      </div></label>
+
+      <label class="lc"><input type="radio" name="layout" value="center_overlay">
+      <div class="li">
+        <div class="lpreview layout-center">
+          <div class="lp-img"></div>
+          <div class="lp-bar"><div class="lp-line thick" style="margin:auto"></div><div class="lp-line thin" style="margin:auto"></div></div>
+        </div>
+        <div class="lnm">Center Overlay</div>
+      </div></label>
+
+      <label class="lc"><input type="radio" name="layout" value="editorial_frame">
+      <div class="li">
+        <div class="lpreview" style="background:var(--gray2);padding:6px">
+          <div style="border:1px solid #444;border-radius:4px;height:100%;display:flex;flex-direction:column">
+            <div style="background:#1A1A1A;flex:1;border-radius:3px 3px 0 0"></div>
+            <div style="padding:6px;background:#111"><div class="lp-line thick"></div><div class="lp-line thin"></div></div>
+          </div>
+        </div>
+        <div class="lnm">Editorial Frame</div>
+      </div></label>
+
+      <label class="lc"><input type="radio" name="layout" value="collage_flatlay">
+      <div class="li">
+        <div class="lpreview" style="background:var(--gray2);display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:2px">
+          <div style="background:#1A1A2A;border-radius:3px;grid-row:span 2"></div>
+          <div style="background:#2A1A1A;border-radius:3px"></div>
+          <div style="background:#111;border-radius:3px;padding:4px"><div class="lp-line thick"></div><div class="lp-line thin"></div></div>
+        </div>
+        <div class="lnm">Collage Flatlay</div>
+      </div></label>
+
+      <label class="lc"><input type="radio" name="layout" value="minimal_badge">
+      <div class="li">
+        <div class="lpreview" style="background:linear-gradient(160deg,#2A2020,#1A1A2A)">
+          <div style="position:absolute;top:12px;left:10px;right:10px;background:rgba(0,0,0,.6);border-radius:4px;padding:5px 7px"><div class="lp-line thick"></div></div>
+          <div style="position:absolute;bottom:12px;left:10px;right:10px"><div class="lp-line thick"></div><div class="lp-line thin"></div><div style="margin-top:5px;background:var(--pink);border-radius:3px;height:10px;width:60%"></div></div>
+        </div>
+        <div class="lnm">Badge + CTA</div>
+      </div></label>
+
+      <label class="lc"><input type="radio" name="layout" value="magazine_header">
+      <div class="li">
+        <div class="lpreview" style="background:var(--gray2)">
+          <div style="background:#FF3CAC22;border-bottom:1px solid #FF3CAC44;padding:6px 7px"><div class="lp-line thick" style="background:#FF3CAC88"></div></div>
+          <div style="flex:1;background:linear-gradient(160deg,#2A2020,#1A1A2A)"></div>
+          <div style="padding:6px 7px;background:#0E0E0E"><div class="lp-line thin"></div><div class="lp-line xtra"></div></div>
+        </div>
+        <div class="lnm">Magazine Header</div>
+      </div></label>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <label>Target Keyword (Optional)</label>
+    <input type="text" id="keyword" placeholder="e.g. spring work outfit ideas 2026">
+  </div>
+
+  <div id="err" class="err"></div>
+  <button class="gbtn" id="genbtn" onclick="generate()">✨ Generate Pin Package + Visual Mockup</button>
+</div>
+
+<div class="ld" id="ld">
+  <div class="ld-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  <p>Generating your pin package & building visual mockups…</p>
+</div>
+
+<div id="results">
+  <div class="res-hdr">
+    <h2>📌 Your Pin Package</h2>
+    <button class="back-btn" onclick="reset()">← New Pin</button>
+  </div>
+
+  <!-- LIVE PIN MOCKUPS -->
+  <div class="pin-preview-wrap">
+    <div class="pin-preview-label">Live Pin Mockups — Scroll to see all layouts</div>
+    <div class="pin-previews" id="pin-previews"></div>
+  </div>
+
+  <!-- COPY BLOCKS -->
+  <div id="results-inner"></div>
+</div>
+
+<div class="ftr"><p>PinReady Pro v2 · <span>NANDYVISUALS</span> · nandyvisuals.com</p></div>
+</div>
+
+<script>
+let currentMode = 'fashion';
+
+const PLACEHOLDERS = {
+  fashion:'e.g. Yellow tweed cropped blazer + wide-leg taupe trousers — polished spring office look',
+  beauty:'e.g. Medicube Zero Pore Pads — visibly shrinks pores with daily use',
+  lifestyle:'e.g. Linen desk setup with warm lighting and morning coffee ritual',
+  affiliate:'e.g. Stanley Quencher 40oz Rose Quartz — keeps drinks cold all day',
+  tiktok:'e.g. Satin slip dress champagne beige from TikTok Shop — under $30',
+  brand:'e.g. LUMÉ Perfume Oil — long-lasting skin scent that layers beautifully'
+};
+
+// Full aesthetic definitions
+const AES = {
+  editorial_cream:{ label:'🤍 Clean Editorial', bg:'linear-gradient(160deg,#1A1610 0%,#2A2218 100%)', accent:'#C9A96E', text:'#F9F0E0', sub:'#B8A88A', overlay:'rgba(15,12,8,0.82)', badge:'#C9A96E', badgeText:'#0A0805', font:'Cormorant Garamond', titleSize:22, codes:'Cream and warm ivory backgrounds (#F9F0E0), muted dusty gold accents (#C9A96E), soft diffused natural window light, clean negative space, linen textures, matte surfaces, minimal props. No harsh shadows.' },
+  dark_luxury:    { label:'🖤 Dark Luxury',     bg:'linear-gradient(160deg,#0A0A0A 0%,#1A0814 100%)', accent:'#FF3CAC', text:'#F9F5F0', sub:'#FF9DD0', overlay:'rgba(5,0,8,0.88)', badge:'#FF3CAC', badgeText:'#fff', font:'Playfair Display', titleSize:22, codes:'Deep matte black (#0A0A0A), hot pink accent glow (#FF3CAC), dramatic single-source lighting, rich shadow play, dark velvet textures, high editorial contrast.' },
+  vamp_romantic:  { label:'🩸 Vamp Romantic',   bg:'linear-gradient(160deg,#12001A 0%,#2A0820 100%)', accent:'#C8A0D0', text:'#EDD8F5', sub:'#B090C0', overlay:'rgba(10,0,14,0.85)', badge:'#8B0057', badgeText:'#EDD8F5', font:'Cormorant Garamond', titleSize:24, codes:'Deep plum (#4A0030), rich burgundy (#8B0057), smoky violet (#6B3070). Low moody candlelit lighting. Antique velvet and lace textures. Dark dried florals.' },
+  glacier_blue:   { label:'🧊 Glacier Blue',    bg:'linear-gradient(160deg,#0A1520 0%,#152535 100%)', accent:'#7CB9E8', text:'#E8F4FF', sub:'#A8C8E8', overlay:'rgba(8,14,22,0.86)', badge:'#7CB9E8', badgeText:'#040810', font:'Syne', titleSize:18, codes:'Icy light blue (#7CB9E8), frosted silver (#C0D8F0), polar white (#E8F4FF). Crystal-clear surfaces. Holographic sheen. Cold clean light — zero warm tones.' },
+  neo_deco:       { label:'✦ Neo Deco',         bg:'linear-gradient(160deg,#0E0A00 0%,#1A1400 100%)', accent:'#FFD700', text:'#F0D080', sub:'#C9A96E', overlay:'rgba(10,8,0,0.88)', badge:'#FFD700', badgeText:'#0A0800', font:'Cormorant Garamond', titleSize:24, codes:'Art Deco geometric gold (#C9A96E, #FFD700), bold symmetry, rich black (#1A1A1A), silver shimmer. Angular compositions. Modern opulence meets 1920s geometry.' },
+  gummy_jelly:    { label:'🍬 Gummy / Jelly',   bg:'linear-gradient(160deg,#1A0A18 0%,#0A1A14 100%)', accent:'#FFB3C6', text:'#FFF0F5', sub:'#FFDAC1', overlay:'rgba(10,5,14,0.80)', badge:'#FFB3C6', badgeText:'#3A0A18', font:'Syne', titleSize:18, codes:'Candy-bright pastels: jelly pink (#FFB3C6), mint green (#B5EAD7), peach (#FFDAC1). Translucent jelly textures. Glossy surfaces. ASMR-satisfying visual quality.' },
+  goddess_complex:{ label:'👑 Goddess Complex', bg:'linear-gradient(160deg,#100800 0%,#201200 100%)', accent:'#C9A96E', text:'#F0D080', sub:'#C89840', overlay:'rgba(12,7,0,0.86)', badge:'#C9A96E', badgeText:'#060400', font:'Cormorant Garamond', titleSize:24, codes:'Burnished gold (#C9A96E), deep amber (#8B6914), rich bronze (#CD7F32). Diverse Black woman protagonist. Sunset golden-hour lighting. Flowing fabric. Nature elements.' },
+  alien_core:     { label:'🛸 Alien Core',      bg:'linear-gradient(160deg,#04101A 0%,#120820 100%)', accent:'#00F5E4', text:'#E0D0FF', sub:'#80E8F0', overlay:'rgba(3,6,12,0.85)', badge:'#00F5E4', badgeText:'#020810', font:'Syne', titleSize:18, codes:'Holographic teal (#00F5E4), cosmic purple (#8A2BE2), opal lavender (#E0D0FF). Chrome reflections. Pearlescent surfaces. Luminous glowing skin quality.' },
+  lace_core:      { label:'🕊️ Lace Core',       bg:'linear-gradient(160deg,#1A1410 0%,#2A1E18 100%)', accent:'#E8C4C0', text:'#F9F0E8', sub:'#D4A8A0', overlay:'rgba(15,10,8,0.84)', badge:'#E8C4C0', badgeText:'#2A0808', font:'Cormorant Garamond', titleSize:24, codes:'Lace ivory (#F9F0E8), blush pink (#E8C4C0), dusty rose (#D4A8A0). Soft diffused romantic light. Sheer fabrics layered. Fine detail focus.' },
+  afrohemian:     { label:'🌍 Afrohemian',      bg:'linear-gradient(160deg,#0E0800 0%,#1A1000 100%)', accent:'#DAA520', text:'#F5E0B0', sub:'#C8904A', overlay:'rgba(10,6,0,0.86)', badge:'#C1440E', badgeText:'#F5E0B0', font:'Syne', titleSize:18, codes:'Terracotta (#C1440E), rich ochre (#DAA520), forest green (#2D5016). African textile patterns — adire, kente geometry, mudcloth. Rattan and natural fiber materials.' },
+  mystic_outlands:{ label:'🌫️ Mystic Outlands', bg:'linear-gradient(160deg,#080E14 0%,#0E1820 100%)', accent:'#6B8E9F', text:'#D4E0E8', sub:'#8AAABB', overlay:'rgba(5,8,12,0.87)', badge:'#6B8E9F', badgeText:'#020406', font:'Cormorant Garamond', titleSize:24, codes:'Mist grey (#B8C9D4), slate blue (#6B8E9F), dark forest (#2C3E50). Misty atmospheric hazy light. Soft fog effect. Ethereal dreamlike depth of field. Fantasy-adjacent.' },
+  glamoratti:     { label:'💎 Glamoratti',      bg:'linear-gradient(160deg,#0A0800 0%,#1A1400 100%)', accent:'#FFD700', text:'#F7E7CE', sub:'#C0A040', overlay:'rgba(8,6,0,0.88)', badge:'#FFD700', badgeText:'#080600', font:'Playfair Display', titleSize:22, codes:'Deep black (#1A1A1A), bold gold (#FFD700), champagne (#F7E7CE). 80s luxury maximalism reimagined. Sculpted shapes. Chunky gold statement jewelry. Bold polished makeup.' },
+  warm_lifestyle: { label:'☀️ Warm Lifestyle',  bg:'linear-gradient(160deg,#1A1008 0%,#2A1810 100%)', accent:'#D4956A', text:'#F5E6D0', sub:'#C8804A', overlay:'rgba(14,8,4,0.82)', badge:'#D4956A', badgeText:'#0A0400', font:'DM Sans', titleSize:18, codes:'Warm amber (#E8C49A), soft terracotta (#D4956A), linen cream (#F5E6D0). Natural afternoon light, candid human moments. Warm soft shadows. Linen and cotton textures.' },
+  bold_vibrant:   { label:'🔥 Bold & Vibrant',  bg:'linear-gradient(160deg,#1A0008 0%,#0A0A00 100%)', accent:'#FF2D55', text:'#FFFFFF', sub:'#FF9500', overlay:'rgba(10,0,4,0.85)', badge:'#FF2D55', badgeText:'#fff', font:'Syne', titleSize:18, codes:'Electric red (#FF2D55), vivid orange (#FF9500), bold yellow (#FFCC00). High contrast saturated color blocking. Graphic editorial energy. Maximalist color as the hero.' }
+};
+
+// Layout render functions
+const LAYOUTS = {
+  split_bottom: (ctx, w, h, d) => {
+    const imgH = h * 0.62;
+    const textH = h - imgH;
+    ctx.fillStyle = d.bg.includes('linear') ? null : d.bgColor;
+    drawGradient(ctx, d.bg, 0, 0, w, imgH);
+    ctx.fillStyle = d.overlay.replace('rgba','rgba').replace(/[\d.]+\)$/,'0.95)');
+    ctx.fillRect(0, imgH, w, textH);
+    drawSplitText(ctx, w, imgH, textH, d);
+    drawBadge(ctx, w, imgH + 14, d, 'bottom');
+  },
+  overlay_bottom: (ctx, w, h, d) => {
+    drawGradient(ctx, d.bg, 0, 0, w, h);
+    const grad = ctx.createLinearGradient(0, h*0.45, 0, h);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.92)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+    drawOverlayText(ctx, w, h, d, 'bottom');
+    drawBadge(ctx, w, 20, d, 'top-left');
+  },
+  split_top: (ctx, w, h, d) => {
+    const textH = h * 0.3;
+    const imgH = h - textH;
+    ctx.fillStyle = 'rgba(0,0,0,0.94)';
+    ctx.fillRect(0, 0, w, textH);
+    drawGradient(ctx, d.bg, 0, textH, w, imgH);
+    drawSplitText(ctx, w, 0, textH, d);
+    drawBadge(ctx, w, textH + 14, d, 'top-left-img');
+  },
+  center_overlay: (ctx, w, h, d) => {
+    drawGradient(ctx, d.bg, 0, 0, w, h);
+    const pad = 18;
+    const bw = w - pad*2;
+    const bh = h * 0.42;
+    const bx = pad;
+    const by = (h - bh) / 2;
+    ctx.fillStyle = 'rgba(0,0,0,0.78)';
+    roundRect(ctx, bx, by, bw, bh, 12);
+    ctx.fill();
+    ctx.strokeStyle = d.accent + '55';
+    ctx.lineWidth = 1;
+    roundRect(ctx, bx, by, bw, bh, 12);
+    ctx.stroke();
+    drawCenterText(ctx, w, h, bh, d);
+    drawBadge(ctx, w, 18, d, 'top-right');
+  },
+  editorial_frame: (ctx, w, h, d) => {
+    ctx.fillStyle = '#0A0A0A';
+    ctx.fillRect(0, 0, w, h);
+    const pad = 10;
+    drawGradient(ctx, d.bg, pad, pad, w-pad*2, h*0.6);
+    const textY = h * 0.65;
+    drawAccentLine(ctx, pad, textY - 8, w - pad*2, d);
+    drawFrameText(ctx, w, h, textY, d);
+    drawBadge(ctx, w, 18, d, 'top-left');
+  },
+  collage_flatlay: (ctx, w, h, d) => {
+    ctx.fillStyle = '#0D0D0D';
+    ctx.fillRect(0, 0, w, h);
+    const gap = 4;
+    const col1w = w * 0.55;
+    const col2w = w - col1w - gap;
+    drawGradient(ctx, d.bg, 0, 0, col1w, h);
+    const row1h = h * 0.52;
+    const row2h = h - row1h - gap;
+    ctx.fillStyle = d.overlay;
+    ctx.fillRect(col1w + gap, 0, col2w, row1h);
+    ctx.fillStyle = 'rgba(0,0,0,0.93)';
+    ctx.fillRect(col1w + gap, row1h + gap, col2w, row2h);
+    drawCollageText(ctx, w, h, col1w, col2w, gap, d);
+    drawBadge(ctx, w, 18, d, 'top-left');
+  },
+  minimal_badge: (ctx, w, h, d) => {
+    drawGradient(ctx, d.bg, 0, 0, w, h);
+    const topH = 60;
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(0, 0, w, topH);
+    drawAccentLine(ctx, 0, topH, w, d);
+    const grad2 = ctx.createLinearGradient(0, h*0.6, 0, h);
+    grad2.addColorStop(0,'rgba(0,0,0,0)');
+    grad2.addColorStop(1,'rgba(0,0,0,0.92)');
+    ctx.fillStyle = grad2;
+    ctx.fillRect(0, 0, w, h);
+    drawBadgeTop(ctx, w, topH, d);
+    drawMinimalBottom(ctx, w, h, d);
+  },
+  magazine_header: (ctx, w, h, d) => {
+    const headerH = 72;
+    ctx.fillStyle = d.badge;
+    ctx.fillRect(0, 0, w, headerH);
+    drawGradient(ctx, d.bg, 0, headerH, w, h - headerH - 80);
+    ctx.fillStyle = 'rgba(0,0,0,0.93)';
+    ctx.fillRect(0, h - 80, w, 80);
+    drawMagazineText(ctx, w, h, headerH, d);
+  }
+};
+
+// ── DRAWING HELPERS ──
+function drawGradient(ctx, bgStr, x, y, w, h) {
+  const colors = parseGradient(bgStr);
+  const grad = ctx.createLinearGradient(x, y, x + w * 0.3, y + h);
+  colors.forEach((c,i) => grad.addColorStop(i / (colors.length-1), c));
+  ctx.fillStyle = grad;
+  ctx.fillRect(x, y, w, h);
+}
+
+function parseGradient(str) {
+  const matches = str.match(/#[0-9A-Fa-f]{3,8}/g);
+  return matches || ['#1A1A1A','#0A0A0A'];
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+function drawAccentLine(ctx, x, y, w, d) {
+  ctx.fillStyle = d.accent;
+  ctx.fillRect(x, y, w, 2);
+}
+
+function wrapText(ctx, text, x, y, maxW, lineH) {
+  const words = text.split(' ');
+  let line = '';
+  let ly = y;
+  for (const word of words) {
+    const test = line + word + ' ';
+    if (ctx.measureText(test).width > maxW && line !== '') {
+      ctx.fillText(line.trim(), x, ly);
+      line = word + ' ';
+      ly += lineH;
+    } else { line = test; }
+  }
+  ctx.fillText(line.trim(), x, ly);
+  return ly;
+}
+
+function getFont(d, size, style='') { return `${style} ${size}px '${d.font}', serif`; }
+
+function drawSplitText(ctx, w, imgY, textH, d) {
+  const pad = 20;
+  const maxW = w - pad * 2;
+  // decorative line
+  ctx.fillStyle = d.accent;
+  ctx.fillRect(pad, imgY + 16, 32, 2);
+  // category label
+  ctx.font = `500 10px 'DM Mono', monospace`;
+  ctx.fillStyle = d.sub;
+  ctx.letterSpacing = '2px';
+  ctx.fillText((d._category||'TRENDING 2026').toUpperCase(), pad, imgY + 38);
+  ctx.letterSpacing = '0px';
+  // title
+  ctx.font = getFont(d, Math.min(d.titleSize, 20), 'italic');
+  ctx.fillStyle = d.text;
+  const titleY = wrapText(ctx, d._title || 'Your Pin Title Here', pad, imgY + 62, maxW, 26);
+  // subtitle
+  ctx.font = `400 11px 'DM Sans', sans-serif`;
+  ctx.fillStyle = d.sub;
+  wrapText(ctx, d._sub || 'Save this for later ↓', pad, titleY + 18, maxW, 17);
+}
+
+function drawOverlayText(ctx, w, h, d, pos) {
+  const pad = 22;
+  const maxW = w - pad * 2;
+  const baseY = h - 130;
+  ctx.font = getFont(d, Math.min(d.titleSize, 22), 'italic');
+  ctx.fillStyle = d.text;
+  const titleY = wrapText(ctx, d._title || 'Your Pin Title Here', pad, baseY, maxW, 28);
+  ctx.font = `400 11px 'DM Sans', sans-serif`;
+  ctx.fillStyle = d.sub;
+  wrapText(ctx, d._sub || 'Save this for later ↓', pad, titleY + 14, maxW, 17);
+}
+
+function drawCenterText(ctx, w, h, bh, d) {
+  const pad = 36;
+  const maxW = w - pad * 2;
+  const centerY = h / 2 - bh / 2 + 24;
+  ctx.font = getFont(d, Math.min(d.titleSize, 20), 'italic');
+  ctx.fillStyle = d.text;
+  ctx.textAlign = 'center';
+  const titleY = wrapText(ctx, d._title || 'Your Pin Title Here', w/2, centerY, maxW, 26);
+  ctx.font = `400 11px 'DM Sans', sans-serif`;
+  ctx.fillStyle = d.sub;
+  wrapText(ctx, d._sub || 'Save this ↓', w/2, titleY + 14, maxW, 17);
+  ctx.textAlign = 'left';
+}
+
+function drawFrameText(ctx, w, h, textY, d) {
+  const pad = 16;
+  const maxW = w - pad * 2;
+  ctx.font = `500 9px 'DM Mono', monospace`;
+  ctx.fillStyle = d.accent;
+  ctx.fillText((d._category||'TRENDING 2026').toUpperCase(), pad, textY + 16);
+  ctx.font = getFont(d, Math.min(d.titleSize, 20), 'italic');
+  ctx.fillStyle = d.text;
+  const tY = wrapText(ctx, d._title || 'Your Pin Title Here', pad, textY + 36, maxW, 26);
+  ctx.font = `400 11px 'DM Sans', sans-serif`;
+  ctx.fillStyle = d.sub;
+  wrapText(ctx, d._sub || 'Save this for later ↓', pad, tY + 14, maxW, 17);
+}
+
+function drawCollageText(ctx, w, h, col1w, col2w, gap, d) {
+  const x2 = col1w + gap;
+  const pad = 10;
+  const maxW = col2w - pad;
+  // left column overlay
+  const gradL = ctx.createLinearGradient(0, h*0.5, 0, h);
+  gradL.addColorStop(0,'rgba(0,0,0,0)');
+  gradL.addColorStop(1,'rgba(0,0,0,0.85)');
+  ctx.fillStyle = gradL;
+  ctx.fillRect(0, 0, col1w, h);
+  ctx.font = getFont(d, 14, 'italic');
+  ctx.fillStyle = d.text;
+  wrapText(ctx, d._title || 'Your Pin Title', 10, h - 60, col1w - 20, 20);
+  // right top: overlay hook
+  ctx.font = `600 10px 'DM Sans', sans-serif`;
+  ctx.fillStyle = d.accent;
+  const rows = (d._hook || 'Shop this look').split(' ');
+  ctx.fillText(rows.join(' '), x2 + pad, 30);
+  // right bottom: details
+  ctx.font = `400 10px 'DM Mono', monospace`;
+  ctx.fillStyle = d.sub;
+  const row2y = h * 0.52 + gap + 20;
+  wrapText(ctx, d._sub || 'Save this ↓', x2 + pad, row2y, maxW, 15);
+}
+
+function drawBadgeTop(ctx, w, topH, d) {
+  const pad = 16;
+  ctx.font = `700 11px 'DM Mono', monospace`;
+  ctx.fillStyle = d.badgeText;
+  ctx.fillText((d._category||'TRENDING 2026').toUpperCase(), pad, topH/2 + 4);
+}
+
+function drawMinimalBottom(ctx, w, h, d) {
+  const pad = 18;
+  const maxW = w - pad * 2;
+  const baseY = h - 110;
+  ctx.font = getFont(d, Math.min(d.titleSize, 21), 'italic');
+  ctx.fillStyle = d.text;
+  const tY = wrapText(ctx, d._title || 'Your Pin Title', pad, baseY, maxW, 26);
+  ctx.font = `500 10px 'DM Sans', sans-serif`;
+  ctx.fillStyle = d.sub;
+  wrapText(ctx, d._sub || 'Save this ↓', pad, tY + 12, maxW, 16);
+  // CTA pill
+  ctx.fillStyle = d.accent;
+  roundRect(ctx, pad, h - 28, 90, 18, 9);
+  ctx.fill();
+  ctx.font = `700 9px 'DM Mono', monospace`;
+  ctx.fillStyle = d.badgeText;
+  ctx.fillText('SAVE THIS →', pad + 8, h - 15);
+}
+
+function drawMagazineText(ctx, w, h, headerH, d) {
+  const pad = 16;
+  // header text
+  ctx.font = `800 13px 'Syne', sans-serif`;
+  ctx.fillStyle = d.badgeText;
+  ctx.fillText((d._category || 'NANDYVISUALS').toUpperCase(), pad, headerH/2 + 5);
+  // bottom text
+  const maxW = w - pad*2;
+  const baseY = h - 68;
+  ctx.font = getFont(d, Math.min(d.titleSize, 20), 'italic');
+  ctx.fillStyle = d.text;
+  const tY = wrapText(ctx, d._title || 'Your Pin Title Here', pad, baseY, maxW, 26);
+  ctx.font = `400 10px 'DM Mono', monospace`;
+  ctx.fillStyle = d.sub;
+  wrapText(ctx, d._sub || 'Save this ↓', pad, tY + 10, maxW, 16);
+}
+
+function drawBadge(ctx, w, y, d, pos) {
+  const text = (d._niche || 'FASHION').toUpperCase();
+  ctx.font = `600 8px 'DM Mono', monospace`;
+  const tw = ctx.measureText(text).width;
+  const bw = tw + 16;
+  const bh = 16;
+  let bx = pos === 'top-right' ? w - bw - 12 : 12;
+  const by = y;
+  ctx.fillStyle = d.badge;
+  roundRect(ctx, bx, by, bw, bh, 4);
+  ctx.fill();
+  ctx.font = `600 8px 'DM Mono', monospace`;
+  ctx.fillStyle = d.badgeText;
+  ctx.fillText(text, bx + 8, by + 11);
+}
+
+// ── BUILD PIN CANVASES ──
+function buildPinCanvas(vibeKey, layoutKey, data) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 440; canvas.height = 660;
+  const ctx = canvas.getContext('2d');
+  const d = { ...AES[vibeKey], ...data };
+  const fn = LAYOUTS[layoutKey] || LAYOUTS.split_bottom;
+  fn(ctx, 440, 660, d);
+  return canvas;
+}
+
+// ── LAYOUT LABELS ──
+const LAYOUT_NAMES = {
+  split_bottom:'Split Bottom', overlay_bottom:'Overlay Bottom', split_top:'Text Top',
+  center_overlay:'Center Overlay', editorial_frame:'Editorial Frame',
+  collage_flatlay:'Collage Flatlay', minimal_badge:'Badge + CTA', magazine_header:'Magazine Header'
+};
+
+// ── MAIN GENERATE ──
+let currentMode = 'fashion';
+function setMode(m, btn) {
+  currentMode = m;
+  document.querySelectorAll('.mbt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('product').placeholder = PLACEHOLDERS[m] || PLACEHOLDERS.fashion;
+}
+function getVibe(){ return document.querySelector('input[name="vibe"]:checked')?.value || 'editorial_cream'; }
+function getGoal(){ return document.querySelector('input[name="goal"]:checked')?.value || 'Save the pin'; }
+function getLayout(){ return document.querySelector('input[name="layout"]:checked')?.value || 'split_bottom'; }
+
+function buildSystem(vibeKey) {
+  const aes = AES[vibeKey];
+  const modeMap = { fashion:'fashion/outfit styling', beauty:'beauty and skincare', lifestyle:'lifestyle and home', affiliate:'affiliate product', tiktok:'TikTok Shop showcase', brand:'brand deal / UGC creator' };
+  return `You are PinReady Pro — elite Pinterest pin strategist for NANDYVISUALS.
+Generate a COMPLETE stop-scroll Pinterest pin package for ${modeMap[currentMode]||'creator'} content.
+
+AESTHETIC: ${aes.label}
+Visual Codes: ${aes.codes}
+
+PINTEREST RULES:
+- Visual search engine. Write naturally first — keywords second.
+- Title = discovery. Description = context. Overlay = emotion. Each covers DIFFERENT ground.
+- Generic is failure. Everything must be specific to this product and moment.
+- Plain English only. If a real person wouldn't say it to a friend, rewrite it.
+
+BANNED: stress-free, amazing, life-changing, game-changer, seamless, effortless, intuitive, leverage, deploy, consumers, individuals
+
+OUTPUT — return exactly these 7 sections with EXACTLY these headers (used for parsing):
+
+---PIN TITLES---
+[3 options. Title Case. 45–65 chars. Formats: (1) what it is/who it helps, (2) outcome/result, (3) curiosity/question. No brand name in first 40 chars.]
+
+---PIN DESCRIPTION---
+[150–230 chars. Helpful confident human voice. Keyword natural. Different ground from titles and overlays.]
+
+---OVERLAY HOOKS---
+[3 options. 4–10 words each. Unfiltered human energy.
+A: Relatable discovery moment
+B: Outcome or transformation
+C: Social proof or CTA]
+
+---ALT TEXT---
+[1 sentence under 140 chars. Visual description with keyword woven naturally.]
+
+---IMAGE PROMPTS---
+PROMPT A — Visual Showcase:
+[Full 2:3 1000×1500px prompt. Apply ${aes.label} exact palette and lighting. Product/outfit focal point. No people. Open upper third for overlay. Photorealistic.]
+
+PROMPT B — Lifestyle Moment:
+[Full 2:3 prompt. Hands/forearms only. Named specific action. ${aes.label} aesthetic different angle from A. One grounding prop. Candid and warm. Photorealistic.]
+
+---BOARD NAMES---
+[3 boards: (1) AUDIENCE — specific person/situation, (2) ACTIVITY — what they're doing, (3) CONTEXT — lifestyle setting or outcome. Plain searchable English only.]
+
+---PIN VISUAL DATA---
+Return exactly this JSON on one line (no markdown):
+{"title":"[best title from above, max 8 words]","subtitle":"[6-8 word hook from overlays]","hook":"[3-4 word ultra-short hook]","niche":"[one word: FASHION/BEAUTY/SKINCARE/LIFESTYLE/etc]","category":"[2-3 word category like OUTFIT INSPO or SKIN GOALS]"}`;
+}
+
+async function generate() {
+  const product = document.getElementById('product').value.trim();
+  if (!product) {
+    const e = document.getElementById('err');
+    e.textContent = 'Please describe your product or content first.';
+    e.classList.add('show'); return;
+  }
+  document.getElementById('err').classList.remove('show');
+  document.getElementById('genbtn').disabled = true;
+  document.getElementById('ld').classList.add('show');
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('results').classList.remove('show');
+
+  const vibeKey = getVibe();
+  const layoutKey = getLayout();
+
+  const userMsg = `Product/Content: ${product}
+Benefit: ${document.getElementById('benefit').value.trim()||'not specified'}
+Audience: ${document.getElementById('audience').value.trim()||'not specified'}
+Keyword: ${document.getElementById('keyword').value.trim()||'AI decide'}
+Goal: ${getGoal()}
+Aesthetic: ${AES[vibeKey].label}
+Mode: ${currentMode}
+
+Generate the complete pin package including the PIN VISUAL DATA JSON.`;
+
+  try {
+    const res = await fetch('https://visionaries-rouge.vercel.app/api/proxy', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system:buildSystem(vibeKey), messages:[{role:'user',content:userMsg}] })
+    });
+    const data = await res.json();
+    const text = data.content?.map(b=>b.text||'').join('') || '';
+    if (!text) throw new Error('empty');
+    renderResults(text, vibeKey, layoutKey);
+  } catch(e) {
+    document.getElementById('err').textContent = 'Something went wrong. Please try again.';
+    document.getElementById('err').classList.add('show');
+    document.getElementById('form-section').style.display = 'block';
+    document.getElementById('genbtn').disabled = false;
+  }
+  document.getElementById('ld').classList.remove('show');
+}
+
+function parse(text, key) {
+  const re = new RegExp(`---${key}---([\\s\\S]*?)(?=---|$)`,'i');
+  return (text.match(re)?.[1]||'').trim();
+}
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderResults(text, vibeKey, selectedLayout) {
+  // Parse visual data
+  const vdSection = parse(text, 'PIN VISUAL DATA');
+  let vd = { title:'Your Pin Title', subtitle:'Save this for later', hook:'Save This', niche:'FASHION', category:'TRENDING 2026' };
+  try {
+    const jsonStr = vdSection.match(/\{[\s\S]*?\}/)?.[0];
+    if (jsonStr) vd = { ...vd, ...JSON.parse(jsonStr) };
+  } catch(e){}
+
+  // Build all pin mockups
+  const allLayouts = Object.keys(LAYOUTS);
+  const previews = document.getElementById('pin-previews');
+  previews.innerHTML = '';
+
+  allLayouts.forEach(lk => {
+    const isSelected = lk === selectedLayout;
+    const canvasData = { _title: vd.title, _sub: vd.subtitle, _hook: vd.hook, _niche: vd.niche, _category: vd.category };
+    const canvas = buildPinCanvas(vibeKey, lk, canvasData);
+
+    const pinCard = document.createElement('div');
+    pinCard.className = 'pin-card';
+    pinCard.style.border = isSelected ? `2px solid var(--teal)` : '2px solid transparent';
+    pinCard.style.borderRadius = '16px';
+    pinCard.style.padding = '2px';
+
+    const pinWrap = document.createElement('div');
+    pinWrap.className = 'pin-canvas';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.borderRadius = '12px';
+    pinWrap.appendChild(canvas);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'pin-variant-label';
+    lbl.textContent = (isSelected ? '✦ ' : '') + LAYOUT_NAMES[lk];
+    if (isSelected) lbl.style.color = 'var(--teal)';
+
+    pinCard.appendChild(pinWrap);
+    pinCard.appendChild(lbl);
+    previews.appendChild(pinCard);
+  });
+
+  // Copy blocks
+  const SECTIONS = [
+    {key:'PIN TITLES', label:'🏷️  Pin Titles — 3 Options'},
+    {key:'PIN DESCRIPTION', label:'📝  Pin Description'},
+    {key:'OVERLAY HOOKS', label:'💬  Overlay Hooks'},
+    {key:'ALT TEXT', label:'🔍  Alt Text'},
+    {key:'IMAGE PROMPTS', label:'🎨  AI Image Prompts (Copy → Kling / Sora / Higgsfield)'},
+    {key:'BOARD NAMES', label:'📋  Pinterest Board Names'},
+  ];
+
+  let html = `<div style="display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:100px;border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);letter-spacing:.1em;margin-bottom:20px">✦ ${AES[vibeKey].label} · ${LAYOUT_NAMES[selectedLayout]}</div>`;
+
+  for (const s of SECTIONS) {
+    const content = parse(text, s.key);
+    if (!content || s.key === 'PIN VISUAL DATA') continue;
+    const id = 'rc-'+s.key.replace(/\s/g,'-');
+    html += `<div class="rb"><div class="rbl">${s.label}</div><div class="rbc" id="${id}">${esc(content)}</div><button class="cpbtn" onclick="cp('${id}',this)">Copy</button></div>`;
+  }
+
+  document.getElementById('results-inner').innerHTML = html;
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+function cp(id, btn) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>{
+    btn.textContent='Copied ✓'; btn.classList.add('ok');
+    setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('ok'); },2000);
+  });
+}
+
+function reset() {
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('form-section').style.display='block';
+  document.getElementById('genbtn').disabled=false;
+  ['product','benefit','audience','keyword'].forEach(id=>document.getElementById(id).value='');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

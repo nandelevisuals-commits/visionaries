@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Deal Pin Generator — NANDYVISUALS</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:#080707;--ink:#111010;--pink:#FF2D7E;--pink-glow:#FF2D7E1A;
+  --teal:#00F5E4;--teal-glow:#00F5E412;--cream:#F5EFE8;--warm:#1A1614;
+  --muted:#6B635C;--border:#221E1B;
+  --serif:'Instrument Serif',Georgia,serif;--sans:'Syne',sans-serif;--mono:'DM Mono',monospace;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--cream);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,#FF2D7E14 0%,transparent 70%);top:-200px;right:-100px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,#00F5E40C 0%,transparent 70%);bottom:-100px;left:-100px;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:840px;margin:0 auto;padding:0 24px 80px}
+
+header{padding:44px 0 36px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.logo{font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.logo span{color:var(--pink)}
+.badge{font-family:var(--mono);font-size:10px;padding:5px 12px;border-radius:100px;border:1px solid var(--border);color:var(--teal);letter-spacing:.12em}
+h1{font-family:var(--serif);font-size:clamp(34px,5.5vw,58px);font-weight:400;line-height:1.06;margin-bottom:14px}
+h1 em{font-style:italic;color:var(--pink)}
+.header-sub{font-size:14px;color:var(--muted);line-height:1.65;max-width:520px}
+
+.type-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:14px}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px}
+@media(max-width:560px){.type-grid{grid-template-columns:1fr}}
+.type-card{cursor:pointer}
+.type-card input{display:none}
+.type-inner{border:1px solid var(--border);border-radius:16px;padding:20px 22px;background:var(--warm);transition:all .22s;display:flex;gap:14px;align-items:flex-start}
+.type-card input:checked+.type-inner{border-color:var(--pink);background:var(--pink-glow)}
+.type-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.type-name{font-size:14px;font-weight:700;margin-bottom:4px}
+.type-desc{font-size:12px;color:var(--muted);line-height:1.55}
+.type-card input:checked+.type-inner .type-name{color:var(--pink)}
+
+.field-group{margin-bottom:18px}
+.field-group label{display:block;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.field-group small{display:block;font-size:11px;color:#3A3430;margin-bottom:10px;line-height:1.5;font-family:var(--mono)}
+input[type="text"],textarea,select{width:100%;background:var(--warm);border:1px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--cream);font-family:var(--sans);font-size:14px;outline:none;transition:border-color .2s;-webkit-appearance:none;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:var(--pink)}
+textarea{min-height:78px}
+select option{background:#1A1614}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.field-row{grid-template-columns:1fr}}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px}
+.pill-row input{display:none}
+.pill-row label{padding:7px 16px;border-radius:100px;border:1px solid var(--border);font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .18s}
+.pill-row input:checked+label{border-color:var(--teal);color:var(--teal);background:var(--teal-glow)}
+.divider{border:none;border-top:1px solid var(--border);margin:28px 0}
+.form-section-title{font-family:var(--serif);font-size:20px;font-style:italic;color:var(--cream);margin-bottom:20px}
+
+/* AESTHETIC GRID */
+.aes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:8px}
+@media(max-width:560px){.aes-grid{grid-template-columns:repeat(2,1fr)}}
+.aes-card{cursor:pointer}
+.aes-card input{display:none}
+.aes-inner{border:1px solid var(--border);border-radius:13px;padding:12px 14px;background:#0D0B0A;transition:all .2s}
+.aes-card input:checked+.aes-inner{border-color:var(--pink);background:var(--pink-glow)}
+.aes-swatch{width:100%;height:6px;border-radius:3px;margin-bottom:9px}
+.aes-emoji{font-size:16px;margin-bottom:5px;display:block}
+.aes-name{font-size:11px;font-weight:700;color:var(--cream);margin-bottom:3px}
+.aes-card input:checked+.aes-inner .aes-name{color:var(--pink)}
+.aes-note{font-size:9px;color:var(--muted);line-height:1.45;font-family:var(--mono)}
+.aes-badge{display:inline-block;margin-top:5px;font-size:8px;font-family:var(--mono);color:var(--teal);letter-spacing:.06em}
+
+.sw-editorial{background:linear-gradient(90deg,#E8DFD0,#C9A96E,#F9F5F0)}
+.sw-dark{background:linear-gradient(90deg,#0A0A0A,#FF2D7E,#1A0A14)}
+.sw-vamp{background:linear-gradient(90deg,#1A0015,#8B0057,#C8A0D0)}
+.sw-glacier{background:linear-gradient(90deg,#B8D8F0,#7CB9E8,#E8F4FF)}
+.sw-neodeco{background:linear-gradient(90deg,#C9A96E,#FFD700,#1A1A1A)}
+.sw-gummy{background:linear-gradient(90deg,#FFB3C6,#B5EAD7,#FFDAC1)}
+.sw-goddess{background:linear-gradient(90deg,#2A1A0A,#C9A96E,#F0D080)}
+.sw-alien{background:linear-gradient(90deg,#00F5E4,#8A2BE2,#E0D0FF)}
+.sw-lace{background:linear-gradient(90deg,#F9F0E8,#E8D5C0,#D4A8A0)}
+.sw-afrohemian{background:linear-gradient(90deg,#8B4513,#DAA520,#006400)}
+.sw-mystic{background:linear-gradient(90deg,#2C3E50,#6B8E9F,#B8C9D4)}
+.sw-glamoratti{background:linear-gradient(90deg,#1A1A1A,#FFD700,#C0B080)}
+.sw-warm{background:linear-gradient(90deg,#E8C49A,#D4956A,#F5E6D0)}
+.sw-bold{background:linear-gradient(90deg,#FF2D55,#FF9500,#FFCC00)}
+
+.gen-btn{width:100%;padding:18px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--pink) 0%,#c4185e 100%);color:white;font-family:var(--sans);font-size:15px;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:all .25s;margin-top:10px}
+.gen-btn:hover{transform:translateY(-2px);box-shadow:0 10px 40px #FF2D7E44}
+.gen-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+.loading{display:none;text-align:center;padding:60px 20px}
+.loading.show{display:block}
+.loader-ring{display:inline-block;width:48px;height:48px;border-radius:50%;border:2px solid var(--border);border-top-color:var(--pink);border-right-color:var(--teal);animation:spin 1s linear infinite;margin-bottom:20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.1em}
+
+#results{display:none}
+#results.show{display:block}
+.results-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap}
+.results-bar h2{font-family:var(--serif);font-size:28px;font-style:italic}
+.back-btn{padding:9px 22px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--sans)}
+.back-btn:hover{border-color:var(--cream);color:var(--cream)}
+
+.result-badges{margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap}
+.rbadge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;font-family:var(--mono);font-size:11px;letter-spacing:.1em}
+.rbadge-pink{background:var(--pink-glow);border:1px solid var(--pink);color:var(--pink)}
+.rbadge-teal{background:var(--teal-glow);border:1px solid var(--teal);color:var(--teal)}
+
+.result-block{background:var(--warm);border:1px solid var(--border);border-radius:18px;padding:24px 26px;margin-bottom:14px;position:relative;overflow:hidden}
+.result-block::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--pink),var(--teal));border-radius:3px 0 0 3px}
+.rb-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--teal);text-transform:uppercase;margin-bottom:14px}
+.rb-content{font-size:14px;line-height:1.8;color:var(--cream);white-space:pre-wrap;word-break:break-word}
+.copy-btn{position:absolute;top:18px;right:18px;padding:5px 13px;border-radius:100px;border:1px solid var(--border);background:var(--black);color:var(--muted);font-size:11px;cursor:pointer;transition:all .2s;font-family:var(--mono)}
+.copy-btn:hover,.copy-btn.ok{border-color:var(--teal);color:var(--teal)}
+.copy-all-btn{width:100%;padding:14px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--cream);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--sans);margin-top:6px}
+.copy-all-btn:hover{background:var(--warm)}
+
+.err{background:#1a0808;border:1px solid #ff3c3c44;border-radius:12px;padding:14px 18px;color:#ff8080;font-size:13px;display:none;margin-top:12px;font-family:var(--mono)}
+.err.show{display:block}
+footer{margin-top:60px;padding-top:28px;border-top:1px solid var(--border);text-align:center}
+footer p{font-family:var(--mono);font-size:11px;color:#3A3530;letter-spacing:.08em}
+footer span{color:var(--pink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="header-top">
+    <div class="logo">NANDY<span>VISUALS</span></div>
+    <div class="badge">Brand Deal System</div>
+  </div>
+  <h1>Brand Deal<br><em>Pin Generator</em></h1>
+  <p class="header-sub">Pinterest pins that make brands find you, want you, and DM you first — with every 2026 trending aesthetic built in.</p>
+</header>
+
+<div id="form-wrap">
+  <div class="type-label">Choose Your Pin Type</div>
+  <div class="type-grid">
+    <label class="type-card"><input type="radio" name="pintype" value="portfolio" checked>
+    <div class="type-inner"><span class="type-icon">🖼️</span><div><div class="type-name">Portfolio Showcase</div><div class="type-desc">Show specific work to prove your skills to brands</div></div></div></label>
+
+    <label class="type-card"><input type="radio" name="pintype" value="authority">
+    <div class="type-inner"><span class="type-icon">👑</span><div><div class="type-name">Creator Authority</div><div class="type-desc">Position yourself as the go-to AI UGC creator</div></div></div></label>
+
+    <label class="type-card"><input type="radio" name="pintype" value="collab">
+    <div class="type-inner"><span class="type-icon">🤝</span><div><div class="type-name">Collab Pitch Pin</div><div class="type-desc">Directly invite brands to work with you</div></div></div></label>
+
+    <label class="type-card"><input type="radio" name="pintype" value="result">
+    <div class="type-inner"><span class="type-icon">📈</span><div><div class="type-name">Results / Social Proof</div><div class="type-desc">Showcase outcomes to build credibility fast</div></div></div></label>
+  </div>
+
+  <hr class="divider">
+  <div class="form-section-title">Your work & context</div>
+
+  <div class="field-group">
+    <label>What Are You Showcasing? *</label>
+    <small>Campaign, content style, tool, result, or message. Be concrete.</small>
+    <textarea id="showcase" placeholder="e.g. A cinematic AI beauty campaign for LUMÉ Skincare — glass skin editorial, diverse Black woman protagonist, delivered in 48hrs using Kling 3.0 Pro"></textarea>
+  </div>
+
+  <div class="field-row">
+    <div class="field-group">
+      <label>Your Niche</label>
+      <select id="niche">
+        <option>Beauty & Skincare</option><option>Fashion & Style</option>
+        <option>Lifestyle & Wellness</option><option>K-Beauty</option>
+        <option>Fragrance</option><option>AI Content Creation</option>
+        <option>UGC & Brand Content</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Target Brand Type</label>
+      <select id="brandtype">
+        <option>Beauty & Skincare brands</option><option>Fashion brands</option>
+        <option>Lifestyle brands</option><option>Indie / DTC brands</option>
+        <option>Luxury brands</option><option>Any brand needing UGC</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>Your Unique Edge</label>
+    <input type="text" id="edge" value="AI-generated cinematic UGC with diverse protagonists, 48hr delivery, Kling 3.0 Pro + Higgsfield — editorial quality at creator speed">
+  </div>
+
+  <div class="field-group">
+    <label>Visual Aesthetic — 2026 Pinterest Trends</label>
+    <small>Image prompts fully coded to this aesthetic's exact palette, lighting & mood.</small>
+    <div class="aes-grid">
+      <label class="aes-card"><input type="radio" name="vibe" value="editorial_cream" checked>
+      <div class="aes-inner"><div class="aes-swatch sw-editorial"></div><span class="aes-emoji">🤍</span><div class="aes-name">Clean Editorial</div><div class="aes-note">Cream, gold, linen minimal</div><span class="aes-badge">Evergreen</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="dark_luxury">
+      <div class="aes-inner"><div class="aes-swatch sw-dark"></div><span class="aes-emoji">🖤</span><div class="aes-name">Dark Luxury</div><div class="aes-note">Black, pink glow, cinematic</div><span class="aes-badge">Evergreen</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="vamp_romantic">
+      <div class="aes-inner"><div class="aes-swatch sw-vamp"></div><span class="aes-emoji">🩸</span><div class="aes-name">Vamp Romantic</div><div class="aes-note">Deep plum, gothic romance</div><span class="aes-badge">↑ +160%</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="glacier_blue">
+      <div class="aes-inner"><div class="aes-swatch sw-glacier"></div><span class="aes-emoji">🧊</span><div class="aes-name">Glacier Blue</div><div class="aes-note">Icy, frosted, polar elegance</div><span class="aes-badge">↑ +150%</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="neo_deco">
+      <div class="aes-inner"><div class="aes-swatch sw-neodeco"></div><span class="aes-emoji">✦</span><div class="aes-name">Neo Deco</div><div class="aes-note">Art Deco + modern shimmer</div><span class="aes-badge">↑ Trending</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="gummy_jelly">
+      <div class="aes-inner"><div class="aes-swatch sw-gummy"></div><span class="aes-emoji">🍬</span><div class="aes-name">Gummy / Jelly</div><div class="aes-note">Candy pastels, dewy texture</div><span class="aes-badge">↑ +130%</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="goddess_complex">
+      <div class="aes-inner"><div class="aes-swatch sw-goddess"></div><span class="aes-emoji">👑</span><div class="aes-name">Goddess Complex</div><div class="aes-note">Gold, amber, divine feminine</div><span class="aes-badge">↑ +760%</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="alien_core">
+      <div class="aes-inner"><div class="aes-swatch sw-alien"></div><span class="aes-emoji">🛸</span><div class="aes-name">Alien Core</div><div class="aes-note">Holographic, opalescent, cosmic</div><span class="aes-badge">↑ +140%</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="lace_core">
+      <div class="aes-inner"><div class="aes-swatch sw-lace"></div><span class="aes-emoji">🕊️</span><div class="aes-name">Lace Core</div><div class="aes-note">Ivory, blush, romantic detail</div><span class="aes-badge">↑ +215%</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="afrohemian">
+      <div class="aes-inner"><div class="aes-swatch sw-afrohemian"></div><span class="aes-emoji">🌍</span><div class="aes-name">Afrohemian</div><div class="aes-note">African textiles, warm earth</div><span class="aes-badge">↑ +220%</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="mystic_outlands">
+      <div class="aes-inner"><div class="aes-swatch sw-mystic"></div><span class="aes-emoji">🌫️</span><div class="aes-name">Mystic Outlands</div><div class="aes-note">Mist, moody, ethereal escape</div><span class="aes-badge">↑ +465%</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="glamoratti">
+      <div class="aes-inner"><div class="aes-swatch sw-glamoratti"></div><span class="aes-emoji">💎</span><div class="aes-name">Glamoratti</div><div class="aes-note">80s luxury, gold maximalism</div><span class="aes-badge">↑ Trending</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="warm_lifestyle">
+      <div class="aes-inner"><div class="aes-swatch sw-warm"></div><span class="aes-emoji">☀️</span><div class="aes-name">Warm Lifestyle</div><div class="aes-note">Natural light, amber, candid</div><span class="aes-badge">Evergreen</span></div></label>
+
+      <label class="aes-card"><input type="radio" name="vibe" value="bold_vibrant">
+      <div class="aes-inner"><div class="aes-swatch sw-bold"></div><span class="aes-emoji">🔥</span><div class="aes-name">Bold & Vibrant</div><div class="aes-note">High contrast, saturated color</div><span class="aes-badge">Evergreen</span></div></label>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>CTA — Where to Send Brands</label>
+    <div class="pill-row">
+      <input type="radio" name="cta" id="ct1" value="DM me on Instagram @nandyvisuals" checked><label for="ct1">DM Instagram</label>
+      <input type="radio" name="cta" id="ct2" value="Visit nandyvisuals.com/mediakit"><label for="ct2">Media Kit</label>
+      <input type="radio" name="cta" id="ct3" value="DM me on TikTok @theeaivisualz"><label for="ct3">DM TikTok</label>
+      <input type="radio" name="cta" id="ct4" value="Email hello@nandyvisuals.com"><label for="ct4">Email</label>
+    </div>
+  </div>
+
+  <div id="err" class="err"></div>
+  <button class="gen-btn" id="gen-btn" onclick="generate()">✦ Generate My Brand Deal Pin Package</button>
+</div>
+
+<div class="loading" id="loading">
+  <div class="loader-ring"></div>
+  <p>Building your brand deal pin package…</p>
+</div>
+
+<div id="results">
+  <div class="results-bar">
+    <h2>Your Pin Package</h2>
+    <button class="back-btn" onclick="reset()">← New Pin</button>
+  </div>
+  <div class="result-badges" id="badges"></div>
+  <div id="results-inner"></div>
+  <button class="copy-all-btn" onclick="copyAll()">Copy Full Package</button>
+</div>
+
+<footer><p>Brand Deal Pin Generator · <span>NANDYVISUALS</span> · nandyvisuals.com</p></footer>
+</div>
+
+<script>
+const PIN_TYPES = {
+  portfolio:{ label:'🖼️ Portfolio Showcase Pin', strategy:'Lead with visual quality, niche, tools, and result. Titles written so brand managers searching "AI UGC creator for beauty brands" find this. Feel like a real portfolio piece — not an ad. Make brands think: "I need this creator."' },
+  authority:{ label:'👑 Creator Authority Pin', strategy:'Share a POV, process reveal, or insight only a skilled AI content creator would know. Educational but impressive. Brands see it and think "this person knows exactly what they are doing."' },
+  collab:   { label:'🤝 Collab Pitch Pin', strategy:'Lead with what the BRAND GETS — not about you. Clear offer and CTA. Feel premium, confident, specific — not desperate.' },
+  result:   { label:'📈 Results & Social Proof Pin', strategy:'Lead with a result, reaction, or transformation. Numbers, feedback, visual proof. Create FOMO — make brands feel behind for not working with you already.' }
+};
+
+const AESTHETICS = {
+  editorial_cream:  { label:'🤍 Clean Editorial',    codes:'Cream (#F9F0E0), warm ivory (#EDE0CC), dusty gold (#C9A96E). Soft diffused natural window light. Clean negative space. Linen textures. Matte surfaces. Minimal props. Magazine composition.' },
+  dark_luxury:      { label:'🖤 Dark Luxury',         codes:'Matte black (#0A0A0A), hot pink glow (#FF2D7E). Dramatic single-source lighting. Rich shadow play. Dark velvet textures. High editorial contrast. Cream (#F9F5F0) as sole bright accent.' },
+  vamp_romantic:    { label:'🩸 Vamp Romantic',       codes:'Deep plum (#4A0030), burgundy (#8B0057), smoky violet (#6B3070), gothic rose (#C8A0D0). Low moody candlelit lighting. Antique velvet and lace textures. Dark dried florals. Victorian elegance.' },
+  glacier_blue:     { label:'🧊 Glacier Blue',        codes:'Icy blue (#7CB9E8), frosted silver (#C0D8F0), polar white (#E8F4FF), icy lavender (#D0D8F0). Crystal-clear frosted glass surfaces. Holographic sheen. Cold clean light — zero warm tones.' },
+  neo_deco:         { label:'✦ Neo Deco',             codes:'Art Deco gold filigree (#C9A96E, #FFD700), bold symmetry, rich black (#1A1A1A), silver shimmer (#C0C0C0). Stained glass color blocking. Angular compositions. 1920s geometry meets modern opulence.' },
+  gummy_jelly:      { label:'🍬 Gummy / Jelly',       codes:'Jelly pink (#FFB3C6), mint green (#B5EAD7), peach (#FFDAC1), lavender (#C7CEEA). Translucent jelly textures. Bouncy dewy finishes. ASMR-satisfying visual quality. Glossy reflective surfaces.' },
+  goddess_complex:  { label:'👑 Goddess Complex',     codes:'Burnished gold (#C9A96E), deep amber (#8B6914), bronze (#CD7F32), warm earth (#2A1A0A). Diverse Black woman protagonist. Sunset golden-hour lighting. Flowing fabric. Nature elements — florals, earth, water.' },
+  alien_core:       { label:'🛸 Alien Core',          codes:'Holographic teal (#00F5E4), cosmic purple (#8A2BE2), opal lavender (#E0D0FF), pearl shimmer (#E8F0FF). Chrome reflections. Pearlescent surfaces. Soft lavender-teal atmosphere. Luminous glowing skin.' },
+  lace_core:        { label:'🕊️ Lace Core',           codes:'Lace ivory (#F9F0E8), blush pink (#E8C4C0), dusty rose (#D4A8A0), antique cream (#EDE0D0). Delicate lace overlay textures. Soft diffused romantic light. Sheer fabrics. Victorian-romantic softness.' },
+  afrohemian:       { label:'🌍 Afrohemian',          codes:'Terracotta (#C1440E), rich ochre (#DAA520), forest green (#2D5016), warm sienna (#8B4513). African textile patterns — adire, kente, mudcloth. Rattan and natural fiber materials. Cultural pride.' },
+  mystic_outlands:  { label:'🌫️ Mystic Outlands',     codes:'Mist grey (#B8C9D4), slate blue (#6B8E9F), dark forest (#2C3E50), soft pewter (#A8B8C0). Misty atmospheric hazy light. Soft fog effect. Ethereal dreamlike depth of field. Fantasy-adjacent.' },
+  glamoratti:       { label:'💎 Glamoratti',          codes:'Deep black (#1A1A1A), bold gold (#FFD700), champagne (#F7E7CE). 80s luxury maximalism reimagined. Sculpted dramatic shapes. Chunky gold statement jewelry. Power-dressing energy. Bold polished makeup.' },
+  warm_lifestyle:   { label:'☀️ Warm Lifestyle',      codes:'Warm amber (#E8C49A), soft terracotta (#D4956A), linen cream (#F5E6D0). Natural afternoon light. Candid human moments. Warm soft shadows. Linen textures. Coffee cups, plants, open windows.' },
+  bold_vibrant:     { label:'🔥 Bold & Vibrant',      codes:'Electric red (#FF2D55), vivid orange (#FF9500), bold yellow (#FFCC00). High contrast saturated color blocking. Graphic editorial energy. Strong shadows. Maximalist color as the hero.' }
+};
+
+function getPinType(){ return document.querySelector('input[name="pintype"]:checked')?.value||'portfolio'; }
+function getVibe(){ return document.querySelector('input[name="vibe"]:checked')?.value||'editorial_cream'; }
+function getCTA(){ return document.querySelector('input[name="cta"]:checked')?.value||'DM me on Instagram @nandyvisuals'; }
+
+function buildSystem(pinType, vibeKey) {
+  const pt = PIN_TYPES[pinType];
+  const aes = AESTHETICS[vibeKey];
+  return `You are PinReady Pro — Pinterest pin strategist for NANDYVISUALS brand deal attraction.
+
+CREATOR: Nandy (@nandyvisuals Instagram/Pinterest/Threads, @theeaivisualz TikTok)
+SPECIALTY: Cinematic AI UGC for beauty, skincare, fashion & lifestyle brands
+TOOLS: Kling 3.0 Pro, Higgsfield, Sora 2, Seedance 2.0
+SIGNATURE: Diverse Black woman protagonists, editorial quality, 48hr delivery
+WEBSITE: nandyvisuals.com/mediakit
+
+PIN TYPE: ${pt.label}
+STRATEGY: ${pt.strategy}
+
+AESTHETIC: ${aes.label}
+Visual Codes: ${aes.codes}
+
+CRITICAL: Both image prompts must fully express ${aes.label} using exact palette colors, specified lighting, and textures listed above.
+
+PINTEREST RULES:
+- Brand managers and creative directors search Pinterest for creators.
+- Titles searchable by people typing "AI UGC creator for beauty brands" or "hire AI content creator."
+- Sound like a confident real creator — not a pitch deck.
+
+BANNED: seamless, effortless, leverage, game-changer, amazing, stress-free, intuitive, consumers, individuals
+
+OUTPUT — exactly these 6 sections:
+
+---PIN TITLES---
+[3 options. Title Case. 45–65 chars. Three formats: (1) what you do/who it's for, (2) outcome for brands, (3) curiosity/process. Front-load the hook.]
+
+---PIN DESCRIPTION---
+[150–220 chars. Confident creator voice. Includes CTA. Natural — not keyword-stuffed. Different ground from titles and overlays.]
+
+---OVERLAY HOOKS---
+[3 options, 4–10 words each.
+A: Bold positioning ("I make brands look like this in 48 hours")
+B: Process tease ("This took 2 prompts and a brief")
+C: Direct brand call-out or social proof]
+
+---ALT TEXT---
+[One sentence under 140 chars. Visual description with creator angle woven naturally.]
+
+---IMAGE PROMPTS---
+PROMPT A — Work Showcase:
+[Full vertical 2:3 1000×1500px. Shows cinematic editorial content. Apply ${aes.label} — exact palette, lighting, textures. Open upper third. NOT generic.]
+
+PROMPT B — Creator at Work:
+[Full vertical 2:3. Hands at laptop/tablet, screen glowing with beautiful AI content. Apply ${aes.label} different lighting angle. Cinematic workspace — not stock photo.]
+
+---BOARD NAMES---
+[3 boards for brand discovery.
+Board 1 — AUDIENCE: Brand managers and their search need
+Board 2 — ACTIVITY: Looking for creators, planning campaigns
+Board 3 — CONTEXT: Outcome they want]`;
+}
+
+async function generate() {
+  const showcase = document.getElementById('showcase').value.trim();
+  if (!showcase) {
+    const err = document.getElementById('err');
+    err.textContent = "Tell me what you're showcasing first.";
+    err.classList.add('show'); return;
+  }
+  document.getElementById('err').classList.remove('show');
+  document.getElementById('gen-btn').disabled = true;
+  document.getElementById('loading').classList.add('show');
+  document.getElementById('form-wrap').style.display = 'none';
+
+  const pinType = getPinType();
+  const vibeKey = getVibe();
+  const aes = AESTHETICS[vibeKey];
+
+  const userMsg = `Pin Type: ${PIN_TYPES[pinType].label}
+What I'm showcasing: ${showcase}
+Niche: ${document.getElementById('niche').value}
+Target Brand: ${document.getElementById('brandtype').value}
+My Edge: ${document.getElementById('edge').value.trim()}
+Aesthetic: ${aes.label}
+CTA: ${getCTA()}
+
+Generate the full brand deal pin package with image prompts specific to the ${aes.label} visual codes.`;
+
+  try {
+    const res = await fetch('https://visionaries-rouge.vercel.app/api/proxy', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:buildSystem(pinType, vibeKey),
+        messages:[{role:'user',content:userMsg}]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.map(b=>b.text||'').join('')||'';
+    if (!text) throw new Error('empty');
+    renderResults(text, pinType, vibeKey);
+  } catch(e) {
+    document.getElementById('err').textContent = 'Something went wrong. Please try again.';
+    document.getElementById('err').classList.add('show');
+    document.getElementById('form-wrap').style.display = 'block';
+    document.getElementById('gen-btn').disabled = false;
+  }
+  document.getElementById('loading').classList.remove('show');
+}
+
+const SECTIONS = [
+  {key:'PIN TITLES',      label:'🏷️  Pin Titles — 3 Options'},
+  {key:'PIN DESCRIPTION', label:'📝  Pin Description'},
+  {key:'OVERLAY HOOKS',   label:'💬  Overlay Hooks'},
+  {key:'ALT TEXT',        label:'🔍  Alt Text'},
+  {key:'IMAGE PROMPTS',   label:'🎨  AI Image Prompts'},
+  {key:'BOARD NAMES',     label:'📋  Pinterest Board Names'},
+];
+
+function parse(text, key){ const re=new RegExp(`---${key}---([\\s\\S]*?)(?=---|$)`,'i'); return(text.match(re)?.[1]||'').trim(); }
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderResults(text, pinType, vibeKey) {
+  const pt = PIN_TYPES[pinType];
+  const aes = AESTHETICS[vibeKey];
+  document.getElementById('badges').innerHTML =
+    `<div class="rbadge rbadge-pink">${pt.label}</div><div class="rbadge rbadge-teal">✦ ${aes.label}</div>`;
+
+  let html = '';
+  for (const s of SECTIONS) {
+    const content = parse(text, s.key);
+    if (!content) continue;
+    const id='rb-'+s.key.replace(/\s/g,'-');
+    html+=`<div class="result-block"><div class="rb-label">${s.label}</div><div class="rb-content" id="${id}">${esc(content)}</div><button class="copy-btn" onclick="copyBlock('${id}',this)">Copy</button></div>`;
+  }
+  document.getElementById('results-inner').innerHTML = html;
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+function copyBlock(id, btn) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>{
+    btn.textContent='Copied ✓'; btn.classList.add('ok');
+    setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('ok'); },2000);
+  });
+}
+
+function copyAll() {
+  const all=[...document.querySelectorAll('.rb-content')].map(e=>e.innerText).join('\n\n---\n\n');
+  navigator.clipboard.writeText(all).then(()=>{
+    const btn=document.querySelector('.copy-all-btn');
+    btn.textContent='Copied ✓';
+    setTimeout(()=>btn.textContent='Copy Full Package',2500);
+  });
+}
+
+function reset() {
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('results-inner').innerHTML='';
+  document.getElementById('form-wrap').style.display='block';
+  document.getElementById('gen-btn').disabled=false;
+  document.getElementById('showcase').value='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
