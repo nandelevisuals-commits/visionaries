@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NANDYVISUALS — Scene Engine</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; color: #f0f0f0; font-family: 'Space Mono', monospace; overflow-x: hidden; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #ff2d78; border-radius: 2px; }
+  .tbtn, .cbtn, .chip { cursor: pointer; border: none; transition: all 0.18s ease; }
+  .tbtn:hover { transform: translateY(-2px); }
+  .cbtn:hover { opacity: 0.8; }
+  .chip:hover { transform: scale(1.05); }
+  .scard { transition: transform 0.18s ease; }
+  .scard:hover { transform: translateX(4px); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes glow { 0%,100%{box-shadow:0 0 0 #ff2d7800} 50%{box-shadow:0 0 14px #ff2d7830} }
+  .fade-in { animation: fadeIn 0.4s ease forwards; }
+  .vp { animation: glow 2.5s ease infinite; }
+  input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:3px; background:#222; border-radius:2px; outline:none; cursor:pointer; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:15px; height:15px; background:#ff2d78; border-radius:50%; cursor:pointer; transition:transform 0.15s; }
+  input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.35); }
+  textarea { resize:none; outline:none; font-family: 'Space Mono', monospace; }
+  textarea::placeholder { color:#2a2a2a; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+const TOGGLES = [
+  { id: "kawaii", label: "KAWAII", emoji: "🎀", desc: "Pastel · floaty · whimsical" },
+  { id: "luxury", label: "LUXURY", emoji: "💎", desc: "Slow motion · clean · fashion" },
+  { id: "blockbuster", label: "BLOCKBUSTER", emoji: "🎬", desc: "Max speed · chaos · aggressive" },
+  { id: "ugc", label: "UGC", emoji: "📱", desc: "iPhone · vlog · reaction" },
+];
+
+const SLIDERS = [
+  { id: "speed", label: "SPEED", left: "SLOW", right: "FAST" },
+  { id: "tone", label: "TONE", left: "CALM", right: "CHAOTIC" },
+  { id: "aesthetic", label: "AESTHETIC", left: "RAW", right: "CINEMATIC" },
+  { id: "scale", label: "SCALE", left: "GROUNDED", right: "SURREAL" },
+];
+
+const VIBE_CHIPS = [
+  "soft apocalypse", "crying in a luxury hotel", "editorial fever dream",
+  "dreamcore underwater", "Wes Anderson meets horror", "golden hour chaos",
+  "silent disco in space", "tender violence", "slow motion heartbreak",
+  "ethereal street documentary",
+];
+
+function buildVibePreview(toggles, sliders, customVibe) {
+  const parts = [];
+  const s = sliders;
+  if (s.speed < 30) parts.push("slow-burning pace");
+  else if (s.speed > 70) parts.push("rapid-fire pace");
+  else parts.push("measured pace");
+  if (s.tone < 30) parts.push("emotionally still");
+  else if (s.tone > 70) parts.push("chaotic energy");
+  else parts.push("balanced tension");
+  if (s.aesthetic < 30) parts.push("raw unfiltered look");
+  else if (s.aesthetic > 70) parts.push("highly cinematic framing");
+  else parts.push("editorial feel");
+  if (s.scale > 70) parts.push("surreal world-bending");
+  else if (s.scale < 30) parts.push("grounded physics");
+  if (toggles.length > 0) parts.push(toggles.map(t => t.toUpperCase()).join(" + ") + " aesthetic");
+  if (customVibe.trim()) parts.push(`"${customVibe.trim()}" energy`);
+  return parts.length ? `Your vibe: ${parts.join(", ")}.` : "Adjust sliders or type a custom vibe to preview your direction.";
+}
+
+function App() {
+  const [image, setImage] = useState(null);
+  const [imageBase64, setImageBase64] = useState(null);
+  const [imageMime, setImageMime] = useState("image/jpeg");
+  const [activeToggles, setActiveToggles] = useState([]);
+  const [sliders, setSliders] = useState({ speed: 50, tone: 50, aesthetic: 70, scale: 50 });
+  const [customVibe, setCustomVibe] = useState("");
+  const [vibePreview, setVibePreview] = useState("");
+  const [output, setOutput] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(null);
+  const [dragOver, setDragOver] = useState(false);
+  const [error, setError] = useState(null);
+  const fileRef = useRef();
+
+  useEffect(() => {
+    setVibePreview(buildVibePreview(activeToggles, sliders, customVibe));
+  }, [activeToggles, sliders, customVibe]);
+
+  const handleImage = (file) => {
+    if (!file) return;
+    setImage(URL.createObjectURL(file));
+    setImageMime(file.type || "image/jpeg");
+    const reader = new FileReader();
+    reader.onload = (e) => setImageBase64(e.target.result.split(",")[1]);
+    reader.readAsDataURL(file);
+    setOutput(null);
+    setError(null);
+  };
+
+  const toggleActive = (id) => {
+    setActiveToggles((prev) => prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]);
+  };
+
+  const setSlider = (id, val) => setSliders((prev) => ({ ...prev, [id]: Number(val) }));
+
+  const buildSystemPrompt = () => {
+    const s = sliders;
+    const speedDesc = s.speed < 30 ? "very slow deliberate pacing" : s.speed > 70 ? "fast rapid-fire pacing" : "moderate pacing";
+    const toneDesc = s.tone < 30 ? "emotionally calm and still" : s.tone > 70 ? "chaotic and high-energy" : "balanced tension with emotional undercurrent";
+    const aestheticDesc = s.aesthetic < 30 ? "raw handheld unfiltered look" : s.aesthetic > 70 ? "highly cinematic composed framing" : "semi-polished editorial feel";
+    const scaleDesc = s.scale < 30 ? "grounded real-world physics" : s.scale > 70 ? "surreal world-bending scale shifts" : "mild surrealism with believable physics";
+    return `You are the cinematic AI engine for NANDYVISUALS, a creative studio specializing in AI-generated viral video content.
+
+Your job: analyze an image and generate a complete viral scene system optimized for Seedance 2.0 video generation.
+
+VIBE CONFIGURATION:
+- Speed: ${speedDesc} (${s.speed}/100)
+- Tone: ${toneDesc} (${s.tone}/100)
+- Aesthetic: ${aestheticDesc} (${s.aesthetic}/100)
+- Scale: ${scaleDesc} (${s.scale}/100)
+- Preset toggles active: ${activeToggles.length > 0 ? activeToggles.map(t => t.toUpperCase()).join(" + ") : "none"}
+- Custom vibe: ${customVibe.trim() || "none specified"}
+
+TOGGLE EFFECTS (apply if active):
+- KAWAII: pastel color grading, softer physics, floaty motion, whimsical reactions
+- LUXURY: elegance over chaos, slow motion dominance, clean compositions, fashion focus, fewer cuts
+- BLOCKBUSTER: maximum speed, destruction energy, aggressive camera, whip pans, heavy motion blur
+- UGC: iPhone handheld feel, vlog storytelling, POV shots, talking to camera, chaotic framing
+
+CUSTOM VIBE RULE: If a custom vibe string is present, treat it as the emotional and aesthetic north star. Every scene should feel like it inhabits that world. Interpret it cinematically and creatively.
+
+CINEMATIC PATH — choose ONE:
+- LAUNCH PATH: jump → chase
+- FALL PATH: drop → transformation
+- DISRUPTION PATH: calm → chaos
+- SCALE PATH: size change
+- POV PATH: object ride / perspective shift
+
+ESCALATION RULE (NON-NEGOTIABLE): Every scene must add ONE new element — motion, obstacle, scale shift, or camera behavior. If a scene does not escalate — rewrite it.
+
+OUTPUT — respond ONLY in this exact JSON, no markdown, no preamble:
+{
+  "title": "scroll-stopping title, short and curiosity-driven",
+  "path": "chosen cinematic path name",
+  "vibeInterpretation": "one sentence: how the full vibe config was interpreted",
+  "imageAnalysis": {
+    "poseEnergy": "description",
+    "environment": "description",
+    "heightRisk": "description",
+    "emotionalTone": "description"
+  },
+  "scenes": [
+    {
+      "number": 1,
+      "timestamp": "0:00 – 0:02",
+      "label": "SCENE LABEL IN CAPS",
+      "seedancePrompt": "3-5 lines of clean Seedance 2.0 director notes, copy-paste ready",
+      "camera": "camera behavior this shot",
+      "escalation": "what new element was added vs previous scene"
+    }
+  ],
+  "caption": "TikTok/Threads viral caption with emojis",
+  "hooks": ["hook 1", "hook 2", "hook 3"],
+  "loopStrategy": "how the end frame connects back to the beginning for seamless replay"
+}
+
+Generate 8-12 scenes. Make every seedancePrompt feel like a director talking to a camera operator — precise, visual, no fluff.`;
+  };
+
+  const generate = async () => {
+    if (!imageBase64) return;
+    setLoading(true);
+    setOutput(null);
+    setError(null);
+    try {
+      const response = await fetch("/api/proxy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 4000,
+          system: buildSystemPrompt(),
+          messages: [{
+            role: "user",
+            content: [
+              { type: "image", source: { type: "base64", media_type: imageMime, data: imageBase64 } },
+              { type: "text", text: "Analyze this image and generate the complete viral scene system. Apply the full vibe configuration. Output ONLY valid JSON." },
+            ],
+          }],
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error?.message || `API error ${response.status}`);
+      const text = data.content?.map((b) => b.text || "").join("");
+      const clean = text.replace(/```json|```/g, "").trim();
+      setOutput(JSON.parse(clean));
+    } catch (err) {
+      setError(err.message || "Generation failed. Check your image and try again.");
+    }
+    setLoading(false);
+  };
+
+  const copyText = (text, id) => {
+    navigator.clipboard.writeText(text);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const copyAllPrompts = () => {
+    if (!output?.scenes) return;
+    const all = output.scenes.map((s) => `[SCENE ${s.number} — ${s.timestamp}]\n${s.seedancePrompt}`).join("\n\n---\n\n");
+    copyText(all, "all");
+  };
+
+  const toggleColors = { kawaii: "#ff6eb4", luxury: "#c9a84c", blockbuster: "#ff2d78", ugc: "#00e5cc" };
+  const darkText = { ugc: true, luxury: true };
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#0a0a0a", color: "#f0f0f0", overflowX: "hidden" }}>
+
+      {/* Header */}
+      <div style={{ borderBottom: "1px solid #161616", padding: "16px 22px", display: "flex", alignItems: "center", gap: "12px", background: "#0a0a0a", position: "sticky", top: 0, zIndex: 100 }}>
+        <div style={{ width: "28px", height: "28px", background: "linear-gradient(135deg, #ff2d78, #00e5cc)", borderRadius: "5px" }} />
+        <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "19px", letterSpacing: "3px", color: "#fff" }}>NANDYVISUALS</span>
+        <span style={{ background: "#ff2d78", color: "#fff", fontSize: "8px", fontWeight: "700", padding: "3px 7px", borderRadius: "3px", letterSpacing: "1px" }}>SCENE ENGINE</span>
+      </div>
+
+      <div style={{ maxWidth: "840px", margin: "0 auto", padding: "28px 18px" }}>
+
+        {/* Hero */}
+        <div style={{ marginBottom: "36px" }}>
+          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(32px, 8vw, 64px)", letterSpacing: "4px", lineHeight: "0.93", color: "#fff" }}>
+            1-CLICK IMAGE<br /><span style={{ color: "#ff2d78" }}>→ VIRAL SCENE</span>
+          </h1>
+          <p style={{ marginTop: "10px", color: "#444", fontSize: "10px", letterSpacing: "1px" }}>DROP IMAGE · DIAL YOUR VIBE · GET SEEDANCE PROMPTS</p>
+        </div>
+
+        {/* 01 Image */}
+        <div style={{ marginBottom: "30px" }}>
+          <div style={{ fontSize: "9px", letterSpacing: "2px", color: "#ff2d78", marginBottom: "10px", fontWeight: "700" }}>01 — DROP YOUR IMAGE</div>
+          <div
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(e) => { e.preventDefault(); setDragOver(false); handleImage(e.dataTransfer.files[0]); }}
+            onClick={() => fileRef.current.click()}
+            style={{ border: `2px dashed ${dragOver ? "#ff2d78" : image ? "#00e5cc" : "#1e1e1e"}`, borderRadius: "10px", overflow: "hidden", cursor: "pointer", background: "#0d0d0d", minHeight: image ? "auto" : "160px", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }}
+          >
+            {image ? (
+              <div style={{ position: "relative", width: "100%" }}>
+                <img src={image} alt="" style={{ width: "100%", maxHeight: "340px", objectFit: "cover", display: "block" }} />
+                <div style={{ position: "absolute", bottom: "10px", right: "10px", background: "#00e5cc", color: "#000", fontSize: "8px", fontWeight: "700", padding: "4px 9px", borderRadius: "3px", letterSpacing: "1px" }}>IMAGE LOCKED ✓</div>
+              </div>
+            ) : (
+              <div style={{ textAlign: "center", padding: "36px" }}>
+                <div style={{ fontSize: "32px", marginBottom: "8px" }}>🎬</div>
+                <div style={{ color: "#333", fontSize: "11px" }}>Drop image or tap to upload</div>
+                <div style={{ color: "#222", fontSize: "9px", marginTop: "4px" }}>JPG · PNG · WEBP</div>
+              </div>
+            )}
+          </div>
+          <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => handleImage(e.target.files[0])} />
+        </div>
+
+        {/* 02 Vibe */}
+        <div style={{ marginBottom: "30px" }}>
+          <div style={{ fontSize: "9px", letterSpacing: "2px", color: "#ff2d78", marginBottom: "14px", fontWeight: "700" }}>02 — DIAL YOUR VIBE</div>
+
+          <div style={{ fontSize: "8px", color: "#333", letterSpacing: "1px", marginBottom: "8px" }}>PRESET MODES</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "7px", marginBottom: "22px" }}>
+            {TOGGLES.map((t) => {
+              const active = activeToggles.includes(t.id);
+              const col = toggleColors[t.id];
+              const dk = darkText[t.id];
+              return (
+                <button key={t.id} className="tbtn" onClick={() => toggleActive(t.id)} style={{
+                  background: active ? col : "#0f0f0f",
+                  border: `1px solid ${active ? "transparent" : "#1a1a1a"}`,
+                  borderRadius: "8px", padding: "12px 6px", textAlign: "center",
+                }}>
+                  <div style={{ fontSize: "18px", marginBottom: "4px" }}>{t.emoji}</div>
+                  <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "13px", letterSpacing: "1px", color: active ? (dk ? "#000" : "#fff") : "#444" }}>{t.label}</div>
+                  <div style={{ fontSize: "8px", marginTop: "3px", color: active ? (dk ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.6)") : "#2a2a2a", lineHeight: "1.3" }}>{t.desc}</div>
+                </button>
+              );
+            })}
+          </div>
+
+          <div style={{ fontSize: "8px", color: "#333", letterSpacing: "1px", marginBottom: "10px" }}>FINE-TUNE DIMENSIONS</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "22px" }}>
+            {SLIDERS.map((s) => (
+              <div key={s.id}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "7px" }}>
+                  <span style={{ fontSize: "9px", letterSpacing: "1px", color: "#777", fontWeight: "700" }}>{s.label}</span>
+                  <span style={{ fontSize: "9px", color: "#ff2d78", fontWeight: "700" }}>{sliders[s.id]}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span style={{ fontSize: "8px", color: "#333", minWidth: "58px" }}>{s.left}</span>
+                  <input type="range" min="0" max="100" value={sliders[s.id]} onChange={(e) => setSlider(s.id, e.target.value)} />
+                  <span style={{ fontSize: "8px", color: "#333", minWidth: "58px", textAlign: "right" }}>{s.right}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ fontSize: "8px", color: "#333", letterSpacing: "1px", marginBottom: "8px" }}>CUSTOM VIBE — TYPE ANYTHING</div>
+          <textarea
+            value={customVibe}
+            onChange={(e) => setCustomVibe(e.target.value)}
+            placeholder={`"soft apocalypse" · "crying in a luxury hotel" · "dreamcore underwater slow burn"`}
+            rows={2}
+            style={{ width: "100%", background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "8px", padding: "11px 13px", color: "#e0e0e0", fontSize: "11px", lineHeight: "1.6", marginBottom: "10px" }}
+          />
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "14px" }}>
+            {VIBE_CHIPS.map((v) => (
+              <button key={v} className="chip" onClick={() => setCustomVibe(customVibe === v ? "" : v)} style={{
+                background: customVibe === v ? "#ff2d78" : "#111",
+                border: `1px solid ${customVibe === v ? "#ff2d78" : "#1e1e1e"}`,
+                borderRadius: "20px", padding: "3px 11px",
+                fontSize: "9px", color: customVibe === v ? "#fff" : "#444",
+                fontFamily: "'Space Mono', monospace",
+              }}>{v}</button>
+            ))}
+          </div>
+
+          <div className="vp" style={{ padding: "13px 15px", background: "#0c0c0c", border: "1px solid #1a1a1a", borderRadius: "8px" }}>
+            <div style={{ fontSize: "8px", color: "#00e5cc", letterSpacing: "2px", marginBottom: "5px", fontWeight: "700" }}>⚡ VIBE PREVIEW</div>
+            <div style={{ fontSize: "11px", color: "#777", lineHeight: "1.6", fontStyle: "italic" }}>{vibePreview}</div>
+          </div>
+        </div>
+
+        {/* 03 Generate */}
+        <div style={{ marginBottom: "36px" }}>
+          <div style={{ fontSize: "9px", letterSpacing: "2px", color: "#ff2d78", marginBottom: "10px", fontWeight: "700" }}>03 — GENERATE</div>
+          <button onClick={generate} disabled={!imageBase64 || loading} className="cbtn" style={{
+            width: "100%", padding: "19px",
+            background: imageBase64 && !loading ? "linear-gradient(135deg, #ff2d78 0%, #c4006a 100%)" : "#0f0f0f",
+            border: "none", borderRadius: "10px",
+            color: imageBase64 && !loading ? "#fff" : "#2a2a2a",
+            fontFamily: "'Bebas Neue', sans-serif", fontSize: "19px", letterSpacing: "4px",
+            cursor: imageBase64 && !loading ? "pointer" : "not-allowed",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
+          }}>
+            {loading
+              ? <><span style={{ animation: "pulse 0.9s infinite", display: "inline-block" }}>⚡</span> ANALYZING + BUILDING SCENES...</>
+              : <>🎬 GENERATE VIRAL SCENE</>}
+          </button>
+        </div>
+
+        {error && (
+          <div style={{ padding: "14px", background: "#140505", border: "1px solid #3a0000", borderRadius: "8px", color: "#ff6666", fontSize: "11px", marginBottom: "20px" }}>
+            ⚠ {error}
+          </div>
+        )}
+
+        {output && !error && (
+          <div className="fade-in">
+            <div style={{ padding: "20px", background: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: "10px", marginBottom: "14px" }}>
+              <div style={{ fontSize: "8px", color: "#00e5cc", letterSpacing: "2px", marginBottom: "4px" }}>CINEMATIC PATH: {output.path}</div>
+              <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(20px, 5vw, 36px)", letterSpacing: "2px", color: "#fff", lineHeight: "1.1", marginBottom: output.vibeInterpretation ? "10px" : "0" }}>
+                "{output.title}"
+              </h2>
+              {output.vibeInterpretation && (
+                <div style={{ fontSize: "10px", color: "#555", fontStyle: "italic", borderTop: "1px solid #161616", paddingTop: "10px" }}>
+                  🎨 {output.vibeInterpretation}
+                </div>
+              )}
+            </div>
+
+            {output.imageAnalysis && (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "7px", marginBottom: "14px" }}>
+                {Object.entries(output.imageAnalysis).map(([key, val]) => (
+                  <div key={key} style={{ padding: "10px 12px", background: "#0a0a0a", border: "1px solid #141414", borderRadius: "7px" }}>
+                    <div style={{ fontSize: "8px", color: "#2a2a2a", letterSpacing: "1px", marginBottom: "3px" }}>{key.replace(/([A-Z])/g, ' $1').toUpperCase()}</div>
+                    <div style={{ fontSize: "10px", color: "#888" }}>{val}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+              <div style={{ fontSize: "9px", letterSpacing: "2px", color: "#ff2d78", fontWeight: "700" }}>SCENE CASCADE — {output.scenes?.length} SCENES</div>
+              <button className="cbtn" onClick={copyAllPrompts} style={{
+                background: copied === "all" ? "#00e5cc" : "#141414",
+                color: copied === "all" ? "#000" : "#555",
+                padding: "6px 11px", borderRadius: "5px", fontSize: "8px", letterSpacing: "1px", fontFamily: "'Space Mono', monospace",
+              }}>{copied === "all" ? "✓ COPIED ALL" : "⬇ COPY ALL PROMPTS"}</button>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "7px", marginBottom: "18px" }}>
+              {output.scenes?.map((scene, i) => (
+                <div key={i} className="scard" style={{ background: "#0d0d0d", border: "1px solid #161616", borderRadius: "9px", overflow: "hidden" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 13px", borderBottom: "1px solid #161616", background: "#0f0f0f" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "9px" }}>
+                      <div style={{ width: "24px", height: "24px", background: "#ff2d78", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "9px", fontWeight: "700", color: "#fff", flexShrink: 0 }}>{scene.number}</div>
+                      <div>
+                        <div style={{ fontSize: "10px", color: "#e0e0e0", fontWeight: "700" }}>{scene.label}</div>
+                        <div style={{ fontSize: "8px", color: "#333" }}>{scene.timestamp}</div>
+                      </div>
+                    </div>
+                    <button className="cbtn" onClick={() => copyText(scene.seedancePrompt, `s${i}`)} style={{
+                      background: copied === `s${i}` ? "#00e5cc" : "#141414",
+                      color: copied === `s${i}` ? "#000" : "#444",
+                      padding: "4px 9px", borderRadius: "4px", fontSize: "8px", letterSpacing: "1px", fontFamily: "'Space Mono', monospace", flexShrink: 0,
+                    }}>{copied === `s${i}` ? "✓" : "COPY"}</button>
+                  </div>
+                  <div style={{ padding: "11px 13px", background: "#070707", borderBottom: "1px solid #111", fontSize: "10px", lineHeight: "1.8", color: "#00e5cc", whiteSpace: "pre-wrap" }}>
+                    {scene.seedancePrompt}
+                  </div>
+                  <div style={{ padding: "8px 13px", display: "flex", flexDirection: "column", gap: "3px" }}>
+                    {scene.escalation && <div style={{ fontSize: "9px", color: "#ff2d78" }}>⚡ {scene.escalation}</div>}
+                    {scene.camera && <div style={{ fontSize: "9px", color: "#333" }}>📷 {scene.camera}</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
+              <div style={{ padding: "16px", background: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: "9px" }}>
+                <div style={{ fontSize: "8px", color: "#ff2d78", letterSpacing: "2px", marginBottom: "9px", fontWeight: "700" }}>📱 VIRAL CAPTION</div>
+                <div style={{ fontSize: "11px", color: "#ccc", lineHeight: "1.6", marginBottom: "10px" }}>{output.caption}</div>
+                <button className="cbtn" onClick={() => copyText(output.caption, "cap")} style={{
+                  background: copied === "cap" ? "#00e5cc" : "#141414", color: copied === "cap" ? "#000" : "#444",
+                  padding: "6px", borderRadius: "4px", fontSize: "8px", letterSpacing: "1px", fontFamily: "'Space Mono', monospace", width: "100%",
+                }}>{copied === "cap" ? "✓ COPIED" : "COPY CAPTION"}</button>
+              </div>
+              <div style={{ padding: "16px", background: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: "9px" }}>
+                <div style={{ fontSize: "8px", color: "#ff2d78", letterSpacing: "2px", marginBottom: "9px", fontWeight: "700" }}>🧲 HOOK OPTIONS</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+                  {output.hooks?.map((hook, i) => (
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "7px" }}>
+                      <div style={{ fontSize: "10px", color: "#aaa", flex: 1 }}>"{hook}"</div>
+                      <button className="cbtn" onClick={() => copyText(hook, `h${i}`)} style={{
+                        background: copied === `h${i}` ? "#00e5cc" : "#141414", color: copied === `h${i}` ? "#000" : "#444",
+                        padding: "3px 7px", borderRadius: "3px", fontSize: "8px", fontFamily: "'Space Mono', monospace", flexShrink: 0,
+                      }}>{copied === `h${i}` ? "✓" : "COPY"}</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {output.loopStrategy && (
+              <div style={{ padding: "13px 16px", background: "#0a0814", border: "1px solid #1e1430", borderRadius: "8px", display: "flex", alignItems: "center", gap: "11px" }}>
+                <div style={{ fontSize: "16px" }}>🔁</div>
+                <div>
+                  <div style={{ fontSize: "8px", color: "#8855cc", letterSpacing: "2px", marginBottom: "2px", fontWeight: "700" }}>LOOP STRATEGY</div>
+                  <div style={{ fontSize: "10px", color: "#666" }}>{output.loopStrategy}</div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div style={{ marginTop: "56px", paddingTop: "18px", borderTop: "1px solid #141414", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "12px", letterSpacing: "3px", color: "#1e1e1e" }}>NANDYVISUALS</span>
+          <span style={{ fontSize: "8px", color: "#181818" }}>POWERED BY CLAUDE · BUILT FOR SEEDANCE 2.0</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+</script>
+</body>
+</html>
