@@ -1,9 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/pinready", "destination": "/pinready-pro-nandyvisuals.html" },
-    { "source": "/branddealpins", "destination": "/brand-deal-pin-generator.html" },
-    { "source": "/mediakit", "destination": "/mediakit.html" },
-    { "source": "/ad-studio", "destination": "/ad-studio.html" },
-    { "source": "/real-tanzania", "destination": "/real-tanzania.html" }
-  ]
-}
