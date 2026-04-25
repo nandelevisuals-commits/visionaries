@@ -6,6 +6,14 @@
     { "source": "/media-studio", "destination": "/nandyvisuals-mediakit.html" },
     { "source": "/ad-studio", "destination": "/nandyvisuals-ad-studio.html" },
     { "source": "/video-studio", "destination": "/nandyvisuals-video-studio.html" },
+    { "source": "/content-studio", "destination": "/content-studio.html" },
+    { "source": "/content-studio/", "destination": "/content-studio.html" },
+    { "source": "/brand-deal-engine", "destination": "/bde-index.html" },
+    { "source": "/brand-deal-engine/access", "destination": "/bde-access.html" },
+    { "source": "/brand-deal-engine/engine", "destination": "/bde-engine.html" },
+    { "source": "/campaign-engine", "destination": "/campaign-engine.html" },
+    { "source": "/pinready", "destination": "/pinready-pro-nandyvisuals.html" },
+    { "source": "/branddealpins", "destination": "/brand-deal-pin-generator.html" },
     { "source": "/tanzania-landing", "destination": "/real-tanzania-landing.html" },
     { "source": "/story-engine", "destination": "/story-engine.html" },
     { "source": "/tanzania-atlas", "destination": "/tanzania-atlas.html" },
@@ -16,7 +24,8 @@
     { "source": "/visionaire-studio", "destination": "/visionaire-studio.html" },
     { "source": "/vibe-engine", "destination": "/vibe-code-engine-v2.html" },
     { "source": "/scene-engine", "destination": "/scene-engine.html" },
-    { "source": "/journey-engine", "destination": "/journey-engine.html" }
+    { "source": "/journey-engine", "destination": "/journey-engine.html" },
+    { "source": "/avatar-engine", "destination": "/avatar-engine-v2.html" }
   ],
   "headers": [
     {
