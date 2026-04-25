@@ -2,9 +2,9 @@
   "rewrites": [
     { "source": "/", "destination": "/linkinbio.html" },
     { "source": "/linkinbio", "destination": "/linkinbio.html" },
-    { "source": "/mediakit", "destination": "/mediakit.html" },
-    { "source": "/ad-studio", "destination": "/nandyvisuals-ad-studio.html" },
+    { "source": "/mediakit", "destination": "/nandyvisuals-mediakit.html" },
     { "source": "/media-studio", "destination": "/nandyvisuals-mediakit.html" },
+    { "source": "/ad-studio", "destination": "/nandyvisuals-ad-studio.html" },
     { "source": "/video-studio", "destination": "/nandyvisuals-video-studio.html" },
     { "source": "/tanzania-landing", "destination": "/real-tanzania-landing.html" },
     { "source": "/story-engine", "destination": "/story-engine.html" },
