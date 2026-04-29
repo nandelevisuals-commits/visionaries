@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NANDYVISUALS × Seedance Director Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --pink: #ff3cac;
+    --teal: #00d4ff;
+    --black: #080808;
+    --card: rgba(255,255,255,0.03);
+    --border: #1a1a1a;
+    --border-active-pink: rgba(255,60,172,0.5);
+    --border-active-teal: rgba(0,212,255,0.5);
+    --text: #f0f0f0;
+    --muted: #555;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --display: 'Bebas Neue', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* Ambient glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255,60,172,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 0 60px;
+  }
+
+  /* HEADER */
+  header {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: 'DIRECTOR';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--display);
+    font-size: 80px;
+    color: rgba(255,255,255,0.02);
+    letter-spacing: 4px;
+    pointer-events: none;
+  }
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .brand-dot {
+    width: 8px; height: 8px;
+    background: var(--pink);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .brand-name {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--pink);
+    font-weight: 700;
+  }
+  .title {
+    font-family: var(--display);
+    font-size: 32px;
+    letter-spacing: 2px;
+    line-height: 1;
+    color: #fff;
+  }
+  .subtitle {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-top: 6px;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    padding: 16px 24px 0;
+  }
+  .progress-bars {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+  .bar {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    transition: background 0.4s ease;
+  }
+  .bar.active { background: var(--teal); }
+  .bar.done { background: rgba(0,212,255,0.4); }
+  .step-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: #333;
+    letter-spacing: 2px;
+  }
+
+  /* CONTENT PANEL */
+  .panel {
+    padding: 28px 24px;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--teal);
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+  }
+  .step-title {
+    font-family: var(--display);
+    font-size: 30px;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .step-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+
+  /* GENRE CARDS */
+  .genre-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .genre-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .genre-card:active { transform: scale(0.98); }
+  .genre-card.selected {
+    background: rgba(0,212,255,0.06);
+    border-color: var(--border-active-teal);
+  }
+  .genre-icon {
+    font-size: 15px;
+    color: var(--muted);
+    margin-top: 1px;
+    flex-shrink: 0;
+    transition: color 0.2s;
+  }
+  .genre-card.selected .genre-icon { color: var(--teal); }
+  .genre-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    transition: color 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .genre-card.selected .genre-label { color: #fff; }
+  .genre-desc {
+    font-size: 10px;
+    color: #383838;
+    margin-top: 2px;
+    line-height: 1.4;
+    font-family: var(--mono);
+  }
+  .genre-card.selected .genre-desc { color: #555; }
+
+  /* STYLE CHIPS */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 28px;
+  }
+  .chip {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 7px 13px;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .chip.selected {
+    background: rgba(255,60,172,0.1);
+    border-color: var(--border-active-pink);
+    color: var(--pink);
+  }
+
+  /* MOOD LIST */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: #333;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+  .mood-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mood-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 12px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-family: var(--sans);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mood-item.selected {
+    background: rgba(0,212,255,0.06);
+    border-color: var(--border-active-teal);
+    color: #fff;
+  }
+
+  /* TEXTAREA + INPUT */
+  textarea, input[type=text] {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: var(--sans);
+    line-height: 1.6;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  textarea:focus, input[type=text]:focus {
+    border-color: rgba(0,212,255,0.3);
+  }
+  textarea { min-height: 140px; resize: vertical; }
+  input[type=text] { margin-top: 0; }
+  ::placeholder { color: #333; }
+
+  /* DURATION */
+  .duration-row {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .dur-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-size: 12px;
+    font-family: var(--mono);
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dur-btn.selected {
+    background: rgba(0,212,255,0.08);
+    border-color: var(--border-active-teal);
+    color: var(--teal);
+  }
+
+  /* REVIEW */
+  .review-row {
+    border-bottom: 1px solid #111;
+    padding: 12px 0;
+  }
+  .review-key {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: #333;
+    letter-spacing: 2px;
+    margin-bottom: 3px;
+  }
+  .review-val {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.4;
+  }
+
+  /* BUTTONS */
+  .btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--pink) 0%, var(--teal) 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    color: #fff;
+    font-size: 12px;
+    font-family: var(--mono);
+    font-weight: 700;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+    margin-top: 24px;
+  }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled {
+    background: #111;
+    color: #333;
+    cursor: not-allowed;
+  }
+  .btn-continue {
+    width: 100%;
+    background: rgba(0,212,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    color: #333;
+    font-size: 12px;
+    font-family: var(--mono);
+    letter-spacing: 3px;
+    cursor: not-allowed;
+    transition: all 0.2s;
+    margin-top: 24px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-continue.ready {
+    border-color: var(--border-active-teal);
+    color: var(--teal);
+    cursor: pointer;
+  }
+  .btn-continue.ready:active { transform: scale(0.98); }
+  .btn-back {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #2a2a2a;
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: 2px;
+    cursor: pointer;
+    padding: 10px;
+    margin-top: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* OUTPUT */
+  .output-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.9;
+    color: #ccc;
+    white-space: pre-wrap;
+    max-height: 440px;
+    overflow-y: auto;
+    word-break: break-word;
+  }
+  .output-box::-webkit-scrollbar { width: 3px; }
+  .output-box::-webkit-scrollbar-track { background: transparent; }
+  .output-box::-webkit-scrollbar-thumb { background: #222; border-radius: 3px; }
+
+  .output-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .btn-copy {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 13px;
+    color: #888;
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-copy.copied {
+    border-color: var(--border-active-teal);
+    color: var(--teal);
+    background: rgba(0,212,255,0.06);
+  }
+  .btn-new {
+    flex: 1;
+    background: rgba(255,60,172,0.06);
+    border: 1px solid rgba(255,60,172,0.15);
+    border-radius: 8px;
+    padding: 13px;
+    color: var(--pink);
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  /* LOADING */
+  .loading-state {
+    text-align: center;
+    padding: 48px 0;
+    color: #333;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+  }
+  .loading-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--pink);
+    transform: rotate(45deg);
+    animation: pulse 1.2s infinite;
+    margin-bottom: 16px;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: rotate(45deg) scale(1); }
+    50% { opacity: 0.3; transform: rotate(45deg) scale(0.6); }
+  }
+
+  /* SPACER */
+  .spacer { height: 16px; }
+  .spacer-sm { height: 10px; }
+
+  /* FOOTER */
+  footer {
+    padding: 20px 24px;
+    border-top: 1px solid #0f0f0f;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: #1e1e1e;
+    letter-spacing: 2px;
+  }
+
+  /* Hidden panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand-row">
+      <div class="brand-dot"></div>
+      <span class="brand-name">NANDYVISUALS</span>
+    </div>
+    <div class="title">SEEDANCE DIRECTOR ENGINE</div>
+    <div class="subtitle">STRUCTURED PROMPTS · EVERY SHOT DIRECTED · PASTE & GENERATE</div>
+  </header>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-bars">
+      <div class="bar active" id="bar1"></div>
+      <div class="bar" id="bar2"></div>
+      <div class="bar" id="bar3"></div>
+      <div class="bar" id="bar4"></div>
+    </div>
+    <div class="step-label" id="stepLabel">STEP 1 OF 4 — GENRE</div>
+  </div>
+
+  <!-- STEP 1: GENRE -->
+  <div class="panel active" id="step1">
+    <div class="step-tag">01 / GENRE</div>
+    <div class="step-title">WHAT KIND OF VIDEO<br>ARE YOU DIRECTING?</div>
+    <div class="step-hint">Pick one. You can always run again with a different genre.</div>
+    <div class="genre-list" id="genreList"></div>
+    <button class="btn-continue" id="continueBtn1" onclick="goTo(2)">CONTINUE →</button>
+  </div>
+
+  <!-- STEP 2: STYLE + MOOD -->
+  <div class="panel" id="step2">
+    <div class="step-tag">02 / STYLE + MOOD</div>
+    <div class="step-title">PICK YOUR<br>VISUAL DNA</div>
+    <div class="step-hint">Up to 4 style elements, then one mood.</div>
+    <div class="chips" id="styleChips"></div>
+    <div class="section-label">MOOD</div>
+    <div class="mood-list" id="moodList"></div>
+    <button class="btn-continue" id="continueBtn2" onclick="goTo(3)">CONTINUE →</button>
+    <button class="btn-back" onclick="goTo(1)">← back</button>
+  </div>
+
+  <!-- STEP 3: BRIEF -->
+  <div class="panel" id="step3">
+    <div class="step-tag">03 / BRIEF</div>
+    <div class="step-title">DESCRIBE<br>YOUR SCENE</div>
+    <div class="step-hint">Talk like a director. What happens? Where? Who? What's the energy?</div>
+    <textarea id="briefInput" placeholder="e.g. A Black woman in white couture walks through an empty Lagos market at golden hour. Fabric trails behind her. She pauses, looks into camera, then dissolves into gold dust..." oninput="checkStep3()"></textarea>
+    <div class="spacer"></div>
+    <div class="section-label">DURATION</div>
+    <div class="duration-row" id="durationRow"></div>
+    <div class="spacer"></div>
+    <div class="section-label">PROTAGONIST <span style="color:#222;font-size:9px">(OPTIONAL)</span></div>
+    <input type="text" id="protagonistInput" placeholder="e.g. Mid-20s Black woman, loc updo, white silk halter..."/>
+    <button class="btn-continue" id="continueBtn3" onclick="goTo(4)">CONTINUE →</button>
+    <button class="btn-back" onclick="goTo(2)">← back</button>
+  </div>
+
+  <!-- STEP 4: REVIEW -->
+  <div class="panel" id="step4">
+    <div class="step-tag">04 / REVIEW</div>
+    <div class="step-title">READY TO<br>DIRECT IT</div>
+    <div class="spacer-sm"></div>
+    <div class="review-row"><div class="review-key">GENRE</div><div class="review-val" id="rv-genre"></div></div>
+    <div class="review-row"><div class="review-key">STYLES</div><div class="review-val" id="rv-styles"></div></div>
+    <div class="review-row"><div class="review-key">MOOD</div><div class="review-val" id="rv-mood"></div></div>
+    <div class="review-row"><div class="review-key">DURATION</div><div class="review-val" id="rv-duration"></div></div>
+    <div class="review-row"><div class="review-key">BRIEF</div><div class="review-val" id="rv-brief"></div></div>
+    <button class="btn-primary" onclick="generate()">◆ GENERATE PROMPT</button>
+    <button class="btn-back" onclick="goTo(3)">← back</button>
+  </div>
+
+  <!-- STEP 5: OUTPUT -->
+  <div class="panel" id="step5">
+    <div class="step-tag">OUTPUT</div>
+    <div class="step-title">YOUR SEEDANCE<br>PROMPT</div>
+    <div class="spacer-sm"></div>
+    <div class="output-box" id="outputBox">
+      <div class="loading-state" id="loadingState">
+        <div class="loading-dot"></div><br>DIRECTING YOUR SCENE...
+      </div>
+    </div>
+    <div class="output-actions">
+      <button class="btn-copy" id="copyBtn" onclick="copyPrompt()">COPY PROMPT</button>
+      <button class="btn-new" onclick="reset()">NEW SCENE</button>
+    </div>
+  </div>
+
+  <footer>NANDYVISUALS × SEEDANCE DIRECTOR ENGINE · @theeaivisualz</footer>
+</div>
+
+<script>
+const GENRES = [
+  { id:"afrofuturism", label:"Afrofuturism", icon:"✦", desc:"Ancestral futures, cosmic Blackness, ritual + technology" },
+  { id:"cinematic_surrealism", label:"Cinematic Surrealism", icon:"◈", desc:"Physics-defying, dreamlike, editorial gravity" },
+  { id:"ugc", label:"UGC / Lifestyle", icon:"◎", desc:"Raw, handheld, authentic creator energy" },
+  { id:"ai_vlog", label:"AI Vlog", icon:"⟡", desc:"First-person POV, relatable, documentary feel" },
+  { id:"fashion_editorial", label:"Fashion Editorial", icon:"◇", desc:"High fashion, Vogue-worthy, structural couture" },
+  { id:"wes_anderson", label:"Wes Anderson", icon:"▣", desc:"Symmetrical framing, pastel palette, deadpan whimsy" },
+  { id:"neo_noir", label:"Neo-Noir", icon:"◉", desc:"Rain-soaked shadows, neon reflections, moral tension" },
+  { id:"luxury_brand", label:"Luxury Brand Film", icon:"◆", desc:"Slow motion, minimal dialogue, aspirational texture" },
+  { id:"horror_beauty", label:"Horror Beauty", icon:"⬡", desc:"Glamour meets dread, uncanny stillness, beauty distorted" },
+  { id:"anime_cinematic", label:"Anime Cinematic", icon:"⟐", desc:"Dynamic angles, sakuga-level motion, emotional close-ups" },
+  { id:"street_doc", label:"Street Documentary", icon:"◑", desc:"Gritty realism, handheld urgency, authentic culture" },
+  { id:"afro_romance", label:"Afro Romance", icon:"❋", desc:"Golden hour love, soft textures, cultural warmth" },
+];
+
+const STYLES = [
+  "Anamorphic lens flare","Heavy film grain","Slow shutter trails",
+  "Liquid gold overlays","Fiber optic hair physics","Levitation physics",
+  "Mirror world reflections","Chromatic aberration","Soft bokeh bloom",
+  "Dust particle atmosphere","Wet surface reflections","Holographic glitch",
+  "Heat haze distortion","Ink bleed transitions","Glass caustic light",
+];
+
+const MOODS = [
+  "Ethereal & transcendent","Raw & unfiltered","Luxurious & slow",
+  "Tense & cinematic","Warm & intimate","Cold & architectural",
+  "Dreamlike & surreal","Powerful & commanding","Nostalgic & tender",
+  "Futuristic & alien","Playful & whimsical","Dark & seductive",
+];
+
+const DURATIONS = ["5s","8s","10s","15s","20s","30s"];
+
+const GENRE_RULES = {
+  afrofuturism: "use ancestral + cosmic vocabulary. References to fabric, ritual objects, celestial bodies. Camera should feel like memory and prophecy coexisting.",
+  cinematic_surrealism: "physics must be visibly defied at least once. Use levitation, liquid transformation, or impossible scale. Keep it grounded in beauty not chaos.",
+  ugc: "camera should feel like a real person holding it. Natural light. Breathing room. Authentic micro-moments. No cinematic perfection — controlled imperfection.",
+  ai_vlog: "first-person POV moments. Direct address to camera. Relatable transitions. Raw energy. Mix talking-head with b-roll cutaways.",
+  fashion_editorial: "treat every frame as a magazine spread. Structural silhouettes. Couture fabric physics. Model behavior — controlled, deliberate, powerful.",
+  wes_anderson: "strict symmetry every shot. Pastel color grading. Deadpan action. Centered subjects. Whimsical props. Flat staging like a diorama.",
+  neo_noir: "every surface should be wet or reflective. Neon color sources only. Deep shadows with one slash of light. Slow and suspicious movement.",
+  luxury_brand: "restraint is power. Extreme slow motion on texture details. Let silence breathe. Subject as the only god in frame.",
+  horror_beauty: "beauty in uncanny moments. Hold on stillness too long. Let glamour become unsettling. One wrong detail per shot.",
+  anime_cinematic: "dynamic Dutch angles. Speed variation — slow to explosive. Extreme close-ups on eyes, hands, impact points.",
+  street_doc: "observational. Camera catches moments. Zoom lens feel. City as character. Real texture.",
+  afro_romance: "golden hour as religion. Skin as canvas. Warmth in every surface. Tenderness in micro-gestures.",
+};
+
+let state = {
+  genre: null,
+  styles: [],
+  mood: null,
+  duration: "10s",
+  brief: "",
+  protagonist: "",
+  currentStep: 1,
+};
+
+// BUILD UI
+function buildGenreList() {
+  const el = document.getElementById('genreList');
+  el.innerHTML = GENRES.map(g => `
+    <div class="genre-card" id="genre-${g.id}" onclick="selectGenre('${g.id}')">
+      <span class="genre-icon">${g.icon}</span>
+      <div>
+        <div class="genre-label">${g.label}</div>
+        <div class="genre-desc">${g.desc}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function buildStyleChips() {
+  const el = document.getElementById('styleChips');
+  el.innerHTML = STYLES.map(s => `
+    <div class="chip" id="chip-${s.replace(/\s+/g,'_')}" onclick="toggleStyle('${s}')">${s}</div>
+  `).join('');
+}
+
+function buildMoodList() {
+  const el = document.getElementById('moodList');
+  el.innerHTML = MOODS.map(m => `
+    <div class="mood-item" id="mood-${m.replace(/\s+/g,'_').replace(/&/g,'and')}" onclick="selectMood('${m}')">${m}</div>
+  `).join('');
+}
+
+function buildDuration() {
+  const el = document.getElementById('durationRow');
+  el.innerHTML = DURATIONS.map(d => `
+    <button class="dur-btn ${d === state.duration ? 'selected':''}" id="dur-${d}" onclick="selectDuration('${d}')">${d}</button>
+  `).join('');
+}
+
+// INTERACTIONS
+function selectGenre(id) {
+  state.genre = id;
+  document.querySelectorAll('.genre-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('genre-'+id).classList.add('selected');
+  checkContinue(1);
+}
+
+function toggleStyle(s) {
+  const key = s.replace(/\s+/g,'_');
+  const el = document.getElementById('chip-'+key);
+  if (state.styles.includes(s)) {
+    state.styles = state.styles.filter(x => x !== s);
+    el.classList.remove('selected');
+  } else if (state.styles.length < 4) {
+    state.styles.push(s);
+    el.classList.add('selected');
+  }
+  checkContinue(2);
+}
+
+function selectMood(m) {
+  state.mood = m;
+  document.querySelectorAll('.mood-item').forEach(el => el.classList.remove('selected'));
+  const key = m.replace(/\s+/g,'_').replace(/&/g,'and');
+  document.getElementById('mood-'+key).classList.add('selected');
+  checkContinue(2);
+}
+
+function selectDuration(d) {
+  state.duration = d;
+  document.querySelectorAll('.dur-btn').forEach(el => el.classList.remove('selected'));
+  document.getElementById('dur-'+d).classList.add('selected');
+}
+
+function checkStep3() {
+  checkContinue(3);
+}
+
+function checkContinue(step) {
+  const btns = { 1:'continueBtn1', 2:'continueBtn2', 3:'continueBtn3' };
+  const btn = document.getElementById(btns[step]);
+  let ready = false;
+  if (step === 1) ready = !!state.genre;
+  if (step === 2) ready = state.styles.length > 0 && !!state.mood;
+  if (step === 3) ready = document.getElementById('briefInput').value.trim().length > 10;
+  btn.classList.toggle('ready', ready);
+}
+
+function goTo(step) {
+  // Validate before proceeding
+  if (step > state.currentStep) {
+    if (state.currentStep === 1 && !state.genre) return;
+    if (state.currentStep === 2 && (state.styles.length === 0 || !state.mood)) return;
+    if (state.currentStep === 3 && document.getElementById('briefInput').value.trim().length <= 10) return;
+  }
+
+  if (step === 3) {
+    state.brief = document.getElementById('briefInput').value;
+    state.protagonist = document.getElementById('protagonistInput').value;
+  }
+
+  if (step === 4) {
+    state.brief = document.getElementById('briefInput').value;
+    state.protagonist = document.getElementById('protagonistInput').value;
+    populateReview();
+  }
+
+  // Hide all panels
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step'+step).classList.add('active');
+  state.currentStep = step;
+  updateProgress(step);
+  window.scrollTo(0,0);
+}
+
+function updateProgress(step) {
+  const labels = ['GENRE','STYLE','BRIEF','REVIEW'];
+  const wrap = document.getElementById('progressWrap');
+  wrap.style.display = step === 5 ? 'none' : 'block';
+  if (step === 5) return;
+  document.getElementById('stepLabel').textContent = `STEP ${step} OF 4 — ${labels[step-1]}`;
+  for (let i = 1; i <= 4; i++) {
+    const bar = document.getElementById('bar'+i);
+    bar.className = 'bar';
+    if (i < step) bar.classList.add('done');
+    else if (i === step) bar.classList.add('active');
+  }
+}
+
+function populateReview() {
+  const g = GENRES.find(x => x.id === state.genre);
+  document.getElementById('rv-genre').textContent = g?.label || '';
+  document.getElementById('rv-styles').textContent = state.styles.join(' · ');
+  document.getElementById('rv-mood').textContent = state.mood;
+  document.getElementById('rv-duration').textContent = state.duration;
+  const b = state.brief;
+  document.getElementById('rv-brief').textContent = b.length > 120 ? b.slice(0,120)+'...' : b;
+}
+
+// GENERATE
+async function generate() {
+  goTo(5);
+  const outputBox = document.getElementById('outputBox');
+  outputBox.innerHTML = `<div class="loading-state"><div class="loading-dot"></div><br>DIRECTING YOUR SCENE...</div>`;
+
+  const g = GENRES.find(x => x.id === state.genre);
+  const systemPrompt = `You are the NANDYVISUALS Seedance Director Engine — an elite AI video prompt architect trained in cinematic surrealism, Afrofuturism, editorial fashion, and structured video generation.
+
+Your job: take a creative brief and output a fully structured Seedance video prompt in NANDYVISUALS bracket format. Every shot must be timestamped, directed, and cinematically precise.
+
+GENRE: ${g?.label} — ${g?.desc}
+VISUAL STYLES: ${state.styles.join(', ')}
+MOOD: ${state.mood}
+DURATION: ${state.duration}
+PROTAGONIST: ${state.protagonist || 'A Black woman, look TBD by director'}
+
+OUTPUT FORMAT — use exactly this structure:
+
+─────────────────────────────
+NANDYVISUALS × SEEDANCE DIRECTOR
+─────────────────────────────
+SCENE: [SCENE TITLE IN CAPS]
+GENRE: ${g?.label}
+MOOD: ${state.mood}
+DURATION: ${state.duration}
+STYLE DNA: [2-3 visual descriptors]
+─────────────────────────────
+
+[SHOT 01 | 0:00–0:03]
+Camera: [precise movement + position]
+Subject: [exact body action, micro-choreography]
+Atmosphere: [lighting color, quality, direction]
+Texture: [surface detail, lens quality, grain]
+Audio: [sound design note]
+
+[SHOT 02 | 0:03–0:06]
+Camera: [...]
+Subject: [...]
+Atmosphere: [...]
+Texture: [...]
+Audio: [...]
+
+[Continue for all shots — one block per 3-4 seconds based on ${state.duration} total]
+
+─────────────────────────────
+DIRECTOR'S NOTES:
+[2-3 sentences on identity lock, anti-jitter rules, and any special Seedance flags]
+─────────────────────────────
+
+RULES:
+- Camera: specific movement — "slow dolly forward from knee height" not "camera moves"
+- Subject: micro-choreography — "heel strikes first, ripple expands" not "she walks"
+- Atmosphere: color + direction + quality — "rose gold bounce fill from camera left"
+- Texture: lens artifacts, grain, surface materials
+- Audio: specific SFX, not music genre
+- No paragraphs anywhere. Structure only.
+- Maintain protagonist identity lock across all shots
+- For ${g?.label} specifically: ${GENRE_RULES[state.genre] || 'apply genre conventions with cinematic precision.'}
+
+Output ONLY the prompt. No preamble. No explanation. Start with the header line immediately.`;
+
+  try {
+    const response = await fetch('https://visionaries-rouge.vercel.app/api/proxy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-opus-4-5',
+        max_tokens: 1500,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: `Creative brief: ${state.brief}` }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.map(b => b.text || '').join('') || 'Error generating prompt. Please try again.';
+    outputBox.textContent = text;
+  } catch(e) {
+    outputBox.textContent = 'Something went wrong. Check your connection and try again.';
+  }
+}
+
+function copyPrompt() {
+  const text = document.getElementById('outputBox').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ COPIED';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'COPY PROMPT';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function reset() {
+  state = { genre:null, styles:[], mood:null, duration:'10s', brief:'', protagonist:'', currentStep:1 };
+  document.getElementById('briefInput').value = '';
+  document.getElementById('protagonistInput').value = '';
+  document.querySelectorAll('.genre-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.mood-item').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.dur-btn').forEach(c => c.classList.remove('selected'));
+  document.getElementById('dur-10s').classList.add('selected');
+  goTo(1);
+}
+
+// INIT
+buildGenreList();
+buildStyleChips();
+buildMoodList();
+buildDuration();
+</script>
+</body>
+</html>
