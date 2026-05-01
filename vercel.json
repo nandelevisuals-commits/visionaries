@@ -26,7 +26,8 @@
     { "source": "/scene-engine", "destination": "/scene-engine.html" },
     { "source": "/journey-engine", "destination": "/journey-engine.html" },
     { "source": "/avatar-engine", "destination": "/avatar-engine-v2.html" },
-    { "source": "/seedance-director", "destination": "/seedance-director.html" }
+    { "source": "/seedance-director", "destination": "/seedance-director.html" },
+    { "source": "/engine", "destination": "/engine/index.html" }
   ],
   "headers": [
     {
