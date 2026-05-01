@@ -1,0 +1,512 @@
+import { useState, useRef } from "react";
+
+// ── Brand tokens ──────────────────────────────────────────────────────────────
+const C = {
+  pink: "#FF2D78", teal: "#00D4C8", gold: "#F5C842",
+  black: "#080808", dark: "#101010", mid: "#161616",
+  panel: "#1C1C1C", border: "#262626", muted: "#555",
+  soft: "#999", light: "#D0D0D0", white: "#FFFFFF",
+};
+
+// ── Concept catalogue ─────────────────────────────────────────────────────────
+const CONCEPTS = [
+  // Lifestyle / Content formats
+  { id:"grwm",           label:"GRWM",                emoji:"💄", group:"lifestyle",   color:"#FF2D78" },
+  { id:"day_life",       label:"Day in My Life",       emoji:"🎬", group:"lifestyle",   color:"#FF6B9D" },
+  { id:"pov",            label:"POV",                  emoji:"👁️", group:"lifestyle",   color:"#00D4C8" },
+  { id:"pack_with_me",   label:"Pack With Me",         emoji:"👜", group:"lifestyle",   color:"#F97316" },
+  { id:"problem_sol",    label:"Problem → Solution",   emoji:"⚡", group:"lifestyle",   color:"#FFD700" },
+  { id:"micro_series",   label:"Micro Series",         emoji:"📺", group:"lifestyle",   color:"#A78BFA" },
+  { id:"sig_series",     label:"Signature Series",     emoji:"✨", group:"lifestyle",   color:"#34D399" },
+  { id:"community",      label:"Community Choice",     emoji:"🗳️", group:"lifestyle",   color:"#60A5FA" },
+  // Cinematic / Production
+  { id:"hype_motion",    label:"Hype Motion",          emoji:"🔥", group:"cinematic",   color:"#FF4500" },
+  { id:"blockbuster",    label:"Blockbuster",          emoji:"🎥", group:"cinematic",   color:"#DC143C" },
+  { id:"tv_spot",        label:"TV Spot",              emoji:"📡", group:"cinematic",   color:"#B8860B" },
+  { id:"kling_director", label:"Kling Director Shot",  emoji:"🎞️", group:"cinematic",   color:"#8B5CF6" },
+  { id:"sora_cinematic", label:"Sora 2 Cinematic",     emoji:"🌌", group:"cinematic",   color:"#0EA5E9" },
+  // Brand / Campaign
+  { id:"brand_campaign", label:"Brand Campaign",       emoji:"🏷️", group:"brand",       color:"#F5C842" },
+  { id:"ai_ugc_ad",      label:"AI UGC Ad",            emoji:"📲", group:"brand",       color:"#00D4C8" },
+  { id:"behind_magic",   label:"Behind the Magic",     emoji:"🔮", group:"brand",       color:"#FF2D78" },
+];
+
+const GROUPS = [
+  { id:"lifestyle",  label:"Lifestyle / Content" },
+  { id:"cinematic",  label:"Cinematic / Production" },
+  { id:"brand",      label:"Brand / Campaign" },
+];
+
+// ── Style variants ────────────────────────────────────────────────────────────
+const STYLES = [
+  "Color Pop Editorial","Soft Luxury","Street Style Editorial",
+  "Date Night","Fashion Creator","Quiet Luxury","Urban Flash",
+  "Cinematic Surrealist","Afrofuturist Noir","High-Fashion Campaign",
+  "Raw Documentary","Dreamcore Editorial","Luxury Sportif",
+];
+
+// ── Target tools ──────────────────────────────────────────────────────────────
+const TOOLS = [
+  { id:"auto",      label:"Auto",            color: C.muted },
+  { id:"seedance",  label:"Seedance 2.0",    color:"#FF2D78" },
+  { id:"kling",     label:"Kling 3.0 Pro",   color:"#8B5CF6" },
+  { id:"sora",      label:"Sora 2",          color:"#0EA5E9" },
+  { id:"higgsfield",label:"Higgsfield",      color:"#00D4C8" },
+  { id:"gptimage",  label:"GPT Image 2",     color:"#F5C842" },
+  { id:"midjourney",label:"Midjourney",      color:"#FF6B9D" },
+];
+
+// ── Protagonist hair pool (no teal) ──────────────────────────────────────────
+const HAIR_POOL = [
+  "long goddess locs with gold cuffs","voluminous natural coils",
+  "sleek high bun","micro braids swept back","short tapered TWA",
+  "waist-length box braids","crimped afro with side part",
+  "updo with exposed nape","finger waves","loose twist-out",
+  "bantu knots","big chop fade","braided crown updo",
+];
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const randomHair = () => HAIR_POOL[Math.floor(Math.random() * HAIR_POOL.length)];
+const conceptColor = (name="") => {
+  const found = CONCEPTS.find(c => name?.toLowerCase().includes(c.label.toLowerCase().split(" ")[0]));
+  return found?.color || C.pink;
+};
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+function Pill({ label, active, color, onClick }) {
+  return (
+    <button onClick={onClick} style={{
+      background: active ? color+"28" : C.panel,
+      border: `1px solid ${active ? color+"88" : C.border}`,
+      color: active ? color : C.soft,
+      padding:"5px 13px", borderRadius:20, fontSize:11,
+      cursor:"pointer", fontFamily:"monospace", fontWeight:700,
+      letterSpacing:.5, transition:"all .18s", whiteSpace:"nowrap",
+    }}>{label}</button>
+  );
+}
+
+function SectionLabel({ text, color = C.muted }) {
+  return (
+    <div style={{ fontSize:10, color, letterSpacing:2.5,
+      textTransform:"uppercase", fontFamily:"monospace",
+      fontWeight:700, marginBottom:10 }}>{text}</div>
+  );
+}
+
+function CopyBlock({ title, content, accent }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => { navigator.clipboard.writeText(content); setCopied(true); setTimeout(()=>setCopied(false),2000); };
+  return (
+    <div style={{ background:C.panel, border:`1px solid ${accent}28`,
+      borderLeft:`3px solid ${accent}`, borderRadius:10, overflow:"hidden", marginBottom:14 }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
+        padding:"9px 14px", borderBottom:`1px solid ${C.border}`, background:accent+"0d" }}>
+        <span style={{ color:accent, fontWeight:700, fontSize:11, letterSpacing:1,
+          textTransform:"uppercase", fontFamily:"monospace" }}>{title}</span>
+        <button onClick={copy} style={{
+          background: copied ? C.teal+"22":C.border, border:`1px solid ${copied?C.teal:"#333"}`,
+          color: copied ? C.teal : C.soft, padding:"3px 10px", borderRadius:6,
+          fontSize:11, cursor:"pointer", fontFamily:"monospace", transition:"all .18s",
+        }}>{copied?"✓ Copied":"Copy"}</button>
+      </div>
+      <pre style={{ margin:0, padding:14, color:C.light, fontSize:12, lineHeight:1.75,
+        whiteSpace:"pre-wrap", wordBreak:"break-word", fontFamily:"monospace",
+        maxHeight:300, overflowY:"auto" }}>{content}</pre>
+    </div>
+  );
+}
+
+function Spinner() {
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:10, padding:"18px 0" }}>
+      <div style={{ width:20, height:20, border:`2px solid ${C.border}`,
+        borderTopColor:C.pink, borderRadius:"50%", animation:"spin .7s linear infinite" }}/>
+      <span style={{ color:C.muted, fontSize:12, fontFamily:"monospace" }}>Analyzing input & building your prompt package…</span>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+}
+
+// ── Main App ──────────────────────────────────────────────────────────────────
+export default function App() {
+  const [text, setText] = useState("");
+  const [imgFile, setImgFile] = useState(null);
+  const [imgB64, setImgB64] = useState(null);
+  const [imgPreview, setImgPreview] = useState(null);
+  const [concept, setConcept] = useState(null);
+  const [style, setStyle] = useState(null);
+  const [tool, setTool] = useState("auto");
+  const [brandMode, setBrandMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
+  const [hair] = useState(randomHair());
+  const fileRef = useRef();
+
+  const handleImg = (file) => {
+    if (!file) return;
+    setImgFile(file);
+    const r = new FileReader();
+    r.onload = e => { setImgPreview(e.target.result); setImgB64(e.target.result.split(",")[1]); };
+    r.readAsDataURL(file);
+  };
+
+  const clearImg = () => { setImgFile(null); setImgB64(null); setImgPreview(null); fileRef.current.value=""; };
+
+  // ── System prompt ───────────────────────────────────────────────────────────
+  const sysPrompt = () => `You are the NANDYVISUALS Content Direction Engine — elite AI visual content strategist for the brand NANDYVISUALS (brand colors: pink #FF2D78, teal #00D4C8, black).
+
+CREATOR PROFILE:
+- Brand: NANDYVISUALS / @theeaivisualz (cinematic editorial) + @nandyailab (educational/process)
+- Aesthetic DNA: cinematic surrealism, high-fashion editorial, luxury brand campaign, diverse Black woman protagonists
+- Creative stack: Seedance 2.0, Kling 3.0 Pro (Camera→Subject→Atmosphere→Texture→Audio structure), Sora 2, Higgsfield (Soul 2 + Nanobanana 2), Midjourney, GPT Image 2
+- Protagonist rule: NEVER teal hair. Always rotate diverse hairstyles. Use this hair for the current generation: "${hair}"
+- Brand deals: pitches AI Cinematic Video at $150-250, TikTok UGC at $75-125, IG Reel at $50-75
+- Mock brand portfolio: LUMÉ, VELOUR, SOLÈNE, HAVEN, Medicube, Terra Lotus
+
+CONCEPT DIRECTIONS AVAILABLE:
+Lifestyle: GRWM, Day in My Life, POV, Pack With Me, Problem→Solution, Micro Series, Signature Series, Community Choice
+Cinematic: Hype Motion (fast-cut energy, bass-drop synced, kinetic), Blockbuster (epic wide shots, dramatic score, theatrical), TV Spot (15-30s polished commercial, brand message, product hero), Kling Director Shot (Camera→Subject→Atmosphere→Texture→Audio structure per shot), Sora 2 Cinematic (atmospheric, longer holds, dreamlike motion, surrealist depth)
+Brand: Brand Campaign Editorial (spec or real brand, campaign concept + hero image prompt), AI UGC Ad (authentic creator-style product pitch, native feel), Behind the Magic (process reveal, @nandyailab pillar, tool breakdown)
+
+TOOL ROUTING — route storyboard/image prompts to correct tool:
+- GPT Image 2: text-in-image, ads, posters, magazine covers, UI mockups, brand kit tiles, typography
+- Midjourney: high-fashion editorial stills, surrealist concepts, cinematic portraits
+- Higgsfield Nanobanana 2: character sheets, identity-consistent portraits
+- Higgsfield Soul 2: reference-based generation, fashion portraits
+- Target video tool: ${tool === "auto" ? "auto-select best tool" : tool}
+
+${brandMode ? "BRAND MODE ON: treat as spec brand campaign. Include brand concept name, tagline, visual identity direction." : "PERSONAL CONTENT MODE: creator-forward, authentic, platform-native."}
+
+RESPOND IN VALID JSON ONLY. No markdown. No backticks. Schema:
+{
+  "chosen_concept": "string",
+  "chosen_style": "string",
+  "target_tool": "string — primary video generation tool",
+  "image_tool": "string — best tool for storyboard/image prompts",
+  "reasoning": "2-3 sentences",
+  "concept_title": "string",
+  "alt_titles": ["string","string","string"],
+  "protagonist": "brief description using the assigned hair, outfit, skin tone",
+  "storyboard_prompt": "full detailed prompt routed to correct image tool, ready to paste",
+  "video_prompt": "full shot-by-shot prompt for the target video tool, with timestamps, camera, transitions, effects density",
+  "fast_cut_prompt": "10-12 second TikTok/Reels version — punchy, fast",
+  "kling_shot_structure": "if Kling is relevant: Camera→Subject→Atmosphere→Texture→Audio breakdown per shot, else null",
+  "caption_hooks": ["string","string","string"],
+  "hashtags": "string",
+  "brand_concept": ${brandMode ? '"string — brand name, tagline, campaign angle"' : 'null'},
+  "style_variations": [
+    {"name":"string","vibe":"string","tool_tip":"which tool suits this variation best","keywords":["string","string","string"]}
+  ]
+}`;
+
+  const generate = async () => {
+    if (!text.trim() && !imgB64) { setError("Add an image or describe your concept."); return; }
+    setLoading(true); setResult(null); setError(null);
+    try {
+      const userContent = [];
+      if (imgB64) userContent.push({ type:"image", source:{ type:"base64", media_type:imgFile.type, data:imgB64 }});
+      const parts = [];
+      if (text.trim()) parts.push(`Input: ${text.trim()}`);
+      if (concept) parts.push(`Locked concept: ${concept}`);
+      if (style) parts.push(`Locked style: ${style}`);
+      if (tool !== "auto") parts.push(`Target video tool: ${tool}`);
+      if (brandMode) parts.push("Brand mode: ON — treat as brand campaign spec work.");
+      if (!concept) parts.push("Auto-detect the best concept direction.");
+      userContent.push({ type:"text", text:parts.join("\n") });
+
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          model:"claude-sonnet-4-20250514", max_tokens:1000,
+          system: sysPrompt(),
+          messages:[{ role:"user", content:userContent }],
+        }),
+      });
+      const data = await res.json();
+      const raw = data.content?.find(b=>b.type==="text")?.text || "";
+      setResult(JSON.parse(raw.replace(/```json|```/g,"").trim()));
+    } catch(e) { setError("Generation failed — please try again."); console.error(e); }
+    finally { setLoading(false); }
+  };
+
+  const reset = () => { setResult(null); setText(""); clearImg(); setConcept(null); setStyle(null); setTool("auto"); setBrandMode(false); setError(null); };
+
+  // ── Render ──────────────────────────────────────────────────────────────────
+  return (
+    <div style={{ minHeight:"100vh", background:C.black, color:C.white,
+      fontFamily:"'Georgia',serif", paddingBottom:60 }}>
+
+      {/* ── Header ── */}
+      <div style={{ background:`linear-gradient(160deg,#0e0006 0%,#080808 60%,#00100f 100%)`,
+        borderBottom:`1px solid ${C.border}`, padding:"28px 22px 24px",
+        position:"relative", overflow:"hidden" }}>
+        {/* Glow blobs */}
+        {[[C.pink,.06,-40,-40,180],[C.teal,.05,20,-30,120]].map(([col,op,t,l,s],i)=>(
+          <div key={i} style={{ position:"absolute", top:t, [i===0?"right":"left"]:Math.abs(l),
+            width:s, height:s, background:col, opacity:op, borderRadius:"50%", filter:"blur(40px)" }}/>
+        ))}
+        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:4, position:"relative" }}>
+          <div style={{ width:38, height:38, borderRadius:10,
+            background:`linear-gradient(135deg,${C.pink},${C.teal})`,
+            display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>🎬</div>
+          <div>
+            <div style={{ fontSize:10, color:C.teal, letterSpacing:3.5, textTransform:"uppercase",
+              fontFamily:"monospace", fontWeight:700 }}>NANDYVISUALS</div>
+            <div style={{ fontSize:21, fontWeight:700, letterSpacing:-.5 }}>Content Direction Engine <span style={{ fontSize:12, color:C.muted, fontWeight:400 }}>v2</span></div>
+          </div>
+        </div>
+        <p style={{ color:C.muted, fontSize:12, margin:"4px 0 0 50px", position:"relative" }}>
+          Drop an image or describe your concept → full prompt package, tool-routed, ready to paste
+        </p>
+      </div>
+
+      <div style={{ maxWidth:740, margin:"0 auto", padding:"22px 18px" }}>
+
+        {/* ── Image drop ── */}
+        <div onDrop={e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f?.type.startsWith("image/"))handleImg(f);}}
+          onDragOver={e=>e.preventDefault()}
+          onClick={()=>!imgPreview&&fileRef.current.click()}
+          style={{ border:`2px dashed ${imgPreview?C.teal+"55":C.border}`, borderRadius:13,
+            overflow:"hidden", cursor:imgPreview?"default":"pointer",
+            background:imgPreview?"transparent":C.mid, marginBottom:14,
+            padding:imgPreview?0:"26px 16px", textAlign:"center", transition:"border-color .2s" }}>
+          {imgPreview ? (
+            <div style={{ position:"relative" }}>
+              <img src={imgPreview} alt="ref" style={{ width:"100%", maxHeight:300, objectFit:"cover", display:"block" }}/>
+              <button onClick={e=>{e.stopPropagation();clearImg();}} style={{
+                position:"absolute", top:10, right:10, background:"#000c", border:`1px solid #333`,
+                color:C.white, borderRadius:7, padding:"4px 10px", cursor:"pointer",
+                fontSize:11, fontFamily:"monospace" }}>✕ Remove</button>
+              <div style={{ position:"absolute", bottom:10, left:10, background:C.teal+"cc",
+                borderRadius:6, padding:"3px 10px", fontSize:10, color:"#000", fontWeight:700, fontFamily:"monospace" }}>
+                ✓ Image loaded
+              </div>
+            </div>
+          ) : (
+            <>
+              <div style={{ fontSize:28, marginBottom:6 }}>📸</div>
+              <div style={{ color:C.light, fontSize:13, fontWeight:600 }}>Drop subject photo, outfit, or mood board</div>
+              <div style={{ color:C.muted, fontSize:11, marginTop:3 }}>or click to upload</div>
+            </>
+          )}
+          <input ref={fileRef} type="file" accept="image/*" style={{ display:"none" }} onChange={e=>handleImg(e.target.files[0])}/>
+        </div>
+
+        {/* ── Text ── */}
+        <textarea value={text} onChange={e=>setText(e.target.value)}
+          placeholder='Describe your concept or subject… e.g. "Black woman in chrome jacket, futuristic cityscape, brand pitch for LUMÉ" or "AI creator process reveal, dark moody studio"'
+          style={{ width:"100%", minHeight:82, background:C.mid, border:`1px solid ${C.border}`,
+            borderRadius:11, color:C.white, fontSize:13, padding:"12px 14px",
+            fontFamily:"Georgia,serif", resize:"vertical", outline:"none",
+            boxSizing:"border-box", lineHeight:1.65, transition:"border-color .2s" }}
+          onFocus={e=>e.target.style.borderColor=C.pink+"55"}
+          onBlur={e=>e.target.style.borderColor=C.border}/>
+
+        {/* ── Mode toggles ── */}
+        <div style={{ display:"flex", gap:10, marginTop:12, alignItems:"center" }}>
+          <button onClick={()=>setBrandMode(b=>!b)} style={{
+            background: brandMode ? C.gold+"22":C.panel,
+            border:`1px solid ${brandMode?C.gold+"88":C.border}`,
+            color: brandMode?C.gold:C.muted,
+            padding:"6px 14px", borderRadius:20, fontSize:11, cursor:"pointer",
+            fontFamily:"monospace", fontWeight:700, transition:"all .18s",
+          }}>🏷️ {brandMode?"Brand Mode ON":"Brand Mode"}</button>
+          <span style={{ color:C.muted, fontSize:11, fontFamily:"monospace" }}>
+            Hair this gen: <span style={{ color:C.teal }}>{hair}</span>
+          </span>
+        </div>
+
+        {/* ── Concept groups ── */}
+        <div style={{ marginTop:18 }}>
+          <SectionLabel text="Concept Direction — lock or let AI choose"/>
+          {GROUPS.map(g=>(
+            <div key={g.id} style={{ marginBottom:12 }}>
+              <div style={{ fontSize:10, color:C.muted, fontFamily:"monospace", marginBottom:7, letterSpacing:1 }}>
+                {g.label}
+              </div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:7 }}>
+                {CONCEPTS.filter(c=>c.group===g.id).map(c=>(
+                  <Pill key={c.id} label={`${c.emoji} ${c.label}`}
+                    active={concept===c.label} color={c.color}
+                    onClick={()=>setConcept(concept===c.label?null:c.label)}/>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── Style variants ── */}
+        <div style={{ marginTop:16 }}>
+          <SectionLabel text="Style Variant — optional override"/>
+          <div style={{ display:"flex", flexWrap:"wrap", gap:7 }}>
+            {STYLES.map(s=>(
+              <Pill key={s} label={s} active={style===s} color={C.teal}
+                onClick={()=>setStyle(style===s?null:s)}/>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Tool selector ── */}
+        <div style={{ marginTop:16 }}>
+          <SectionLabel text="Target Video Tool"/>
+          <div style={{ display:"flex", flexWrap:"wrap", gap:7 }}>
+            {TOOLS.map(t=>(
+              <Pill key={t.id} label={t.label} active={tool===t.id} color={t.color}
+                onClick={()=>setTool(t.id)}/>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Generate ── */}
+        <button onClick={generate} disabled={loading} style={{
+          width:"100%", marginTop:20, padding:"15px",
+          background: loading?C.panel:`linear-gradient(135deg,${C.pink},#FF6090)`,
+          border:`1px solid ${loading?C.border:C.pink}`,
+          borderRadius:12, color:C.white, fontSize:14, fontWeight:700,
+          cursor:loading?"not-allowed":"pointer", letterSpacing:1,
+          fontFamily:"monospace", transition:"all .2s",
+          boxShadow:loading?"none":`0 4px 24px ${C.pink}33`,
+        }}>
+          {loading?"GENERATING PACKAGE…":"⚡ GENERATE CONTENT PACKAGE"}
+        </button>
+
+        {loading && <Spinner/>}
+        {error && (
+          <div style={{ background:"#1a0505", border:`1px solid ${C.pink}33`,
+            borderRadius:10, padding:"11px 14px", marginTop:14,
+            color:"#FF8080", fontSize:12, fontFamily:"monospace" }}>{error}</div>
+        )}
+
+        {/* ── Results ── */}
+        {result && (
+          <div style={{ marginTop:26 }}>
+
+            {/* Direction card */}
+            <div style={{ background:`linear-gradient(135deg,${conceptColor(result.chosen_concept)}0d,${C.teal}06)`,
+              border:`1px solid ${conceptColor(result.chosen_concept)}28`,
+              borderRadius:14, padding:"18px", marginBottom:18 }}>
+
+              {/* Badges row */}
+              <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:12 }}>
+                {[
+                  [result.chosen_concept, conceptColor(result.chosen_concept)],
+                  [result.chosen_style, C.teal],
+                  [result.target_tool, C.gold],
+                  [result.image_tool, "#A78BFA"],
+                ].filter(([l])=>l).map(([label,color],i)=>(
+                  <span key={i} style={{ background:color+"22", border:`1px solid ${color}44`,
+                    color, padding:"3px 10px", borderRadius:20, fontSize:10,
+                    fontWeight:700, letterSpacing:.8, textTransform:"uppercase", fontFamily:"monospace" }}>
+                    {label}
+                  </span>
+                ))}
+                {result.brand_concept && (
+                  <span style={{ background:C.gold+"22", border:`1px solid ${C.gold}44`,
+                    color:C.gold, padding:"3px 10px", borderRadius:20, fontSize:10,
+                    fontWeight:700, letterSpacing:.8, textTransform:"uppercase", fontFamily:"monospace" }}>
+                    🏷️ {result.brand_concept}
+                  </span>
+                )}
+              </div>
+
+              <div style={{ fontSize:21, fontWeight:700, marginBottom:6, letterSpacing:-.3 }}>
+                {result.concept_title}
+              </div>
+              <div style={{ color:C.soft, fontSize:12.5, lineHeight:1.65, marginBottom:12 }}>
+                {result.reasoning}
+              </div>
+
+              {/* Protagonist */}
+              {result.protagonist && (
+                <div style={{ background:C.mid, borderRadius:8, padding:"8px 12px",
+                  fontSize:12, color:C.light, fontFamily:"monospace", marginBottom:12,
+                  borderLeft:`2px solid ${C.pink}` }}>
+                  👤 {result.protagonist}
+                </div>
+              )}
+
+              {/* Alt titles */}
+              {result.alt_titles?.length > 0 && (
+                <>
+                  <div style={{ fontSize:10, color:C.muted, letterSpacing:2, textTransform:"uppercase",
+                    fontFamily:"monospace", marginBottom:8 }}>Alt Titles</div>
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:7 }}>
+                    {result.alt_titles.map((t,i)=>(
+                      <span key={i} style={{ background:C.panel, border:`1px solid ${C.border}`,
+                        borderRadius:7, padding:"4px 10px", fontSize:11,
+                        color:C.light, fontFamily:"monospace" }}>{t}</span>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Prompt blocks */}
+            <CopyBlock title="📸 Storyboard / Image Prompt" content={result.storyboard_prompt} accent={C.pink}/>
+            <CopyBlock title="🎬 Full Video Prompt" content={result.video_prompt} accent={C.teal}/>
+            {result.kling_shot_structure && (
+              <CopyBlock title="🎞️ Kling Director — Camera→Subject→Atmosphere→Texture→Audio" content={result.kling_shot_structure} accent="#8B5CF6"/>
+            )}
+            <CopyBlock title="⚡ Fast Cut — TikTok / Reels Version" content={result.fast_cut_prompt} accent={C.gold}/>
+
+            {/* Hooks + hashtags */}
+            <div style={{ background:C.panel, border:`1px solid ${C.border}`,
+              borderRadius:12, padding:16, marginBottom:14 }}>
+              <SectionLabel text="🪝 Caption Hooks" color={C.pink}/>
+              {result.caption_hooks?.map((h,i)=>(
+                <div key={i} style={{ background:C.mid, borderRadius:8, padding:"9px 13px",
+                  marginBottom:8, color:C.light, fontSize:12.5, lineHeight:1.6,
+                  borderLeft:`3px solid ${C.pink}` }}>{h}</div>
+              ))}
+              {result.hashtags && (
+                <>
+                  <SectionLabel text="# Hashtags" color={C.teal}/>
+                  <div style={{ color:C.teal, fontSize:11.5, lineHeight:1.9, fontFamily:"monospace" }}>
+                    {result.hashtags}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Style variations */}
+            {result.style_variations?.length > 0 && (
+              <>
+                <SectionLabel text="Style Variations"/>
+                <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:16 }}>
+                  {result.style_variations.map((v,i)=>(
+                    <div key={i} style={{ background:C.panel, border:`1px solid ${C.border}`,
+                      borderRadius:10, padding:"13px 15px" }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+                        <span style={{ color:C.white, fontWeight:700, fontSize:13 }}>{v.name}</span>
+                        {v.tool_tip && (
+                          <span style={{ background:C.mid, borderRadius:6, padding:"2px 8px",
+                            fontSize:10, color:C.teal, fontFamily:"monospace" }}>→ {v.tool_tip}</span>
+                        )}
+                      </div>
+                      <div style={{ color:C.muted, fontSize:12, marginBottom:8 }}>{v.vibe}</div>
+                      <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                        {v.keywords?.map((kw,j)=>(
+                          <span key={j} style={{ background:C.mid, color:C.teal,
+                            padding:"2px 8px", borderRadius:6, fontSize:10, fontFamily:"monospace" }}>{kw}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            <button onClick={reset} style={{
+              width:"100%", padding:"12px", background:"transparent",
+              border:`1px solid ${C.border}`, borderRadius:11, color:C.muted,
+              fontSize:12, cursor:"pointer", fontFamily:"monospace",
+            }}>↺ New Generation</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
