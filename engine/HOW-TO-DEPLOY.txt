@@ -1,0 +1,29 @@
+# DROP THESE INTO YOUR visionaries REPO
+# Live at: nandyvisuals.com/engine
+
+## STEP 1 — Upload this file to GitHub
+File: public/engine/index.html
+→ In your visionaries repo, go to the `public` folder
+→ Click Add file → Create new file
+→ Name it: engine/index.html
+→ Paste the contents of index.html
+→ Commit
+
+## STEP 2 — Check your vercel.json
+Your vercel.json should already have a rewrite for /api/proxy.
+Just confirm it also serves the public folder. It should look like:
+
+{
+  "rewrites": [
+    { "source": "/api/proxy", "destination": "/api/proxy" },
+    { "source": "/engine", "destination": "/public/engine/index.html" },
+    { "source": "/engine/(.*)", "destination": "/public/engine/$1" }
+  ]
+}
+
+## STEP 3 — Add env variable on Vercel (if not already there)
+Go to vercel.com → your project → Settings → Environment Variables
+Add: ANTHROPIC_API_KEY = your key
+
+## STEP 4 — Done
+Visit: nandyvisuals.com/engine
