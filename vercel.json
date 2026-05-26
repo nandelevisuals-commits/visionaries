@@ -28,7 +28,8 @@
     { "source": "/avatar-engine", "destination": "/avatar-engine-v2.html" },
     { "source": "/seedance-director", "destination": "/seedance-director.html" },
     { "source": "/virality-predictor", "destination": "/virality-predictor.html" },
-    { "source": "/engine", "destination": "/engine/index.html" }
+    { "source": "/engine", "destination": "/engine/index.html" },
+    { "source": "/visionaries", "destination": "/nandyvisuals-visionaries-collection.html" }
   ],
   "headers": [
     {
