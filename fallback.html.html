@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NANDYVISUALS CINEDECK</title>
+<style>
+:root{
+  --ink:#08070C;
+  --panel:#101019;
+  --panel-2:#171725;
+  --line:#26263A;
+  --bone:#F2F0EC;
+  --dim:#8B87A0;
+  --pink:#FF3E8A;
+  --teal:#17E0C8;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --r:4px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--ink);
+  color:var(--bone);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.5;
+  padding-bottom:88px;
+  background-image:
+    linear-gradient(rgba(38,38,58,.30) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(38,38,58,.30) 1px,transparent 1px);
+  background-size:52px 52px;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+
+/* ---------- masthead ---------- */
+header{border-bottom:1px solid var(--line);padding:26px 0 20px;margin-bottom:26px}
+.brandline{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.mark{
+  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.06em;
+  color:var(--ink);background:var(--pink);padding:5px 8px;border-radius:2px;
+}
+h1{
+  margin:0;font-size:clamp(30px,7.5vw,54px);font-weight:800;
+  letter-spacing:-.035em;font-style:italic;line-height:.95;
+}
+h1 .ghost{color:transparent;-webkit-text-stroke:1px var(--teal)}
+.tag{font-family:var(--mono);font-size:12px;color:var(--teal);margin-top:10px}
+.tag b{color:var(--dim);font-weight:400}
+
+/* ---------- layout ---------- */
+.deck{display:grid;grid-template-columns:1fr;gap:22px}
+@media(min-width:1000px){
+  .deck{grid-template-columns:minmax(0,1fr) minmax(0,440px);align-items:start}
+  .rail{position:sticky;top:18px}
+}
+
+/* ---------- panels ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-bottom:20px;overflow:hidden}
+.phead{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 14px;background:var(--panel-2);border-bottom:1px solid var(--line);
+}
+.phead h2{margin:0;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.09em;color:var(--bone)}
+.phead .num{font-family:var(--mono);font-size:11px;color:var(--pink);margin-right:8px}
+.pbody{padding:14px}
+.hint{font-family:var(--mono);font-size:11px;color:var(--dim);margin:0 0 10px}
+
+/* ---------- controls ---------- */
+textarea,input[type=text],select{
+  width:100%;background:#05050A;color:var(--bone);border:1px solid var(--line);
+  border-radius:2px;padding:11px 12px;font-family:var(--mono);font-size:13px;line-height:1.5;
+}
+textarea{min-height:104px;resize:vertical}
+textarea::placeholder,input::placeholder{color:#4E4B60}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--teal) 50%),linear-gradient(135deg,var(--teal) 50%,transparent 50%);background-position:calc(100% - 16px) 18px,calc(100% - 11px) 18px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+label.fld{display:block;margin-bottom:14px}
+label.fld > span{display:block;font-family:var(--mono);font-size:11px;color:var(--dim);margin-bottom:5px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.row2{grid-template-columns:1fr}}
+
+button{font-family:var(--mono);font-size:12px;cursor:pointer;border-radius:2px;border:1px solid var(--line);background:var(--panel-2);color:var(--bone);padding:9px 13px;transition:border-color .12s,color .12s}
+button:hover{border-color:var(--teal);color:var(--teal)}
+.btn-key{background:var(--pink);border-color:var(--pink);color:#0A0208;font-weight:700}
+.btn-key:hover{background:#FF5C9C;border-color:#FF5C9C;color:#0A0208}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- preset list ---------- */
+.scroller{max-height:320px;overflow-y:auto;border:1px solid var(--line);border-radius:2px;background:#05050A}
+.opt{display:flex;gap:12px;align-items:center;padding:11px 13px;border-bottom:1px solid #1B1B29;cursor:pointer}
+.opt:last-child{border-bottom:0}
+.opt .ic{font-size:19px;line-height:1;flex:0 0 auto;filter:saturate(.85)}
+.opt .txt{min-width:0;flex:1}
+.opt .nm{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.opt .md{font-family:var(--mono);font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opt[aria-selected=true]{background:var(--bone)}
+.opt[aria-selected=true] .nm{color:#0A0208}
+.opt[aria-selected=true] .md{color:#55516A}
+.opt.house .nm::after{content:"NV";font-family:var(--mono);font-size:9px;color:var(--teal);border:1px solid var(--teal);border-radius:2px;padding:1px 4px;margin-left:8px;vertical-align:2px}
+.opt.house[aria-selected=true] .nm::after{color:var(--pink);border-color:var(--pink)}
+
+/* ---------- chips ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-family:var(--mono);font-size:11px;padding:7px 10px;border:1px solid var(--line);border-radius:2px;background:#05050A;color:var(--dim);cursor:pointer}
+.chip:hover{border-color:var(--teal);color:var(--teal)}
+.chip[aria-pressed=true]{background:var(--teal);border-color:var(--teal);color:#04211E;font-weight:700}
+.chip.pk[aria-pressed=true]{background:var(--pink);border-color:var(--pink);color:#1A0410}
+
+/* ---------- grade swatches ---------- */
+.grades{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:10px}
+.grade{border:1px solid var(--line);border-radius:2px;background:#05050A;padding:10px;cursor:pointer;text-align:left}
+.grade:hover{border-color:var(--teal)}
+.grade[aria-pressed=true]{border-color:var(--pink);background:#190611}
+.grade .nm{font-size:13px;font-weight:600;margin-bottom:3px}
+.grade .rf{font-family:var(--mono);font-size:10px;color:var(--dim);line-height:1.4;min-height:28px}
+.sw{display:flex;height:16px;margin-top:8px;border-radius:1px;overflow:hidden}
+.sw i{flex:1}
+
+/* ---------- cast card ---------- */
+.cast{background:#05050A;border:1px solid var(--line);border-radius:2px;padding:13px;font-family:var(--mono);font-size:12px;line-height:1.75}
+.cast dt{color:var(--dim);float:left;width:82px;clear:left}
+.cast dd{margin:0 0 0 82px;color:var(--bone)}
+.cast dl{margin:0}
+.lockbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:11px;flex-wrap:wrap}
+.rule{font-family:var(--mono);font-size:10px;color:var(--teal)}
+
+/* ---------- output ---------- */
+.out{background:#05050A;border:1px solid var(--line);border-radius:2px;padding:14px;font-family:var(--mono);font-size:12px;line-height:1.65;white-space:pre-wrap;word-wrap:break-word;max-height:60vh;overflow:auto;color:#D9D5E4}
+.out .k{color:var(--pink)}
+.meta{font-family:var(--mono);font-size:11px;color:var(--teal);background:#04120F;border:1px solid #14403A;border-radius:2px;padding:10px 12px;margin-top:12px;line-height:1.6}
+.neg{color:#FF7A7A}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin:-14px -14px 14px;background:var(--panel-2)}
+.tab{flex:1;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:11px 6px;color:var(--dim)}
+.tab[aria-selected=true]{color:var(--bone);border-bottom-color:var(--pink);background:var(--panel)}
+.tab:hover{color:var(--bone)}
+
+/* ---------- vault ---------- */
+.vault{list-style:none;margin:0;padding:0}
+.vault li{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #1B1B29;font-family:var(--mono);font-size:11px}
+.vault li:last-child{border-bottom:0}
+.vault .vn{color:var(--bone);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vault .vb{display:flex;gap:6px;flex:0 0 auto}
+.vault button{padding:5px 8px;font-size:10px}
+.empty{font-family:var(--mono);font-size:11px;color:var(--dim);padding:6px 0}
+
+/* ---------- action bar ---------- */
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(8,7,12,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px 18px calc(12px + env(safe-area-inset-bottom));z-index:20}
+.bar .wrap{display:flex;gap:8px;align-items:center}
+.bar .btn-key{flex:1}
+.count{font-family:var(--mono);font-size:11px;color:var(--dim);flex:0 0 auto}
+@media(max-width:520px){.count{display:none}}
+
+footer{border-top:1px solid var(--line);margin-top:34px;padding:20px 0 8px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="brandline">
+    <span class="mark">NV</span>
+    <h1>CINE<span class="ghost">DECK</span></h1>
+  </div>
+  <p class="tag">Prompt engine for the NANDYVISUALS stack <b>— Seedance 2.5 · Kling 3.0 Pro · Sora 2 · Higgsfield · Veo</b></p>
+</header>
+
+<div class="deck">
+
+<!-- ============ LEFT: CONFIG ============ -->
+<div>
+
+  <section class="panel">
+    <div class="phead"><h2><span class="num">01</span>Scene</h2><button id="clearScene">Clear</button></div>
+    <div class="pbody">
+      <p class="hint">One or two sentences. What happens, and where.</p>
+      <textarea id="scene" placeholder="A woman stops mid-step on a wet sidewalk because the vending machine behind her has started speaking her name."></textarea>
+      <div class="btn-row" style="margin-top:10px">
+        <button id="seedIdea">Draw a scene seed</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="phead"><h2><span class="num">02</span>Look</h2><span class="rule" id="presetCount"></span></div>
+    <div class="pbody">
+      <div class="scroller" id="presets" role="listbox" aria-label="Visual style preset"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="phead"><h2><span class="num">03</span>Cast lock</h2><button id="rollCast">Roll new look</button></div>
+    <div class="pbody">
+      <div class="cast">
+        <dl>
+          <dt>Lead</dt><dd id="cLead"></dd>
+          <dt>Hair</dt><dd id="cHair"></dd>
+          <dt>Wardrobe</dt><dd id="cFit"></dd>
+          <dt>Register</dt><dd id="cFace"></dd>
+        </dl>
+      </div>
+      <div class="lockbar">
+        <span class="rule">Locked: no teal hair · no facial piercings · rotates every roll</span>
+        <label style="display:flex;gap:7px;align-items:center;font-family:var(--mono);font-size:11px;color:var(--dim)">
+          <input type="checkbox" id="castOn" checked style="width:auto;accent-color:var(--pink)"> include in prompt
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="phead"><h2><span class="num">04</span>Grade</h2></div>
+    <div class="pbody">
+      <p class="hint">Colour comes from a light source in the room, never from "golden hour".</p>
+      <div class="grades" id="grades"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="phead"><h2><span class="num">05</span>Camera</h2></div>
+    <div class="pbody">
+      <div class="row2">
+        <label class="fld"><span>Body &amp; lens</span>
+          <select id="rig"></select>
+        </label>
+        <label class="fld"><span>Aspect</span>
+          <select id="aspect">
+            <option>9:16 vertical</option><option selected>16:9 widescreen</option>
+            <option>2.39:1 anamorphic scope</option><option>1:1 square</option><option>4:5 feed</option>
+          </select>
+        </label>
+      </div>
+      <p class="hint">Movement — pick up to three, they map onto the beats in order.</p>
+      <div class="chips" id="moves"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="phead"><h2><span class="num">06</span>Build</h2></div>
+    <div class="pbody">
+      <div class="row2">
+        <label class="fld"><span>Target engine</span><select id="engine"></select></label>
+        <label class="fld"><span>Length</span>
+          <select id="dur"><option>8s</option><option>10s</option><option selected>20s</option><option>30s</option><option>30s ×2 chain (60s)</option></select>
+        </label>
+      </div>
+      <label class="fld"><span>Register — how expensive it is allowed to look</span><select id="reg"></select></label>
+      <p class="hint">Beats. Edit freely — these are the spine of the film.</p>
+      <label class="fld"><span>Beat 1 · hook</span><input type="text" id="b1"></label>
+      <label class="fld"><span>Beat 2 · turn</span><input type="text" id="b2"></label>
+      <label class="fld"><span>Beat 3 · payoff</span><input type="text" id="b3"></label>
+      <div class="btn-row">
+        <button id="autoBeats">Rebuild beats from scene</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ RIGHT: OUTPUT ============ -->
+<div class="rail">
+  <section class="panel">
+    <div class="phead"><h2>Prompt</h2><span class="rule" id="engBadge"></span></div>
+    <div class="pbody">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" data-t="prompt" aria-selected="true">Prompt</button>
+        <button class="tab" role="tab" data-t="neg" aria-selected="false">Negatives</button>
+        <button class="tab" role="tab" data-t="vault" aria-selected="false">Vault</button>
+      </div>
+
+      <div id="tab-prompt">
+        <div class="out" id="out"></div>
+        <div class="meta" id="metaLine"></div>
+      </div>
+
+      <div id="tab-neg" hidden>
+        <div class="out neg" id="outNeg"></div>
+        <p class="hint" style="margin-top:10px">Kling and Veo take these in a separate negative field. For Seedance and Sora they stay at the bottom of the prompt.</p>
+      </div>
+
+      <div id="tab-vault" hidden>
+        <ul class="vault" id="vaultList"></ul>
+        <div class="btn-row" style="margin-top:12px">
+          <button id="exportVault">Export vault</button>
+          <button id="importVault">Import vault</button>
+          <input type="file" id="fileIn" accept="application/json" hidden>
+        </div>
+        <p class="hint" style="margin-top:10px">Saved prompts live in this session. Export before you close the tab.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+</div>
+
+<footer>NANDYVISUALS CINEDECK · one file, no server, no build step · house rules enforced at output</footer>
+</div>
+
+<div class="bar">
+  <div class="wrap">
+    <button class="btn-key" id="copyBtn">Copy full prompt</button>
+    <button id="saveBtn">Save to vault</button>
+    <button id="dlBtn">.txt</button>
+    <span class="count" id="cc"></span>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   NANDYVISUALS CINEDECK — data
+   ===================================================================== */
+
+const PRESETS = [
+  {id:"auto", ic:"✨", nm:"Auto (no preset)", md:"Adaptive",
+   cam:"clean coverage chosen by the content of the scene", lens:"35mm, natural perspective",
+   tex:"neutral digital capture, no stylisation", aud:"room tone and whatever the scene itself makes",
+   meta:"Adaptive · engine picks coverage"},
+
+  {id:"cinreal", ic:"🎬", nm:"Cinematic realism", md:"Dramatic, high-budget, immersive",
+   cam:"deliberate blocking, motivated moves, subject held in frame", lens:"ARRI Alexa 35, Panavision anamorphic 40mm, T2.8",
+   tex:"fine 35mm grain, gentle halation on speculars, true skin texture with visible pores",
+   aud:"full diegetic field — footsteps, cloth, breath, the room's own reverb",
+   meta:"ARRI Alexa 35 · anamorphic · 180° shutter · ND-controlled"},
+
+  {id:"anime", ic:"🌸", nm:"Anime dreamscape", md:"Ethereal, vibrant, emotional",
+   cam:"held wide, then a slow push into a single expression", lens:"cel-animation perspective, painted depth planes",
+   tex:"hand-inked linework, cel shading, painted gouache skies, visible paper grain",
+   aud:"wind through leaves, cicadas, distant train crossing",
+   meta:"2D cel animation · painted backgrounds · 12fps character, 24fps camera"},
+
+  {id:"foundfoot", ic:"👻", nm:"Found footage horror", md:"Terrifying, claustrophobic, panic",
+   cam:"handheld to the point of failure, the operator running, the frame losing the subject", lens:"consumer camcorder 4mm wide, hard vignette",
+   tex:"interlaced video, IR night-vision green, blown highlights, tape dropout",
+   aud:"breathing into the mic, footsteps on debris, mic clipping and wind buffet",
+   meta:"Camcorder · night vision · timecode burn · tape artefacts"},
+
+  {id:"sitcom", ic:"📺", nm:"90s sitcom", md:"Cheesy, bright, nostalgic",
+   cam:"flat multi-cam proscenium, three-camera coverage, no camera movement", lens:"broadcast zoom at 50mm equivalent",
+   tex:"videotape softness, flat even key, hard sitcom set lighting with no shadows",
+   aud:"live studio room, canned audience laugh, doors on hinges",
+   meta:"Multi-cam videotape · 4:3 safe framing · studio flood"},
+
+  {id:"mv", ic:"🎵", nm:"Music video", md:"Hype, glossy, rhythmic",
+   cam:"cut-on-beat energy, whips, snap zooms, camera dancing with the subject", lens:"wide 24mm close to the face, heavy foreground",
+   tex:"glossy contrast, crushed blacks, colour separation in the highlights, shutter drag on movement",
+   aud:"performance sound only — footfalls, fabric, breath on the beat",
+   meta:"Beat-mapped coverage · shutter drag · saturated key"},
+
+  {id:"surreal", ic:"👽", nm:"Surreal", md:"Bizarre, dreamy, uncanny",
+   cam:"symmetrical, slightly too slow, holding a beat past comfort", lens:"28mm at eye height, dead centre",
+   tex:"soft even light with no visible source, scale relationships subtly wrong",
+   aud:"a room too quiet for its size, one sound arriving late",
+   meta:"Centre-framed · impossible light source · delayed sound"},
+
+  {id:"ring", ic:"🔔", nm:"Ring camera", md:"Voyeuristic, candid, raw",
+   cam:"fixed doorbell height, fisheye, nobody operating it", lens:"1.9mm fisheye, everything in focus",
+   tex:"HDR-flattened, IR wash after dark, motion-triggered exposure hunting",
+   aud:"compressed doorbell mic, wind, a dog three houses down",
+   meta:"Doorbell cam · fisheye · date-time stamp · motion trigger"},
+
+  {id:"bodycam", ic:"👮", nm:"Bodycam footage", md:"Intense, realistic, gritty",
+   cam:"chest-mounted, swinging with the wearer's stride, subject entering and leaving frame", lens:"ultra-wide with barrel distortion",
+   tex:"digital stabilisation warping at the edges, blown windows, heavy compression",
+   aud:"clothing rustle over the mic, radio chatter, breathing",
+   meta:"AXON UI overlay · GPS coords · digital stabilisation artefacts · chest-mounted wide"},
+
+  {id:"cctv", ic:"📹", nm:"CCTV security", md:"Cold, observational, distant",
+   cam:"locked off in a high corner, nobody moves it, the subject is small in frame", lens:"3.6mm ceiling-mounted, top-down bias",
+   tex:"low frame rate, smeared motion, monochrome IR at night, heavy block compression",
+   aud:"none, or a single flat mic picking up HVAC",
+   meta:"Fixed CCTV · 12fps · timestamp overlay · IR cut filter"},
+
+  {id:"dash", ic:"🚗", nm:"Dashboard camera", md:"Unexpected, fast, road-trip",
+   cam:"bolted to the windscreen, the world arriving at the frame", lens:"wide dash lens, bonnet in the bottom of frame",
+   tex:"windscreen glare, wiper sweep, exposure hunting between shade and sun",
+   aud:"engine, tyre roar, indicator tick, muffled cabin voices",
+   meta:"Dashcam · fixed mount · speed and coord overlay"},
+
+  {id:"drone", ic:"🚁", nm:"Drone aerial", md:"Grand, expansive, breath-taking",
+   cam:"rising reveal, slow orbit, or a top-down descent onto the subject", lens:"24mm equivalent, horizon locked",
+   tex:"clean daylight capture, long-lens compression on the ground plane, ND-controlled motion blur",
+   aud:"wind, distance, ground sound thinned by height",
+   meta:"Aerial gimbal · ND filtered · horizon-locked · 24fps"},
+
+  {id:"ugc", ic:"📱", nm:"UGC / influencer", md:"Authentic, trendy, casual",
+   cam:"held at arm's length or propped against something, reframed mid-thought", lens:"phone front camera, 26mm, close",
+   tex:"phone HDR, mixed indoor light, slight over-sharpening, real skin",
+   aud:"talking directly into the phone mic, room sound, hands on product",
+   meta:"Phone capture · handheld · vertical-native · natural mixed light"},
+
+  {id:"kawaii", ic:"🎀", nm:"Kawaii / anime-inspired", md:"Cute, soft, pastel",
+   cam:"gentle, bouncing slightly, always finding the sweetest angle", lens:"35mm soft-focus, shallow",
+   tex:"pastel palette, bloom on every highlight, soft edges, glitter specular",
+   aud:"small bright sounds — charms, wrappers, a kettle",
+   meta:"Pastel key · bloom · soft-focus filtration"},
+
+  {id:"wes", ic:"🦊", nm:"Wes Anderson style", md:"Quirky, deadpan, organised",
+   cam:"dead-centre symmetry, 90° whip pans, snap-zoom, flat tableau staging", lens:"27mm flat perspective, everything parallel to the wall",
+   tex:"pastel-limited palette, even front light, planar depth, nothing tilted",
+   aud:"crisp isolated foley, each sound arriving alone",
+   meta:"Symmetrical tableau · planar staging · 90° whips · limited palette"},
+
+  /* ---- NANDYVISUALS house presets ---- */
+  {id:"prestige", house:1, ic:"🖤", nm:"Prestige fashion film", md:"Editorial, expensive, still",
+   cam:"held frames, one motivated move per shot, the subject given time", lens:"ARRI Alexa 35, Panavision anamorphic 50mm, T2.0",
+   tex:"anamorphic flare and oval bokeh, fine grain, halation on skin highlights, real fabric behaviour",
+   aud:"fabric, breath, heel on floor, the room's reverb — nothing else",
+   meta:"ARRI Alexa 35 · Panavision anamorphic · 180° shutter · print-stock grade"},
+
+  {id:"stilllife", house:1, ic:"🫙", nm:"Editorial still-life", md:"Tactile, macro, product-forward",
+   cam:"locked-off macro, then a slow parallax slide across the surface", lens:"100mm macro, T4, focus falling off within centimetres",
+   tex:"raking side light, real condensation and dust, material grain readable at the edge of frame",
+   aud:"the product's own sound — glass, cap, liquid, paper",
+   meta:"Macro tabletop · raking key · shallow plane · practical surfaces"},
+
+  {id:"oner", house:1, ic:"➰", nm:"Continuous-take oner", md:"Unbroken, choreographed, alive",
+   cam:"one unbroken take, camera travelling with the subject through doorways and light changes, no cuts",
+   lens:"32mm on a stabilised head, operator walking",
+   tex:"exposure shifting as the take passes practicals, natural handheld float",
+   aud:"one continuous sound field, perspective changing with the camera",
+   meta:"Single take · no cuts · stabilised handheld · practical-lit passes"},
+
+  {id:"fpv", house:1, ic:"🛩", nm:"FPV chase", md:"Velocity, proximity, thrill",
+   cam:"FPV drone diving, threading gaps, proximity passes at speed, camera itself the event",
+   lens:"controlled fisheye, 180° shutter, ND filtered",
+   tex:"real motion blur, horizon rolling with the airframe, speed compressing the frame",
+   aud:"prop wash, air over the frame, the world arriving and leaving",
+   meta:"FPV airframe · ND filter · 180° shutter · gap and dive maneuvers"},
+
+  {id:"deadpan", house:1, ic:"🪑", nm:"Deadpan absurdist spot", md:"Straight-faced, one rule, funny",
+   cam:"static, patient, holding on people reacting to something absurd as if it were routine",
+   lens:"40mm at eye height, locked off, occasional slow push for the punchline",
+   tex:"honest office or domestic light, nothing heightened, the absurdity carried by behaviour",
+   aud:"flat real room, one sound doing the joke, a witness sighing",
+   meta:"Locked-off · comedic hold · real interior light · punchline push"},
+
+  {id:"s16", house:1, ic:"🎞", nm:"Super 16 memory", md:"Grainy, warm, remembered",
+   cam:"loose handheld, imperfect framing, the moment caught not staged", lens:"Super 16, 25mm, T2.8, softer edges",
+   tex:"heavy 16mm grain, gate weave, warm print bias, highlights rolling off early",
+   aud:"muffled and close, as if remembered rather than recorded",
+   meta:"Super 16mm · gate weave · print-stock warmth · handheld"},
+
+  {id:"neon", house:1, ic:"🌃", nm:"Night neon melodrama", md:"Wet streets, held emotion",
+   cam:"slow lateral tracking past light sources, subject moving through pools of colour",
+   lens:"anamorphic 40mm wide open, streaking flares",
+   tex:"wet asphalt reflections, sodium and neon mixing, deep clean blacks, rain in the beams",
+   aud:"rain, traffic hiss, a door somewhere behind",
+   meta:"Night exterior · practical neon · anamorphic flare · wet-down"},
+
+  {id:"demo", house:1, ic:"🤲", nm:"Hands-on demo", md:"Close, satisfying, instructive",
+   cam:"over-shoulder and top-down alternating, hands always the subject, product entering frame with intent",
+   lens:"50mm at 40cm, shallow, focus following the hands",
+   tex:"soft window key with one hard accent, real texture on skin and packaging, visible product response",
+   aud:"every step of the action audible — cap, pump, pour, sizzle, click",
+   meta:"Top-down + over-shoulder · hands-led · window key · product-response sound"}
+];
+
+const GRADES = [
+  {id:"none", nm:"No grade lock", rf:"Let the preset carry the colour.", sw:["#2A2A34","#4B4B5A","#8B87A0"],
+   line:""},
+  {id:"sodium", nm:"Sodium vapour", rf:"Streetlight amber against uncorrected night blue.", sw:["#F2A65A","#7A4A1E","#16223A"],
+   line:"graded to sodium-vapour street lighting — amber #F2A65A key falling to unbalanced night blue #16223A in the shadows, no white light anywhere in frame"},
+  {id:"fluoro", nm:"Fluorescent office", rf:"Overhead tubes, green bias, no flattery.", sw:["#D8E3D5","#9BAF9C","#3D4A42"],
+   line:"graded to overhead fluorescent tubes — green-biased #D8E3D5 top light, flat shadows #3D4A42, deliberately unflattering, no warm fill"},
+  {id:"tungsten", nm:"Tungsten practicals", rf:"Lamps in shot doing all the work.", sw:["#FFC98B","#B36A32","#241812"],
+   line:"lit only by tungsten practicals inside the frame — #FFC98B pools falling to #241812, light levels dropping off fast between lamps"},
+  {id:"northwin", nm:"North window", rf:"Overcast daylight, one direction, soft.", sw:["#CFD8DE","#8C9AA5","#2E353B"],
+   line:"lit by a single north-facing window under overcast sky — cool soft #CFD8DE from one direction, shadows open and grey, no fill from the other side"},
+  {id:"bleach", nm:"Bleach bypass", rf:"Silver retained, concrete and skin.", sw:["#E6E4DF","#9A968E","#14140F"],
+   line:"bleach-bypass process look — silver retained, desaturated #9A968E midtones, blacks crushed to #14140F, skin reading pale and metallic"},
+  {id:"print", nm:"2383 print stock", rf:"Warm shoulder, clean deep blacks.", sw:["#F0DCC2","#B4744C","#100C0E"],
+   line:"graded to a 2383 print emulation — warm shoulder on the highlights #F0DCC2, dense blacks #100C0E, gentle red bias in skin"},
+  {id:"rain", nm:"Cyan night rain", rf:"Wet street, cold key, one warm break.", sw:["#7FD8E8","#2B6478","#0A1219"],
+   line:"cold cyan night grade — #7FD8E8 rim light through rain, everything else falling to #0A1219, exactly one warm practical breaking the palette"},
+  {id:"mixed", nm:"Warm lamp, cold window", rf:"Two sources arguing in one room.", sw:["#FFB870","#5C6E86","#1C1A21"],
+   line:"mixed colour temperature — warm #FFB870 lamplight on one side of the face, cold #5C6E86 window light on the other, no attempt to balance them"}
+];
+
+const RIGS = [
+  "ARRI Alexa 35 · Panavision anamorphic 40mm · T2.8 · 180° shutter",
+  "ARRI Alexa 35 · anamorphic 50mm · T2.0 · shallow",
+  "Super 16mm · 25mm spherical · T2.8 · gate weave",
+  "35mm spherical · 85mm portrait · T1.8 · long-lens compression",
+  "100mm macro · T4 · centimetre-deep focus plane",
+  "24mm wide · T2.8 · close to the subject, heavy foreground",
+  "Phone front camera · 26mm · handheld, vertical-native",
+  "Consumer camcorder · 4mm wide · interlaced, hard vignette",
+  "Fixed security lens · 3.6mm · high corner mount",
+  "FPV airframe · controlled fisheye · ND filtered",
+  "Aerial gimbal · 24mm equivalent · horizon locked"
+];
+
+const MOVES = ["locked off","slow push in","dolly out","lateral track","low orbit","crane down","handheld follow","whip pan","snap zoom","rack focus","top-down descent","over-shoulder glide","FPV dive","parallax slide","hold, then reframe"];
+
+const ENGINES = [
+  {id:"seedance", nm:"Seedance 2.5", badge:"timed beats · @refs"},
+  {id:"kling", nm:"Kling 3.0 Pro", badge:"shot block · split negatives"},
+  {id:"sora", nm:"Sora 2", badge:"prose paragraph"},
+  {id:"higgs", nm:"Higgsfield (Soul 2)", badge:"image-first"},
+  {id:"veo", nm:"Veo 3", badge:"description + audio field"}
+];
+
+const REGISTERS = [
+  "R1 — deliberately cheap. Consumer capture, bad light, no polish. It should not look directed.",
+  "R2 — plausible amateur. Real room, one usable light, mistakes left in.",
+  "R3 — competent commercial. Clean, lit, unremarkable on purpose.",
+  "R4 — paid media. Motivated light, controlled grade, the frame is composed.",
+  "R5 — prestige. Every element art-directed, film-grade capture, nothing accidental."
+];
+
+/* ---- cast rotation: house rules enforced ---- */
+const HAIR = [
+  "shoulder-length locs pulled back, edges laid",
+  "natural 4C afro, full and freshly picked out",
+  "twist-out with defined coils falling past the collarbone",
+  "sleek bone-straight bob with a sharp centre part",
+  "slicked-back low bun with a clean hairline",
+  "finger waves set close to the head, glossy",
+  "pin curls, 1940s set, deep side part",
+  "straight-back cornrows into a long tail",
+  "body-wave length past the shoulder with soft movement",
+  "high sculpted updo, nape shaved clean",
+  "tapered TWA, dense and even",
+  "honey-brown blown-out layers with a deep side part",
+  "auburn micro-coils cropped close",
+  "jet-black blunt shoulder cut, one length"
+];
+const FITS = [
+  "tailored black wool suiting, no jewellery",
+  "washed denim and a heavy ribbed knit",
+  "liquid slip dress in oyster satin",
+  "utility canvas jacket over a plain white tee",
+  "matte technical outerwear, high collar",
+  "vintage leather blazer with an oversize shoulder",
+  "cream knit set, soft and unstructured",
+  "sheer layered blouse over a structured bodice",
+  "cargo trousers, cropped tank, worn sneakers",
+  "long camel coat over head-to-toe charcoal",
+  "printed silk shirt tucked into pleated trousers",
+  "sculptural neoprene dress in one flat colour"
+];
+const FACE = [
+  "unimpressed, holding the look a second too long",
+  "caught mid-thought, not performing for the camera",
+  "quiet amusement she is not trying to hide",
+  "flat professional composure while something absurd happens",
+  "genuine surprise arriving late",
+  "steady, direct, unbothered",
+  "concentrating, mouth slightly open, unaware of the camera",
+  "warm and open, breaking into a real laugh"
+];
+const AGES = ["mid-twenties","late twenties","early thirties","mid-thirties"];
+
+const SEEDS = [
+  "A woman waits for a lift that opens onto a completely different building each time.",
+  "Someone alphabetises a shelf while, behind her, the room slowly fills with identical umbrellas.",
+  "A late-night launderette. The only dryer still running has been running for eleven years.",
+  "She sets a glass down and the whole table settles a centimetre, like it agreed to something.",
+  "A stylist steams a jacket and the steam refuses to disperse, hanging in the shape of the wearer.",
+  "The office coffee machine will only dispense if you tell it something true.",
+  "A woman photographs her dinner and the dish rearranges itself into a better composition.",
+  "Rain stops in a perfect circle around one person on a crowded pavement.",
+  "She opens a package and everything inside is a smaller, identical package.",
+  "A market stall where the fruit visibly ripens the longer you look at it."
+];
+
+/* =====================================================================
+   state
+   ===================================================================== */
+const state = {
+  preset:"cinreal", grade:"none", rig:RIGS[0], moves:["slow push in"],
+  engine:"seedance", reg:REGISTERS[3], cast:null, castOn:true, vault:[], tab:"prompt"
+};
+
+const $ = s => document.querySelector(s);
+const rnd = a => a[Math.floor(Math.random()*a.length)];
+let lastCast = {};
+function rollCast(){
+  const pick = (arr,key) => { let v; let n=0; do{ v = rnd(arr); n++; }while(v===lastCast[key] && n<12); lastCast[key]=v; return v; };
+  state.cast = {
+    age: pick(AGES,"age"),
+    hair: pick(HAIR,"hair"),
+    fit: pick(FITS,"fit"),
+    face: pick(FACE,"face")
+  };
+  paintCast();
+}
+function paintCast(){
+  const c = state.cast;
+  $("#cLead").textContent = "Black woman, " + c.age + ", believable skin texture and visible pores";
+  $("#cHair").textContent = c.hair;
+  $("#cFit").textContent  = c.fit;
+  $("#cFace").textContent = c.face;
+}
+
+/* =====================================================================
+   render controls
+   ===================================================================== */
+function paintPresets(){
+  const box = $("#presets");
+  box.innerHTML = "";
+  PRESETS.forEach(p=>{
+    const d = document.createElement("div");
+    d.className = "opt" + (p.house ? " house" : "");
+    d.setAttribute("role","option");
+    d.setAttribute("tabindex","0");
+    d.setAttribute("aria-selected", p.id===state.preset ? "true":"false");
+    d.innerHTML = '<span class="ic">'+p.ic+'</span><span class="txt"><span class="nm">'+p.nm+'</span><span class="md">'+p.md+'</span></span>';
+    const go = ()=>{ state.preset=p.id; paintPresets(); build(); };
+    d.addEventListener("click", go);
+    d.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); }});
+    box.appendChild(d);
+  });
+  $("#presetCount").textContent = PRESETS.length + " looks · " + PRESETS.filter(p=>p.house).length + " house";
+}
+
+function paintGrades(){
+  const box = $("#grades"); box.innerHTML="";
+  GRADES.forEach(g=>{
+    const b = document.createElement("button");
+    b.className="grade"; b.setAttribute("aria-pressed", g.id===state.grade?"true":"false");
+    b.innerHTML = '<div class="nm">'+g.nm+'</div><div class="rf">'+g.rf+'</div><div class="sw">'+g.sw.map(c=>'<i style="background:'+c+'"></i>').join("")+'</div>';
+    b.onclick = ()=>{ state.grade=g.id; paintGrades(); build(); };
+    box.appendChild(b);
+  });
+}
+
+function paintMoves(){
+  const box = $("#moves"); box.innerHTML="";
+  MOVES.forEach(m=>{
+    const b=document.createElement("button");
+    b.className="chip pk"; b.type="button";
+    b.setAttribute("aria-pressed", state.moves.includes(m)?"true":"false");
+    b.textContent=m;
+    b.onclick=()=>{
+      const i=state.moves.indexOf(m);
+      if(i>-1) state.moves.splice(i,1);
+      else { if(state.moves.length>=3) state.moves.shift(); state.moves.push(m); }
+      paintMoves(); build();
+    };
+    box.appendChild(b);
+  });
+}
+
+function fillSelects(){
+  const rig=$("#rig"); RIGS.forEach(r=>{ const o=document.createElement("option"); o.textContent=r; rig.appendChild(o); });
+  rig.value = state.rig;
+  const en=$("#engine"); ENGINES.forEach(e=>{ const o=document.createElement("option"); o.value=e.id; o.textContent=e.nm; en.appendChild(o); });
+  en.value = state.engine;
+  const rg=$("#reg"); REGISTERS.forEach(r=>{ const o=document.createElement("option"); o.textContent=r; rg.appendChild(o); });
+  rg.value = state.reg;
+}
+
+/* =====================================================================
+   beats
+   ===================================================================== */
+function autoBeats(){
+  const s = $("#scene").value.trim();
+  const core = s ? s.replace(/\.$/,"") : "the scene";
+  $("#b1").value = "Open held and still — " + core + ". Nobody explains it.";
+  $("#b2").value = "The situation escalates one notch. Someone in frame reacts and keeps going anyway.";
+  $("#b3").value = "The payoff lands in a single frame, then the shot holds two beats longer than comfortable.";
+  build();
+}
+
+/* =====================================================================
+   prompt assembly
+   ===================================================================== */
+const HOUSE_NEG = [
+  "no non-diegetic music, no score, no voiceover",
+  "no teal or unnaturally coloured hair",
+  "no nose rings or facial piercings",
+  "no plastic or waxy skin, no airbrushed pores",
+  "no warped hands, no extra fingers, no fused limbs",
+  "no floating text, watermarks, logos or captions",
+  "no golden-hour default lighting unless specified above",
+  "no slow-motion unless specified, no morphing between shots",
+  "no crowd faces melting or duplicating in the background"
+];
+
+function castLine(){
+  if(!state.castOn || !state.cast) return "";
+  const c=state.cast;
+  return "Black woman, "+c.age+", believable skin texture with visible pores and natural specularity. Hair: "+c.hair+
+         ". Wardrobe: "+c.fit+". Performance register: "+c.face+
+         ". Same face, same hair, same wardrobe in every frame of this film.";
+}
+
+function assemble(){
+  const p = PRESETS.find(x=>x.id===state.preset);
+  const g = GRADES.find(x=>x.id===state.grade);
+  const scene = $("#scene").value.trim() || "(describe the scene in panel 01)";
+  const dur = $("#dur").value, asp = $("#aspect").value;
+  const b = [$("#b1").value.trim(), $("#b2").value.trim(), $("#b3").value.trim()].filter(Boolean);
+  const mv = state.moves.length ? state.moves : ["locked off"];
+  const grade = g.line || p.tex;
+  const cast = castLine();
+  const eng = state.engine;
+
+  const camLine = state.rig + " · " + p.cam;
+  const negs = HOUSE_NEG.join("; ");
+
+  if(eng==="seedance"){
+    const segs = dur.indexOf("chain")>-1 ? 2 : 1;
+    const total = parseInt(dur) || 20;
+    const per = Math.round(total/Math.max(b.length,1));
+    let t=0;
+    const beatBlock = (b.length?b:["(add beats in panel 06)"]).map((x,i)=>{
+      const from=t, to=t+per; t=to;
+      return "BEAT "+(i+1)+"  ("+from+"s–"+to+"s)  ·  camera: "+(mv[i]||mv[mv.length-1])+"\n"+x;
+    }).join("\n\n");
+    return (
+"[FILM] "+p.nm.toUpperCase()+"  ·  "+total+"s  ·  "+asp+"\n"+
+state.reg+"\n\n"+
+"@SUBJECT — identity lock\n"+(cast||"(cast lock off — describe the subject inside the beats)")+"\n\n"+
+"@WORLD\n"+scene+"\n\n"+
+beatBlock+"\n\n"+
+"CAMERA\n"+camLine+"\nLens: "+p.lens+"\n\n"+
+"LIGHT & GRADE\n"+grade+"\n\n"+
+"TEXTURE\n"+p.tex+"\n\n"+
+"AUDIO — diegetic only\n"+p.aud+"\n\n"+
+"PHYSICS LOCK\nReal weight, real contact, real cloth. Objects obey gravity and momentum. Hands grip and release with visible pressure. No teleporting between beats — the film is continuous within each beat.\n\n"+
+"HARD NEGATIVES\n"+negs+
+(segs>1 ? "\n\nEXTENSION CHAIN\nSegment 1 ends on the last frame of BEAT "+b.length+". Segment 2 opens on that identical frame — same subject, same wardrobe, same grade, same lens — and continues without a cut." : "")
+    );
+  }
+
+  if(eng==="kling"){
+    return (
+"SHOT: "+scene+"\n\n"+
+"SUBJECT: "+(cast||"as described in the shot")+"\n\n"+
+"ACTION: "+(b.join(" Then, ") || "(add beats in panel 06)")+"\n\n"+
+"CAMERA: "+camLine+". Movement: "+mv.join(", then ")+". Lens: "+p.lens+".\n\n"+
+"LIGHTING & COLOUR: "+grade+"\n\n"+
+"TEXTURE: "+p.tex+"\n\n"+
+"SOUND (diegetic only): "+p.aud+"\n\n"+
+"DURATION: "+dur+"  ·  ASPECT: "+asp+"  ·  "+state.reg+"\n\n"+
+"— paste the block below into Kling's negative prompt field —\n"+negs
+    );
+  }
+
+  if(eng==="sora"){
+    return (
+scene+" "+(cast?cast+" ":"")+
+(b.join(" ")||"")+" "+
+"Shot on "+state.rig+", "+p.cam+", "+p.lens+". The camera "+mv.join(", then ")+". "+
+grade+" "+p.tex+" "+
+"Sound is diegetic only: "+p.aud+". "+
+"Duration "+dur+", "+asp+". "+state.reg.split("—")[1].trim()+"\n\n"+
+"Avoid: "+negs
+    );
+  }
+
+  if(eng==="higgs"){
+    return (
+"IMAGE PROMPT — "+p.nm+"\n\n"+
+(cast||"Subject as described below.")+"\n\n"+
+"Frame: "+scene+"\n"+
+"Moment to hold: "+(b[0]||"the still that carries the whole idea")+"\n\n"+
+"Capture: "+state.rig+", "+p.lens+"\n"+
+"Light & grade: "+grade+"\n"+
+"Texture: "+p.tex+"\n"+
+"Aspect: "+asp+"  ·  "+state.reg+"\n\n"+
+"NEGATIVE: "+negs+"\n\n"+
+"— use this still as the @reference for the matching Seedance beat —"
+    );
+  }
+
+  /* veo */
+  return (
+"DESCRIPTION\n"+scene+"\n"+(cast?cast+"\n":"")+"\n"+
+"SEQUENCE\n"+(b.map((x,i)=>(i+1)+". "+x).join("\n")||"(add beats in panel 06)")+"\n\n"+
+"CINEMATOGRAPHY\n"+camLine+"; "+p.lens+"; camera "+mv.join(", then ")+"; "+asp+"; "+dur+"\n\n"+
+"COLOUR\n"+grade+"\n\n"+
+"AUDIO\n"+p.aud+" — diegetic sources only, no music bed, no narration.\n\n"+
+"NEGATIVE PROMPT\n"+negs
+  );
+}
+
+function build(){
+  const p = PRESETS.find(x=>x.id===state.preset);
+  const txt = assemble();
+  $("#out").textContent = txt;
+  $("#outNeg").textContent = HOUSE_NEG.map(n=>"· "+n).join("\n");
+  $("#metaLine").textContent = "// " + p.meta + "  |  " + $("#aspect").value + "  |  " + $("#dur").value;
+  const e = ENGINES.find(x=>x.id===state.engine);
+  $("#engBadge").textContent = e.badge;
+  $("#cc").textContent = txt.length + " chars";
+}
+
+/* =====================================================================
+   vault
+   ===================================================================== */
+function paintVault(){
+  const ul=$("#vaultList"); ul.innerHTML="";
+  if(!state.vault.length){ ul.innerHTML='<li class="empty">Nothing saved yet. Build a prompt and hit Save to vault.</li>'; return; }
+  state.vault.forEach((v,i)=>{
+    const li=document.createElement("li");
+    li.innerHTML='<span class="vn">'+v.name+'</span>';
+    const box=document.createElement("span"); box.className="vb";
+    const load=document.createElement("button"); load.textContent="Load";
+    load.onclick=()=>{ navigator.clipboard && navigator.clipboard.writeText(v.text); load.textContent="Copied"; setTimeout(()=>load.textContent="Load",1200); };
+    const del=document.createElement("button"); del.textContent="Delete";
+    del.onclick=()=>{ state.vault.splice(i,1); paintVault(); };
+    box.appendChild(load); box.appendChild(del); li.appendChild(box); ul.appendChild(li);
+  });
+}
+
+/* =====================================================================
+   wiring
+   ===================================================================== */
+function tabTo(t){
+  state.tab=t;
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected", b.dataset.t===t ? "true":"false"));
+  $("#tab-prompt").hidden = t!=="prompt";
+  $("#tab-neg").hidden = t!=="neg";
+  $("#tab-vault").hidden = t!=="vault";
+}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>tabTo(b.dataset.t));
+
+$("#scene").addEventListener("input", build);
+["b1","b2","b3"].forEach(id=>$("#"+id).addEventListener("input", build));
+$("#aspect").onchange = build;
+$("#dur").onchange = build;
+$("#rig").onchange = e => { state.rig = e.target.value; build(); };
+$("#engine").onchange = e => { state.engine = e.target.value; build(); };
+$("#reg").onchange = e => { state.reg = e.target.value; build(); };
+$("#castOn").onchange = e => { state.castOn = e.target.checked; build(); };
+$("#rollCast").onclick = ()=>{ rollCast(); build(); };
+$("#autoBeats").onclick = autoBeats;
+$("#clearScene").onclick = ()=>{ $("#scene").value=""; build(); };
+$("#seedIdea").onclick = ()=>{ $("#scene").value = rnd(SEEDS); autoBeats(); };
+
+$("#copyBtn").onclick = ()=>{
+  const t = state.tab==="neg" ? $("#outNeg").textContent : $("#out").textContent;
+  const done = ()=>{ $("#copyBtn").textContent="Copied"; setTimeout(()=>$("#copyBtn").textContent="Copy full prompt",1300); };
+  if(navigator.clipboard){ navigator.clipboard.writeText(t).then(done, fallback); } else fallback();
+  function fallback(){
+    const ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta);
+    ta.select(); try{ document.execCommand("copy"); done(); }catch(e){}
+    document.body.removeChild(ta);
+  }
+};
+
+$("#saveBtn").onclick = ()=>{
+  const p = PRESETS.find(x=>x.id===state.preset);
+  const stamp = new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  state.vault.unshift({ name: p.nm + " · " + $("#dur").value + " · " + stamp, text: $("#out").textContent });
+  paintVault(); tabTo("vault");
+};
+
+$("#dlBtn").onclick = ()=>{
+  const p = PRESETS.find(x=>x.id===state.preset);
+  const blob = new Blob([$("#out").textContent], {type:"text/plain"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download = "NV_"+p.id+"_"+Date.now()+".txt";
+  a.click(); URL.revokeObjectURL(a.href);
+};
+
+$("#exportVault").onclick = ()=>{
+  const blob=new Blob([JSON.stringify(state.vault,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="nandyvisuals-vault.json"; a.click(); URL.revokeObjectURL(a.href);
+};
+$("#importVault").onclick = ()=> $("#fileIn").click();
+$("#fileIn").onchange = e => {
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ const d=JSON.parse(r.result); if(Array.isArray(d)){ state.vault=d.concat(state.vault); paintVault(); } }catch(err){ alert("That file isn't a CINEDECK vault export."); } };
+  r.readAsText(f);
+};
+
+/* boot */
+fillSelects();
+paintPresets();
+paintGrades();
+paintMoves();
+rollCast();
+autoBeats();
+paintVault();
+build();
+</script>
+</body>
+</html>
